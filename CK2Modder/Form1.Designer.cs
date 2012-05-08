@@ -31,7 +31,7 @@ namespace CK2Modder
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,16 +39,14 @@ namespace CK2Modder
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.workingLocationStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.workingLocationStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabDynasties = new System.Windows.Forms.TabPage();
             this.dynastyGridView = new System.Windows.Forms.DataGridView();
-            this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DynastyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Culture = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabCharacters = new System.Windows.Forms.TabPage();
             this.dynastyBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -70,6 +68,7 @@ namespace CK2Modder
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
+            this.saveToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -91,7 +90,7 @@ namespace CK2Modder
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -106,17 +105,17 @@ namespace CK2Modder
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // workingLocationStripStatusLabel
-            // 
-            this.workingLocationStripStatusLabel.Name = "workingLocationStripStatusLabel";
-            this.workingLocationStripStatusLabel.Size = new System.Drawing.Size(104, 17);
-            this.workingLocationStripStatusLabel.Text = "Working Location:";
-            // 
             // toolStripProgressBar
             // 
             this.toolStripProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripProgressBar.Name = "toolStripProgressBar";
             this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
+            // 
+            // workingLocationStripStatusLabel
+            // 
+            this.workingLocationStripStatusLabel.Name = "workingLocationStripStatusLabel";
+            this.workingLocationStripStatusLabel.Size = new System.Drawing.Size(104, 17);
+            this.workingLocationStripStatusLabel.Text = "Working Location:";
             // 
             // tabControl
             // 
@@ -144,43 +143,22 @@ namespace CK2Modder
             // 
             // dynastyGridView
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dynastyGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ID,
-            this.DynastyName,
-            this.Culture});
             this.dynastyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dynastyGridView.Location = new System.Drawing.Point(3, 3);
             this.dynastyGridView.Name = "dynastyGridView";
             this.dynastyGridView.Size = new System.Drawing.Size(767, 478);
             this.dynastyGridView.TabIndex = 0;
-            // 
-            // ID
-            // 
-            this.ID.HeaderText = "ID";
-            this.ID.Name = "ID";
-            this.ID.ReadOnly = true;
-            this.ID.ToolTipText = "The ID of the Dynasty";
-            // 
-            // DynastyName
-            // 
-            this.DynastyName.HeaderText = "Name";
-            this.DynastyName.Name = "DynastyName";
-            this.DynastyName.ToolTipText = "The Name of the Dynasty";
-            // 
-            // Culture
-            // 
-            this.Culture.HeaderText = "Culture";
-            this.Culture.Name = "Culture";
-            this.Culture.ToolTipText = "The Culture of the Dynasty";
             // 
             // tabCharacters
             // 
@@ -196,6 +174,13 @@ namespace CK2Modder
             // 
             this.dynastyBackgroundWorker.WorkerReportsProgress = true;
             this.dynastyBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dynastyBackgroundWorker_DoWork);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -235,10 +220,8 @@ namespace CK2Modder
         private System.Windows.Forms.TabPage tabCharacters;
         private System.Windows.Forms.DataGridView dynastyGridView;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DynastyName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Culture;
         private System.ComponentModel.BackgroundWorker dynastyBackgroundWorker;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
     }
 }
 

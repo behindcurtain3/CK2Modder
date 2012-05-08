@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace CK2Modder
 {
@@ -19,15 +20,47 @@ namespace CK2Modder
 
         public String SelectedFolder { get; set; }
 
+        public BindingList<Dynasty> dynasties;
+
         public Form1()
         {
             InitializeComponent();
+
+            dynasties = new BindingList<Dynasty>();
 
             toolStripProgressBar.Visible = false;
 
             dynastyBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(dynastyBackgroundWorker_ProgressChanged);
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
-        }        
+
+            dynastyGridView.AutoGenerateColumns = false;
+
+            DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
+            idColumn.DataPropertyName = "ID";
+            idColumn.HeaderText = "ID";
+
+            DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
+            nameColumn.DataPropertyName = "Name";
+            nameColumn.HeaderText = "Name";
+
+            DataGridViewTextBoxColumn cultureColumn = new DataGridViewTextBoxColumn();
+            cultureColumn.DataPropertyName = "Culture";
+            cultureColumn.HeaderText = "Culture";
+
+            dynastyGridView.Columns.Add(idColumn);
+            dynastyGridView.Columns.Add(nameColumn);
+            dynastyGridView.Columns.Add(cultureColumn);
+
+            dynastyGridView.DataSource = dynasties;
+            dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("sv");
+        }
+
+        void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];            
+        }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -56,6 +89,7 @@ namespace CK2Modder
             if (File.Exists(absolutePath))
             {
                 StreamReader stream = File.OpenText(absolutePath);
+                
 
                 toolStripProgressBar.Visible = true;
                 toolStripProgressBar.Value = 0;
@@ -69,7 +103,7 @@ namespace CK2Modder
         {
             int progress = 0;
             // Store the ids
-            List<String[]> rows = new List<string[]>();
+            List<Dynasty> loadingDynasties = new List<Dynasty>();
 
             BackgroundWorker worker = sender as BackgroundWorker;
             StreamReader stream = e.Argument as StreamReader;
@@ -81,13 +115,12 @@ namespace CK2Modder
                 // Start of dynasty
                 if (line.EndsWith("= {") && !line.StartsWith("#"))
                 {
-                    String[] row = new String[3];
-                    row[0] = Regex.Match(line, @"\d+").Value;
-                    row[1] = "";
-                    row[2] = "";
+                    Dynasty dynasty = new Dynasty();
+                    dynasty.ID = Int32.Parse(Regex.Match(line, @"\d+").Value);
 
                     int openingBrackets = 1;
                     int closingBrackets = 0;
+                    int colorsFound = 0;
 
                     String insideLine;
 
@@ -100,32 +133,79 @@ namespace CK2Modder
                         else if (insideLine.Contains("}"))
                             closingBrackets++;
 
+                        // Add the name
                         if (insideLine.Contains("name"))
                         {
                             int start = insideLine.IndexOf('"') + 1;
                             int end = insideLine.IndexOf('"', start);
-                            row[1] = insideLine.Substring(start, end - start);
+                            dynasty.Name = insideLine.Substring(start, end - start);
                         }
-                        if (insideLine.Contains("culture"))
+
+                        // Add the culture
+                        else if (insideLine.Contains("culture"))
                         {
                             // Cultures are added in two ways with "" or without
                             if (insideLine.Contains('"'))
                             {
                                 int start = insideLine.IndexOf('"') + 1;
                                 int end = insideLine.IndexOf('"', start);
-                                row[2] = insideLine.Substring(start, end - start);
+                                dynasty.Culture = insideLine.Substring(start, end - start);
                             }
                             else
                             {
-                                row[2] = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
+                                dynasty.Culture = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
                             }
+                        }
+
+                        // Add the coat of arms
+                        else if (insideLine.Contains("coat_of_arms"))
+                        {
+                            dynasty.COA = new CoatOfArms();                            
+                        }
+
+                        // COA template
+                        else if (insideLine.Contains("template"))
+                        {
+                            dynasty.COA.Template = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // COA Texture_Internal
+                        // We need to check for this before "texture" because we are using contains
+                        else if (insideLine.Contains("texture_internal"))
+                        {
+                            dynasty.COA.Layer.Texture_Internal = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // COA Texture
+                        else if (insideLine.Contains("texture"))
+                        {
+                            dynasty.COA.Layer.Texture = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }                       
+
+                        // COA Emblem
+                        else if (insideLine.Contains("emblem"))
+                        {
+                            dynasty.COA.Layer.Emblem = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // COA Color1
+                        else if (insideLine.Contains("color"))
+                        {
+                            if(colorsFound == 0)
+                                dynasty.COA.Layer.R = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                            else if (colorsFound == 1)
+                                dynasty.COA.Layer.G = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                            else if (colorsFound == 2)
+                                dynasty.COA.Layer.B = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+
+                            colorsFound++;
                         }
 
                     } while (closingBrackets < openingBrackets);
 
 
                     // Add the row to our list
-                    rows.Add(row);
+                    loadingDynasties.Add(dynasty);
 
                     // Update the progress
                     progress += 10;
@@ -137,18 +217,17 @@ namespace CK2Modder
             }
 
             stream.Close();
-            e.Result = rows;
+            e.Result = loadingDynasties;
         }
 
         void dynastyBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             toolStripProgressBar.Visible = false;
 
-            List<String[]> rows = e.Result as List<String[]>;
-            foreach (string[] rowArray in rows)
-            {
-                dynastyGridView.Rows.Add(rowArray);
-            }
+            List<Dynasty> rows = e.Result as List<Dynasty>;
+
+            foreach (Dynasty d in rows)
+                dynasties.Add(d);
 
         }
 
@@ -160,6 +239,17 @@ namespace CK2Modder
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StreamWriter stream = File.CreateText(SelectedFolder + "/dynasties.modder");
+            
+
+            foreach (Dynasty dynasty in dynasties)
+                stream.Write(dynasty.ToString());
+
+            stream.Close();
         }
     }
 }
