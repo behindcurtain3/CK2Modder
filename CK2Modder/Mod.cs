@@ -148,6 +148,10 @@ namespace CK2Modder
 
                     mod = new Mod(line.Substring(start, end - start));
                 }
+                else if (line.Equals("replace_path = \"common\""))
+                {
+                    mod.ReplaceCommonPath = true;
+                }
             }
 
             return mod;
