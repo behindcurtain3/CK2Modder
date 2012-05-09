@@ -40,17 +40,17 @@ namespace CK2Modder
 
         public override string ToString()
         {
-            String result = "\tcoat_of_arms = {\n";
-            result += "\t\ttemplate = " + Template + "\n";
-            result += "\t\tlayer = {\n";
-            result += "\t\t\ttexture = " + Layer.Texture + "\n";
-            result += "\t\t\ttexture_internal = " + Layer.Texture_Internal + "\n";
-            result += "\t\t\temblem = " + Layer.Emblem + "\n";
-            result += "\t\t\tcolor = " + Layer.R + "\n";
-            result += "\t\t\tcolor = " + Layer.G + "\n";
-            result += "\t\t\tcolor = " + Layer.B + "\n";
-            result += "\t\t}\n";
-            result += "\t}\n";
+            String result = "\tcoat_of_arms = {\r\n";
+            result += "\t\ttemplate = " + Template + "\r\n";
+            result += "\t\tlayer = {\r\n";
+            result += "\t\t\ttexture = " + Layer.Texture + "\r\n";
+            result += "\t\t\ttexture_internal = " + Layer.Texture_Internal + "\r\n";
+            result += "\t\t\temblem = " + Layer.Emblem + "\r\n";
+            result += "\t\t\tcolor = " + Layer.R + "\r\n";
+            result += "\t\t\tcolor = " + Layer.G + "\r\n";
+            result += "\t\t\tcolor = " + Layer.B + "\r\n";
+            result += "\t\t}\r\n";
+            result += "\t}\r\n";
 
             return result;
         }

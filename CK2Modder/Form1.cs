@@ -17,12 +17,10 @@ namespace CK2Modder
     {
         public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
         public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
-        public static readonly String DynastyFile = "/common/dynasties.txt";
+        public static readonly String VanillaDynastyFile = "/common/dynasties.txt";
 
         public String WorkingLocation { get; set; }
-
-        public BindingList<Dynasty> dynasties;
-        public Mod CurrentMod;
+        public Mod CurrentMod { get; set; }
 
         public Form1()
         {
@@ -31,40 +29,42 @@ namespace CK2Modder
             // Setup the working location
             if (Directory.Exists(SteamDirectory))
                 WorkingLocation = SteamDirectory;
-            else
+            else if (Directory.Exists(SteamDirectoryX86))
                 WorkingLocation = SteamDirectoryX86;
+            else
+                WorkingLocation = "C:\\";                     
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
-            dynasties = new BindingList<Dynasty>();
-
+            tabControl.Visible = false;
             toolStripProgressBar.Visible = false;
 
             dynastyBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(dynastyBackgroundWorker_ProgressChanged);
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
 
+            dynastyGridView.Visible = false;
             dynastyGridView.AutoGenerateColumns = false;
 
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "ID";
             idColumn.HeaderText = "ID";
+            idColumn.MinimumWidth = 100;
 
             DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.DataPropertyName = "Name";
             nameColumn.HeaderText = "Name";
+            nameColumn.MinimumWidth = 150;
 
             DataGridViewTextBoxColumn cultureColumn = new DataGridViewTextBoxColumn();
             cultureColumn.DataPropertyName = "Culture";
             cultureColumn.HeaderText = "Culture";
+            cultureColumn.MinimumWidth = 150;
 
             dynastyGridView.Columns.Add(idColumn);
             dynastyGridView.Columns.Add(nameColumn);
             dynastyGridView.Columns.Add(cultureColumn);
-
-            dynastyGridView.DataSource = dynasties;
+            
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
-
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("sv");
         }
 
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -74,27 +74,22 @@ namespace CK2Modder
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog = new FolderBrowserDialog();
-            //folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-            folderBrowserDialog.Description = "Select the main Crusader Kings II installation directory.";
-            folderBrowserDialog.SelectedPath = SteamDirectory;
-            folderBrowserDialog.ShowNewFolderButton = false;
-
-            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Mod File (*.mod)|*.mod";
+            openFileDialog.InitialDirectory = WorkingLocation + "/mod";
+            openFileDialog.Multiselect = false;
+            openFileDialog.Title = "Select a mod to open";
+            if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                WorkingLocation = folderBrowserDialog.SelectedPath;
+                System.Console.WriteLine(openFileDialog.FileName);
 
-                if (!WorkingLocation.Equals(""))
-                {
-                    workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
-                    LoadDynastiesInfo();
-                }
-            }
+                setCurrentMod(Mod.LoadFromFile(openFileDialog.FileName));
+            }            
         }
 
-        private void LoadDynastiesInfo()
+        private void ImportAllVanillaDynasties()
         {
-            String absolutePath = WorkingLocation + DynastyFile;
+            String absolutePath = WorkingLocation + VanillaDynastyFile;
 
             if (File.Exists(absolutePath))
             {
@@ -106,6 +101,9 @@ namespace CK2Modder
                 toolStripProgressBar.Maximum = 100;
 
                 dynastyBackgroundWorker.RunWorkerAsync(stream);
+
+                // After importing vanilla data we want to replace the path to the dynasties
+                CurrentMod.ReplaceCommonPath = true;
             }
         }
 
@@ -234,11 +232,14 @@ namespace CK2Modder
         {
             toolStripProgressBar.Visible = false;
 
+            if (CurrentMod == null)
+                return;
+
             List<Dynasty> rows = e.Result as List<Dynasty>;
 
             foreach (Dynasty d in rows)
-                dynasties.Add(d);
-
+                if(!CurrentMod.Dynasties.Contains(d))
+                    CurrentMod.Dynasties.Add(d);            
         }
 
         void dynastyBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -253,10 +254,34 @@ namespace CK2Modder
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
+            String modPath = WorkingLocation + "/" + CurrentMod.Path;
 
-            stream.WriteLine("name = \"" + CurrentMod.Name + "\"");
-            stream.WriteLine("path = \"" + CurrentMod.Path + "\"");
+            // Write out the mod file
+            StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
+            stream.Write(CurrentMod.RawOutput);
+            stream.Close();
+
+            // Make sure the mod directory exists
+            if (!Directory.Exists(modPath))
+            {
+                Directory.CreateDirectory(modPath);
+            }
+
+            // Write out the dynasties
+            if (CurrentMod.Dynasties.Count > 0)
+            {
+                if (!Directory.Exists(modPath + "/common"))
+                {
+                    Directory.CreateDirectory(modPath + "/common");
+                }
+
+                stream = File.CreateText(modPath + "/common/dynasties.txt");
+
+                foreach (Dynasty dynasty in CurrentMod.Dynasties)
+                    stream.Write(dynasty.ToString());
+
+                stream.Close();
+            }
 
             /*
             StreamWriter stream = File.CreateText(WorkingLocation + "/dynasties.modder");
@@ -265,7 +290,7 @@ namespace CK2Modder
             foreach (Dynasty dynasty in dynasties)
                 stream.Write(dynasty.ToString());
             */
-            stream.Close();
+            
         }
 
         private void modToolStripMenuItem_Click(object sender, EventArgs e)
@@ -276,8 +301,58 @@ namespace CK2Modder
 
         public void setCurrentMod(Mod m)
         {
-            modNameStatusLabel.Text = "Mod Name: " + m.Name;
+            if (m == null)
+            {
+                MessageBox.Show("Unable to load the specified mod.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             CurrentMod = m;
+
+            tabControl.Visible = true;
+            dynastyGridView.DataSource = CurrentMod.Dynasties;
+            dynastyGridView.Visible = true;
+
+            // Add data bindings
+            textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
+            textBoxDependencies.DataBindings.Add("Text", CurrentMod, "Dependencies");
+            textBoxModRawOutput.DataBindings.Add("Text", CurrentMod, "RawOutput");
+            buttonImportDynasties.DataBindings.Add("Enabled", CurrentMod, "NotReplaceCommonPath");
+
+            // Load the dynasties
+            String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
+            if (File.Exists(dynastyFile))
+            {
+                StreamReader stream = File.OpenText(dynastyFile);
+                dynastyBackgroundWorker.RunWorkerAsync(stream);
+            }
+        }
+
+        private void buttonImportDynasties_Click(object sender, EventArgs e)
+        {
+            ImportAllVanillaDynasties();
+        }
+
+        private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
+        {            
+            folderBrowserDialog = new FolderBrowserDialog();
+            //folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            folderBrowserDialog.Description = "Select the main Crusader Kings II installation directory containing ck2.exe";
+            folderBrowserDialog.SelectedPath = SteamDirectory;
+            folderBrowserDialog.ShowNewFolderButton = false;
+
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (File.Exists(folderBrowserDialog.SelectedPath + "/ck2.exe"))
+                {
+                    WorkingLocation = folderBrowserDialog.SelectedPath;
+
+                    if (!WorkingLocation.Equals(""))
+                    {
+                        workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
+                    }
+                }
+            }
         }
     }
 }

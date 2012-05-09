@@ -73,14 +73,14 @@ namespace CK2Modder
 
         public override string ToString()
         {
-            String result = ID + " = {\n";
-            result += "\tname=\"" + Name + "\"\n";
-            result += "\tculture = " + Culture + "\n";
+            String result = ID + " = {\r\n";
+            result += "\tname=\"" + Name + "\"\r\n";
+            result += "\tculture = " + Culture + "\r\n";
 
             if(COA != null)
                 result += COA.ToString();
 
-            result += "}\n";
+            result += "}\r\n";
             return result;
         }
     }
