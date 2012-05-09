@@ -90,6 +90,10 @@ namespace CK2Modder
             }
         }
 
+        /// <summary>
+        /// This looks wierd but its used to disable buttons when the replace
+        /// common path variable is true.
+        /// </summary>
         private Boolean _notReplaceCommonPath;
         public Boolean NotReplaceCommonPath
         {

@@ -24,15 +24,13 @@ namespace CK2Modder
 
         public Form1()
         {
-            InitializeComponent();
-
             // Setup the working location
-            if (Directory.Exists(SteamDirectory))
-                WorkingLocation = SteamDirectory;
-            else if (Directory.Exists(SteamDirectoryX86))
-                WorkingLocation = SteamDirectoryX86;
-            else
-                WorkingLocation = "C:\\";                     
+            WorkingLocation = UserPreferences.Default.WorkingLocation;
+
+            while (!Directory.Exists(WorkingLocation))
+                SelectWorkingLocation();
+
+            InitializeComponent();
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
@@ -65,6 +63,12 @@ namespace CK2Modder
             dynastyGridView.Columns.Add(cultureColumn);
             
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
+
+            // Attempt to load the last mod
+            if (File.Exists(UserPreferences.Default.LastMod))
+            {
+                setCurrentMod(Mod.LoadFromFile(UserPreferences.Default.LastMod));
+            }
         }
 
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -256,43 +260,7 @@ namespace CK2Modder
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            String modPath = WorkingLocation + "/" + CurrentMod.Path;
-
-            // Write out the mod file
-            StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
-            stream.Write(CurrentMod.RawOutput);
-            stream.Close();
-
-            // Make sure the mod directory exists
-            if (!Directory.Exists(modPath))
-            {
-                Directory.CreateDirectory(modPath);
-            }
-
-            // Write out the dynasties
-            if (CurrentMod.Dynasties.Count > 0)
-            {
-                if (!Directory.Exists(modPath + "/common"))
-                {
-                    Directory.CreateDirectory(modPath + "/common");
-                }
-
-                stream = File.CreateText(modPath + "/common/dynasties.txt");
-
-                foreach (Dynasty dynasty in CurrentMod.Dynasties)
-                    stream.Write(dynasty.ToString());
-
-                stream.Close();
-            }
-
-            /*
-            StreamWriter stream = File.CreateText(WorkingLocation + "/dynasties.modder");
-            
-
-            foreach (Dynasty dynasty in dynasties)
-                stream.Write(dynasty.ToString());
-            */
-            
+            SaveMod();            
         }
 
         private void modToolStripMenuItem_Click(object sender, EventArgs e)
@@ -328,6 +296,13 @@ namespace CK2Modder
                 StreamReader stream = File.OpenText(dynastyFile);
                 dynastyBackgroundWorker.RunWorkerAsync(stream);
             }
+
+            UserPreferences.Default.LastMod = WorkingLocation + "/mod/" + CurrentMod.Name + ".mod";
+            UserPreferences.Default.Save();
+
+            saveToolStripMenuItem.Enabled = true;
+            closeModToolStripMenuItem.Enabled = true;
+            closeWithoutSavingToolStripMenuItem.Enabled = true;
         }
 
         private void buttonImportDynasties_Click(object sender, EventArgs e)
@@ -336,7 +311,12 @@ namespace CK2Modder
         }
 
         private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
-        {            
+        {
+            SelectWorkingLocation();
+        }
+
+        private void SelectWorkingLocation()
+        {
             folderBrowserDialog = new FolderBrowserDialog();
             //folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
             folderBrowserDialog.Description = "Select the main Crusader Kings II installation directory containing ck2.exe";
@@ -348,11 +328,13 @@ namespace CK2Modder
                 if (File.Exists(folderBrowserDialog.SelectedPath + "/ck2.exe"))
                 {
                     WorkingLocation = folderBrowserDialog.SelectedPath;
-
-                    if (!WorkingLocation.Equals(""))
-                    {
-                        workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
-                    }
+                    workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
+                    UserPreferences.Default.WorkingLocation = WorkingLocation;
+                    UserPreferences.Default.Save();
+                }
+                else
+                {
+                    MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -478,5 +460,81 @@ namespace CK2Modder
             buttonClose.Click += closeHandler2;
                 
         }
+
+        private void closeModToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveMod();
+            CloseMod();
+        }
+
+        private void closeWithoutSavingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloseMod();
+        }
+
+        private void SaveMod()
+        {
+            if (CurrentMod == null)
+                return;
+
+            String modPath = WorkingLocation + "/" + CurrentMod.Path;
+
+            // Write out the mod file
+            StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
+            stream.Write(CurrentMod.RawOutput);
+            stream.Close();
+
+            // Make sure the mod directory exists
+            if (!Directory.Exists(modPath))
+            {
+                Directory.CreateDirectory(modPath);
+            }
+
+            // Write out the dynasties
+            if (CurrentMod.Dynasties.Count > 0)
+            {
+                if (!Directory.Exists(modPath + "/common"))
+                {
+                    Directory.CreateDirectory(modPath + "/common");
+                }
+
+                stream = File.CreateText(modPath + "/common/dynasties.txt");
+
+                foreach (Dynasty dynasty in CurrentMod.Dynasties)
+                    stream.Write(dynasty.ToString());
+
+                stream.Close();
+            }
+
+            /*
+            StreamWriter stream = File.CreateText(WorkingLocation + "/dynasties.modder");
+            
+
+            foreach (Dynasty dynasty in dynasties)
+                stream.Write(dynasty.ToString());
+            */
+        }
+
+        private void CloseMod()
+        {
+            saveToolStripMenuItem.Enabled = false;
+            closeModToolStripMenuItem.Enabled = false;
+            closeWithoutSavingToolStripMenuItem.Enabled = false;
+
+            CurrentMod = null;
+            this.tabControl.Visible = false;
+
+            dynastyGridView.DataSource = null;
+            dynastyGridView.Visible = false;
+
+            // Add data bindings
+            textBoxModName.DataBindings.Clear();
+            textBoxDependencies.DataBindings.Clear();
+            textBoxModRawOutput.DataBindings.Clear();
+            buttonImportDynasties.DataBindings.Clear();
+
+            UserPreferences.Default.LastMod = "";
+            UserPreferences.Default.Save();
+        }        
     }
 }
