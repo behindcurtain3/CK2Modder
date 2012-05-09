@@ -22,7 +22,30 @@ namespace CK2Modder
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
 
+        public Form1(string filename)
+        {
+            Initialize();
+
+            // Attempt to load the mod passed in
+            if (File.Exists(filename))
+            {
+                setCurrentMod(Mod.LoadFromFile(filename));
+            }
+
+        }
+
         public Form1()
+        {
+            Initialize();
+
+            // Attempt to load the last mod
+            if (File.Exists(UserPreferences.Default.LastMod))
+            {
+                setCurrentMod(Mod.LoadFromFile(UserPreferences.Default.LastMod));
+            }
+        }
+
+        public void Initialize()
         {
             // Setup the working location
             WorkingLocation = UserPreferences.Default.WorkingLocation;
@@ -30,7 +53,7 @@ namespace CK2Modder
             InitializeComponent();
 
             while (!Directory.Exists(WorkingLocation))
-                SelectWorkingLocation();            
+                SelectWorkingLocation();
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
@@ -61,16 +84,10 @@ namespace CK2Modder
             dynastyGridView.Columns.Add(idColumn);
             dynastyGridView.Columns.Add(nameColumn);
             dynastyGridView.Columns.Add(cultureColumn);
-            
+
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
-
-            // Attempt to load the last mod
-            if (File.Exists(UserPreferences.Default.LastMod))
-            {
-                setCurrentMod(Mod.LoadFromFile(UserPreferences.Default.LastMod));
-            }
         }
-
+       
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
