@@ -27,10 +27,10 @@ namespace CK2Modder
             // Setup the working location
             WorkingLocation = UserPreferences.Default.WorkingLocation;
 
-            while (!Directory.Exists(WorkingLocation))
-                SelectWorkingLocation();
-
             InitializeComponent();
+
+            while (!Directory.Exists(WorkingLocation))
+                SelectWorkingLocation();            
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
@@ -82,7 +82,7 @@ namespace CK2Modder
         {
             openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Mod File (*.mod)|*.mod";
-            openFileDialog.InitialDirectory = WorkingLocation + "/mod";
+            openFileDialog.InitialDirectory = WorkingLocation + "\\mod";
             openFileDialog.Multiselect = false;
             openFileDialog.Title = "Select a mod to open";
             if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
@@ -472,7 +472,7 @@ namespace CK2Modder
             CloseMod();
         }
 
-        private void SaveMod()
+        public void SaveMod()
         {
             if (CurrentMod == null)
                 return;
@@ -515,7 +515,7 @@ namespace CK2Modder
             */
         }
 
-        private void CloseMod()
+        public void CloseMod()
         {
             saveToolStripMenuItem.Enabled = false;
             closeModToolStripMenuItem.Enabled = false;

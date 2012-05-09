@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 
 namespace CK2Modder
@@ -32,6 +33,17 @@ namespace CK2Modder
                 MessageBox.Show(this, "Please enter a name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            // Check to see if a mod like this already exists
+            String directory = UserPreferences.Default.WorkingLocation + "\\mod\\";
+            if (File.Exists(directory + nameTextBox.Text + ".mod"))
+            {
+                MessageBox.Show(this, "A mod with this name already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            mainForm.SaveMod();
+            mainForm.CloseMod();
 
             Mod mod = new Mod(nameTextBox.Text);
 
