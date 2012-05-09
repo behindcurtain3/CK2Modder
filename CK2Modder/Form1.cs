@@ -69,7 +69,9 @@ namespace CK2Modder
 
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];            
+            DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
+
+            ShowDynasty((Dynasty)row.DataBoundItem);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -353,6 +355,128 @@ namespace CK2Modder
                     }
                 }
             }
+        }
+
+        private void ShowDynasty(Dynasty dynasty)
+        {
+            // SETUP THE UI            
+            // 
+            // labelDynastyID
+            // 
+            Label labelDynastyID = new Label();
+            labelDynastyID.AutoSize = true;
+            labelDynastyID.Location = new System.Drawing.Point(7, 7);
+            labelDynastyID.Name = "labelDynastyID";
+            labelDynastyID.Size = new System.Drawing.Size(79, 13);
+            labelDynastyID.TabIndex = 0;
+            labelDynastyID.Text = "Dynasty ID:";
+            // 
+            // textBoxDynastyID
+            // 
+            TextBox textBoxDynastyID = new TextBox();
+            textBoxDynastyID.Location = new System.Drawing.Point(10, 23);
+            textBoxDynastyID.Name = "textBoxDynastyID";
+            textBoxDynastyID.Size = new System.Drawing.Size(279, 20);
+            textBoxDynastyID.TabIndex = 1;
+            textBoxDynastyID.Text = dynasty.ID.ToString();
+            textBoxDynastyID.DataBindings.Add("Text", dynasty, "ID");
+            // 
+            // labelDynastyName
+            // 
+            Label labelDynastyName = new Label();
+            labelDynastyName.AutoSize = true;
+            labelDynastyName.Location = new System.Drawing.Point(7, 58);
+            labelDynastyName.Name = "labelDynastyName";
+            labelDynastyName.Size = new System.Drawing.Size(79, 13);
+            labelDynastyName.TabIndex = 0;
+            labelDynastyName.Text = "Dynasty Name:";
+            // 
+            // textBoxDynastyName
+            // 
+            TextBox textBoxDynastyName = new TextBox();
+            textBoxDynastyName.Location = new System.Drawing.Point(10, 74);
+            textBoxDynastyName.Name = "textBoxDynastyName";
+            textBoxDynastyName.Size = new System.Drawing.Size(279, 20);
+            textBoxDynastyName.TabIndex = 1;
+            textBoxDynastyName.Text = dynasty.Name;
+            textBoxDynastyName.DataBindings.Add("Text", dynasty, "Name");
+            // 
+            // labelDynastyCulture
+            // 
+            Label labelDynastyCulture = new Label();
+            labelDynastyCulture.AutoSize = true;
+            labelDynastyCulture.Location = new System.Drawing.Point(7, 109);
+            labelDynastyCulture.Name = "labelDynastyCulture";
+            labelDynastyCulture.Size = new System.Drawing.Size(43, 13);
+            labelDynastyCulture.TabIndex = 2;
+            labelDynastyCulture.Text = "Culture:";
+            // 
+            // textBoxDynastyCulture
+            // 
+            TextBox textBoxDynastyCulture = new TextBox();
+            textBoxDynastyCulture.Location = new System.Drawing.Point(10, 125);
+            textBoxDynastyCulture.Name = "textBoxDynastyCulture";
+            textBoxDynastyCulture.Size = new System.Drawing.Size(279, 20);
+            textBoxDynastyCulture.TabIndex = 3;
+            textBoxDynastyCulture.Text = dynasty.Culture;
+            textBoxDynastyCulture.DataBindings.Add("Text", dynasty, "Culture");
+            // 
+            // dataGridViewDynastyCharacters
+            // 
+            DataGridView dataGridViewDynastyCharacters = new DataGridView();
+            dataGridViewDynastyCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewDynastyCharacters.Location = new System.Drawing.Point(10, 265);
+            dataGridViewDynastyCharacters.Name = "dataGridViewDynastyCharacters";
+            dataGridViewDynastyCharacters.Size = new System.Drawing.Size(755, 213);
+            dataGridViewDynastyCharacters.TabIndex = 5;
+            // 
+            // labelDynastyCharacters
+            // 
+            Label labelDynastyCharacters = new Label();
+            labelDynastyCharacters.AutoSize = true;
+            labelDynastyCharacters.Location = new System.Drawing.Point(7, 249);
+            labelDynastyCharacters.Name = "labelDynastyCharacters";
+            labelDynastyCharacters.Size = new System.Drawing.Size(99, 13);
+            labelDynastyCharacters.Text = "Dynasty Characters";
+            //
+            // buttonClose
+            //
+            Button buttonClose = new Button();
+            buttonClose.Location = new Point(636, 6);
+            buttonClose.Text = "Close";
+            buttonClose.Size = new Size(129, 23);
+            buttonClose.TabIndex = 4;
+            // 
+            // tabDynastyInfo
+            // 
+            TabPage tabDynastyInfo = new TabPage(dynasty.Name);
+            tabDynastyInfo.Controls.Add(labelDynastyID);
+            tabDynastyInfo.Controls.Add(textBoxDynastyID);
+            tabDynastyInfo.Controls.Add(labelDynastyCharacters);
+            tabDynastyInfo.Controls.Add(dataGridViewDynastyCharacters);
+            tabDynastyInfo.Controls.Add(textBoxDynastyCulture);
+            tabDynastyInfo.Controls.Add(labelDynastyCulture);
+            tabDynastyInfo.Controls.Add(textBoxDynastyName);
+            tabDynastyInfo.Controls.Add(labelDynastyName);
+            tabDynastyInfo.Controls.Add(buttonClose);
+            tabDynastyInfo.Location = new System.Drawing.Point(4, 22);
+            tabDynastyInfo.Name = "tabDynastyInfo";
+            tabDynastyInfo.Padding = new System.Windows.Forms.Padding(3);
+            tabDynastyInfo.Size = new System.Drawing.Size(773, 484);
+            tabDynastyInfo.TabIndex = this.tabControl.TabCount;
+            tabDynastyInfo.Text = dynasty.Name + " Dynasty";
+            tabDynastyInfo.BackColor = Color.Transparent;
+            //tabDynastyInfo.ResumeLayout(false);
+            //tabDynastyInfo.PerformLayout();
+
+            this.tabControl.TabPages.Add(tabDynastyInfo);
+            this.tabControl.SelectedIndex = tabDynastyInfo.TabIndex;
+
+            EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabDynastyInfo);
+            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 1; // go to dynasties tab
+            buttonClose.Click += closeHandler;
+            buttonClose.Click += closeHandler2;
+                
         }
     }
 }

@@ -31,8 +31,7 @@ namespace CK2Modder
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +40,8 @@ namespace CK2Modder
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.workingLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -65,9 +66,6 @@ namespace CK2Modder
             this.tabCharacters = new System.Windows.Forms.TabPage();
             this.dynastyBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.modBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.workingLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -75,7 +73,6 @@ namespace CK2Modder
             this.groupBox1.SuspendLayout();
             this.tabDynasties.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.modBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -145,6 +142,21 @@ namespace CK2Modder
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.workingLocationToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // workingLocationToolStripMenuItem
+            // 
+            this.workingLocationToolStripMenuItem.Name = "workingLocationToolStripMenuItem";
+            this.workingLocationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.workingLocationToolStripMenuItem.Text = "Working Location...";
+            this.workingLocationToolStripMenuItem.Click += new System.EventHandler(this.workingLocationToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -348,14 +360,14 @@ namespace CK2Modder
             // 
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dynastyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dynastyGridView.Location = new System.Drawing.Point(3, 3);
@@ -382,25 +394,6 @@ namespace CK2Modder
             // 
             this.openFileDialog.FileName = "openFileDialog1";
             // 
-            // modBindingSource
-            // 
-            this.modBindingSource.DataSource = typeof(CK2Modder.Mod);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.workingLocationToolStripMenuItem});
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // workingLocationToolStripMenuItem
-            // 
-            this.workingLocationToolStripMenuItem.Name = "workingLocationToolStripMenuItem";
-            this.workingLocationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.workingLocationToolStripMenuItem.Text = "Working Location...";
-            this.workingLocationToolStripMenuItem.Click += new System.EventHandler(this.workingLocationToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -423,7 +416,6 @@ namespace CK2Modder
             this.groupBox1.ResumeLayout(false);
             this.tabDynasties.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.modBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -451,7 +443,6 @@ namespace CK2Modder
         private System.Windows.Forms.TabPage tabModProperties;
         private System.Windows.Forms.TextBox textBoxModName;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.BindingSource modBindingSource;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxModRawOutput;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
