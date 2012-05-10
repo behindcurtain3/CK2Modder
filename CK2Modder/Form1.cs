@@ -358,6 +358,9 @@ namespace CK2Modder
 
         private void ShowDynasty(Dynasty dynasty)
         {
+            if (dynasty == null)
+                return;
+
             // SETUP THE UI            
             // 
             // labelDynastyID
@@ -465,8 +468,6 @@ namespace CK2Modder
             tabDynastyInfo.TabIndex = this.tabControl.TabCount;
             tabDynastyInfo.Text = dynasty.Name + " Dynasty";
             tabDynastyInfo.BackColor = Color.Transparent;
-            //tabDynastyInfo.ResumeLayout(false);
-            //tabDynastyInfo.PerformLayout();
 
             this.tabControl.TabPages.Add(tabDynastyInfo);
             this.tabControl.SelectedIndex = tabDynastyInfo.TabIndex;
@@ -552,6 +553,93 @@ namespace CK2Modder
 
             UserPreferences.Default.LastMod = "";
             UserPreferences.Default.Save();
-        }        
+        }
+
+        private void buttonDynastyFilterByID_Click(object sender, EventArgs e)
+        {
+            BindingList<Dynasty> filteredList = new BindingList<Dynasty>();
+            BindingList<Dynasty> idList = null;
+            BindingList<Dynasty> nameList = null;
+            BindingList<Dynasty> cultureList = null;
+            if (!textBoxDynastyFilterByID.Text.Equals(""))
+            {
+                try
+                {
+                    int id = Int32.Parse(textBoxDynastyFilterByID.Text);
+                    idList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.ID == id).ToList());
+                }
+                catch (FormatException ex)
+                {
+                    MessageBox.Show("The ID entered must be a number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            if (!textBoxDynastyFilterByName.Text.Equals(""))
+            {
+                nameList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.Name.ToLower().Contains(textBoxDynastyFilterByName.Text.ToLower()) == true).ToList());
+            }
+            if (!textBoxDynastyFilterByCulture.Text.Equals(""))
+            {
+                cultureList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.Culture.ToLower().Contains(textBoxDynastyFilterByCulture.Text.ToLower()) == true).ToList());
+            }
+
+            if (idList != null)
+            {
+                foreach (Dynasty d in idList)
+                    filteredList.Add(d);
+            }
+
+            if (nameList != null)
+            {
+                foreach (Dynasty d in nameList)
+                {
+                    if (!filteredList.Contains(d))
+                        filteredList.Add(d);
+                }
+            }
+
+            if (cultureList != null)
+            {
+                foreach (Dynasty d in cultureList)
+                {
+                    if (!filteredList.Contains(d))
+                        filteredList.Add(d);
+                }
+            }
+
+            dynastyGridView.AllowUserToAddRows = false;
+            dynastyGridView.AllowUserToDeleteRows = false;
+            dynastyGridView.DataSource = filteredList;
+        }
+
+        private void buttonDynastyClearFilter_Click(object sender, EventArgs e)
+        {
+            textBoxDynastyFilterByID.Text = "";
+            textBoxDynastyFilterByName.Text = "";
+            textBoxDynastyFilterByCulture.Text = "";
+
+            dynastyGridView.DataSource = CurrentMod.Dynasties;
+
+            dynastyGridView.AllowUserToAddRows = true;
+            dynastyGridView.AllowUserToDeleteRows = true;
+        }
+
+        private void textBoxDynastyFilterByID_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Return)
+                buttonDynastyFilter.PerformClick();
+        }
+
+        private void textBoxDynastyFilterByName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+                buttonDynastyFilter.PerformClick();
+        }
+
+        private void textBoxDynastyFilterByCulture_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return)
+                buttonDynastyFilter.PerformClick();
+        }
     }
 }

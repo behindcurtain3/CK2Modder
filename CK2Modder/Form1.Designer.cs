@@ -31,13 +31,16 @@ namespace CK2Modder
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.closeModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeWithoutSavingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,13 +65,18 @@ namespace CK2Modder
             this.textBoxModName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabDynasties = new System.Windows.Forms.TabPage();
+            this.textBoxDynastyFilterByCulture = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxDynastyFilterByName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.buttonDynastyClearFilter = new System.Windows.Forms.Button();
+            this.buttonDynastyFilter = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxDynastyFilterByID = new System.Windows.Forms.TextBox();
             this.dynastyGridView = new System.Windows.Forms.DataGridView();
             this.tabCharacters = new System.Windows.Forms.TabPage();
             this.dynastyBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.closeModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.closeWithoutSavingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -109,7 +117,7 @@ namespace CK2Modder
             this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modToolStripMenuItem});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.newToolStripMenuItem.Text = "New";
             // 
             // modToolStripMenuItem
@@ -124,7 +132,7 @@ namespace CK2Modder
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.openToolStripMenuItem.Text = "Load...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -137,16 +145,37 @@ namespace CK2Modder
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            // 
+            // closeModToolStripMenuItem
+            // 
+            this.closeModToolStripMenuItem.Enabled = false;
+            this.closeModToolStripMenuItem.Name = "closeModToolStripMenuItem";
+            this.closeModToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.closeModToolStripMenuItem.Text = "Close And Save";
+            this.closeModToolStripMenuItem.Click += new System.EventHandler(this.closeModToolStripMenuItem_Click);
+            // 
+            // closeWithoutSavingToolStripMenuItem
+            // 
+            this.closeWithoutSavingToolStripMenuItem.Enabled = false;
+            this.closeWithoutSavingToolStripMenuItem.Name = "closeWithoutSavingToolStripMenuItem";
+            this.closeWithoutSavingToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.closeWithoutSavingToolStripMenuItem.Text = "Close Without Saving";
+            this.closeWithoutSavingToolStripMenuItem.Click += new System.EventHandler(this.closeWithoutSavingToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(184, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -354,6 +383,15 @@ namespace CK2Modder
             // 
             // tabDynasties
             // 
+            this.tabDynasties.BackColor = System.Drawing.Color.Transparent;
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByCulture);
+            this.tabDynasties.Controls.Add(this.label8);
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByName);
+            this.tabDynasties.Controls.Add(this.label7);
+            this.tabDynasties.Controls.Add(this.buttonDynastyClearFilter);
+            this.tabDynasties.Controls.Add(this.buttonDynastyFilter);
+            this.tabDynasties.Controls.Add(this.label6);
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByID);
             this.tabDynasties.Controls.Add(this.dynastyGridView);
             this.tabDynasties.Location = new System.Drawing.Point(4, 22);
             this.tabDynasties.Name = "tabDynasties";
@@ -361,25 +399,95 @@ namespace CK2Modder
             this.tabDynasties.Size = new System.Drawing.Size(773, 484);
             this.tabDynasties.TabIndex = 1;
             this.tabDynasties.Text = "Dynasties";
-            this.tabDynasties.UseVisualStyleBackColor = true;
+            // 
+            // textBoxDynastyFilterByCulture
+            // 
+            this.textBoxDynastyFilterByCulture.Location = new System.Drawing.Point(444, 8);
+            this.textBoxDynastyFilterByCulture.Name = "textBoxDynastyFilterByCulture";
+            this.textBoxDynastyFilterByCulture.Size = new System.Drawing.Size(140, 20);
+            this.textBoxDynastyFilterByCulture.TabIndex = 8;
+            this.textBoxDynastyFilterByCulture.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByCulture_KeyDown);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(380, 11);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(58, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "By Culture:";
+            // 
+            // textBoxDynastyFilterByName
+            // 
+            this.textBoxDynastyFilterByName.Location = new System.Drawing.Point(237, 8);
+            this.textBoxDynastyFilterByName.Name = "textBoxDynastyFilterByName";
+            this.textBoxDynastyFilterByName.Size = new System.Drawing.Size(137, 20);
+            this.textBoxDynastyFilterByName.TabIndex = 6;
+            this.textBoxDynastyFilterByName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByName_KeyDown);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(178, 11);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "By Name:";
+            // 
+            // buttonDynastyClearFilter
+            // 
+            this.buttonDynastyClearFilter.Location = new System.Drawing.Point(681, 7);
+            this.buttonDynastyClearFilter.Name = "buttonDynastyClearFilter";
+            this.buttonDynastyClearFilter.Size = new System.Drawing.Size(75, 23);
+            this.buttonDynastyClearFilter.TabIndex = 4;
+            this.buttonDynastyClearFilter.Text = "Clear Filters";
+            this.buttonDynastyClearFilter.UseVisualStyleBackColor = true;
+            this.buttonDynastyClearFilter.Click += new System.EventHandler(this.buttonDynastyClearFilter_Click);
+            // 
+            // buttonDynastyFilter
+            // 
+            this.buttonDynastyFilter.Location = new System.Drawing.Point(600, 6);
+            this.buttonDynastyFilter.Name = "buttonDynastyFilter";
+            this.buttonDynastyFilter.Size = new System.Drawing.Size(75, 23);
+            this.buttonDynastyFilter.TabIndex = 3;
+            this.buttonDynastyFilter.Text = "Filter";
+            this.buttonDynastyFilter.UseVisualStyleBackColor = true;
+            this.buttonDynastyFilter.Click += new System.EventHandler(this.buttonDynastyFilterByID_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 11);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Filter by ID:";
+            // 
+            // textBoxDynastyFilterByID
+            // 
+            this.textBoxDynastyFilterByID.Location = new System.Drawing.Point(72, 8);
+            this.textBoxDynastyFilterByID.Name = "textBoxDynastyFilterByID";
+            this.textBoxDynastyFilterByID.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDynastyFilterByID.TabIndex = 1;
+            this.textBoxDynastyFilterByID.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByID_KeyDown);
             // 
             // dynastyGridView
             // 
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dynastyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dynastyGridView.Location = new System.Drawing.Point(3, 3);
+            this.dynastyGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
             this.dynastyGridView.Name = "dynastyGridView";
-            this.dynastyGridView.Size = new System.Drawing.Size(767, 478);
+            this.dynastyGridView.Size = new System.Drawing.Size(767, 443);
             this.dynastyGridView.TabIndex = 0;
             // 
             // tabCharacters
@@ -400,27 +508,6 @@ namespace CK2Modder
             // openFileDialog
             // 
             this.openFileDialog.FileName = "openFileDialog1";
-            // 
-            // closeModToolStripMenuItem
-            // 
-            this.closeModToolStripMenuItem.Enabled = false;
-            this.closeModToolStripMenuItem.Name = "closeModToolStripMenuItem";
-            this.closeModToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.closeModToolStripMenuItem.Text = "Close And Save";
-            this.closeModToolStripMenuItem.Click += new System.EventHandler(this.closeModToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
-            // 
-            // closeWithoutSavingToolStripMenuItem
-            // 
-            this.closeWithoutSavingToolStripMenuItem.Enabled = false;
-            this.closeWithoutSavingToolStripMenuItem.Name = "closeWithoutSavingToolStripMenuItem";
-            this.closeWithoutSavingToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.closeWithoutSavingToolStripMenuItem.Text = "Close Without Saving";
-            this.closeWithoutSavingToolStripMenuItem.Click += new System.EventHandler(this.closeWithoutSavingToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -443,6 +530,7 @@ namespace CK2Modder
             this.tabModProperties.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.tabDynasties.ResumeLayout(false);
+            this.tabDynasties.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -488,6 +576,14 @@ namespace CK2Modder
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem closeModToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeWithoutSavingToolStripMenuItem;
+        private System.Windows.Forms.Button buttonDynastyFilter;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textBoxDynastyFilterByID;
+        private System.Windows.Forms.Button buttonDynastyClearFilter;
+        private System.Windows.Forms.TextBox textBoxDynastyFilterByName;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxDynastyFilterByCulture;
+        private System.Windows.Forms.Label label8;
     }
 }
 
