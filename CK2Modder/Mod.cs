@@ -5,12 +5,14 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using CK2Modder.GameData.common;
 
 namespace CK2Modder
 {
     public class Mod : INotifyPropertyChanged
     {
         public BindingList<Dynasty> Dynasties;
+        public List<Culture> Cultures;
 
         private String _rawOutput;
         public String RawOutput 
@@ -38,7 +40,7 @@ namespace CK2Modder
 
                 // Update the path also
                 // Set the path to the name, all lower case with no spaces
-                _path = "mod/" + _name.ToLower().Replace(" ", "");
+                _path = "mod/" + _name; // _name.ToLower().Replace(" ", "");
 
                 UpdateRawOutput();
                 NotifyPropertyChanged("Name");
@@ -105,6 +107,30 @@ namespace CK2Modder
             }
         }
 
+        private Boolean _areCulturesImported = true;
+        public Boolean AreCulturesImported
+        {
+            get { return _areCulturesImported; }
+            set
+            {
+                _areCulturesImported = value;
+                UpdateRawOutput();
+                NotifyPropertyChanged("AreCulturesImported");
+            }
+        }
+
+        private Boolean _areDynastiesImported = true;
+        public Boolean AreDynastiesImported
+        {
+            get { return _areDynastiesImported; }
+            set
+            {
+                _areDynastiesImported = value;
+                UpdateRawOutput();
+                NotifyPropertyChanged("AreDynastiesImported");
+            }
+        }
+
         public Mod(String name)
         {
             Name = name;
@@ -115,6 +141,7 @@ namespace CK2Modder
 
             // Setup dynasty list
             Dynasties = new BindingList<Dynasty>();
+            Cultures = new List<Culture>();
         }
 
         public void UpdateRawOutput()
@@ -129,8 +156,13 @@ namespace CK2Modder
 
             if (Dependencies != null && !Dependencies.Equals(""))
             {
-                RawOutput += "dependencies = { " + Dependencies + " }";
+                RawOutput += "dependencies = { " + Dependencies + " }\r\n";
             }
+
+            RawOutput += "\r\n";
+            RawOutput += "### CK2 Modder settings ###\r\n";
+            RawOutput += "# areDynastiesImported = " + AreDynastiesImported.ToString() + "\r\n";
+            RawOutput += "# areCulturesImported = " + AreCulturesImported.ToString() + "\r\n";
         }
 
         public static Mod LoadFromFile(String file)
@@ -155,6 +187,18 @@ namespace CK2Modder
                 else if (line.Equals("replace_path = \"common\""))
                 {
                     mod.ReplaceCommonPath = true;
+                }
+                else if (line.StartsWith("# areDynastiesImported = "))
+                {
+                    int start = line.IndexOf("=") + 1;
+                    String answer = line.Substring(start, line.Length - start);
+                    mod.AreDynastiesImported = Boolean.Parse(answer.Trim());
+                }
+                else if (line.StartsWith("# areCulturesImported = "))
+                {
+                    int start = line.IndexOf("=") + 1;
+                    String answer = line.Substring(start, line.Length - start);
+                    mod.AreCulturesImported = Boolean.Parse(answer.Trim());
                 }
             }
 

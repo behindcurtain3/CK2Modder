@@ -46,8 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoatOfArms.cs" />
-    <Compile Include="Dynasty.cs" />
+    <Compile Include="GameData\common\Culture.cs" />
+    <Compile Include="GameData\gfx\CoatOfArms.cs" />
+    <Compile Include="GameData\common\Dynasty.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

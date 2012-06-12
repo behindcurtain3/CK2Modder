@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace CK2Modder
+namespace CK2Modder.GameData.common
 {
     public class Dynasty : INotifyPropertyChanged
     {

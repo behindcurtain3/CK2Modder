@@ -10,6 +10,7 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Globalization;
+using CK2Modder.GameData.common;
 
 namespace CK2Modder
 {
@@ -17,10 +18,14 @@ namespace CK2Modder
     {
         public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
         public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
+
         public static readonly String VanillaDynastyFile = "/common/dynasties.txt";
+        public static readonly String VanillaCulturesFile = "/common/cultures.txt";
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
+        public Culture SelectedCulture { get; set; }
+        public TreeNode SelectedCultureNode { get; set; }
 
         public Form1(string filename)
         {
@@ -66,6 +71,8 @@ namespace CK2Modder
             dynastyGridView.Visible = false;
             dynastyGridView.AutoGenerateColumns = false;
 
+            cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
+
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "ID";
             idColumn.HeaderText = "ID";
@@ -86,7 +93,134 @@ namespace CK2Modder
             dynastyGridView.Columns.Add(cultureColumn);
 
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
+
+            cultureTreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(cultureTreeView_NodeMouseClick);
         }
+
+        void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            SelectedCultureNode = e.Node;
+
+            // Don't do this on a right-click
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                return;
+
+            String nodeName = e.Node.Text;
+
+            Culture selectedCulture = CurrentMod.Cultures.Find(delegate(Culture c) { return c.Name.Equals(nodeName); });
+            if (selectedCulture == null)
+            {
+                Culture searchForMe;
+                // search the subcultures
+                foreach (Culture culture in CurrentMod.Cultures)
+                {
+                    searchForMe = culture.SubCultures.Find(delegate(Culture c) { return c.Name.Equals(nodeName); });
+                    if (searchForMe != null)
+                    {
+                        selectedCulture = searchForMe;
+                        break;
+                    }
+                }
+            }
+
+            SelectedCulture = selectedCulture;
+
+            if (selectedCulture != null)
+            {
+                cultureInformationGroupBox.Visible = true;
+                cultureNamesGroupBox.Visible = true;
+
+                // isCulture will be true if this is a culture, false if a culture group
+                Boolean isCulture = (selectedCulture.SubCultures.Count == 0 && !SelectedCultureNode.Parent.Text.Equals("Culture Groups"));
+
+                cultureNameTextBox.Text = selectedCulture.Name;
+                cultureGfxTextBox.Text = selectedCulture.Graphical_Culture;
+                cultureColorTextBox.Text = selectedCulture.Color;
+                cultureMaleNamesRichTextBox.Text = selectedCulture.MaleNames;
+                cultureFemaleNamesRichTextBox.Text = selectedCulture.FemaleNames;                
+                cultureDynastyPrefixTextBox.Text = selectedCulture.DynastyPrefix;
+                cultureBastardTextBox.Text = selectedCulture.BastardPrefix;
+                cultureModifierTextBox.Text = selectedCulture.Modifier;
+                cultureMalePatronymTextBox.Text = selectedCulture.MalePatronym;
+                cultureFemalePatronymTextBox.Text = selectedCulture.FemalePatronym;
+                cultureSuffixCheckBox.Checked = selectedCulture.IsSuffix;
+
+                // Name chances
+                culturePatGFTextBox.Text = selectedCulture.PaternalGrandFather.ToString();
+                cultureMatGFTextBox.Text = selectedCulture.MaternalGrandFather.ToString();
+                cultureFatherTextBox.Text = selectedCulture.Father.ToString();
+
+                culturePatGMTextBox.Text = selectedCulture.PaternalGrandMother.ToString();
+                cultureMatGMTextBox.Text = selectedCulture.MaternalGrandMother.ToString();
+                cultureMotherTextBox.Text = selectedCulture.Mother.ToString();
+
+                // enable or disable the appropriate fields
+                cultureColorTextBox.Enabled = isCulture;
+                cultureMaleNamesRichTextBox.Enabled = isCulture;
+                cultureFemaleNamesRichTextBox.Enabled = isCulture;
+                cultureDynastyPrefixTextBox.Enabled = isCulture;
+                cultureBastardTextBox.Enabled = isCulture;
+                cultureModifierTextBox.Enabled = isCulture;
+                cultureMalePatronymTextBox.Enabled = isCulture;
+                cultureFemalePatronymTextBox.Enabled = isCulture;
+                cultureSuffixCheckBox.Enabled = isCulture;
+                culturePatGFTextBox.Enabled = isCulture;
+                culturePatGMTextBox.Enabled = isCulture;
+                cultureMatGFTextBox.Enabled = isCulture;
+                cultureMatGMTextBox.Enabled = isCulture;
+                cultureFatherTextBox.Enabled = isCulture;
+                cultureMotherTextBox.Enabled = isCulture;
+
+                // data bindings
+                cultureNameTextBox.DataBindings.Clear();
+                cultureNameTextBox.DataBindings.Add("Text", selectedCulture, "Name");
+
+                cultureGfxTextBox.DataBindings.Clear();
+                cultureGfxTextBox.DataBindings.Add("Text", selectedCulture, "Graphical_Culture");
+
+                cultureColorTextBox.DataBindings.Clear();
+                cultureColorTextBox.DataBindings.Add("Text", selectedCulture, "Color");
+
+                cultureMaleNamesRichTextBox.DataBindings.Clear();
+                cultureMaleNamesRichTextBox.DataBindings.Add("Text", selectedCulture, "MaleNames");
+
+                cultureFemaleNamesRichTextBox.DataBindings.Clear();
+                cultureFemaleNamesRichTextBox.DataBindings.Add("Text", selectedCulture, "FemaleNames");
+
+                cultureDynastyPrefixTextBox.DataBindings.Clear();
+                cultureDynastyPrefixTextBox.DataBindings.Add("Text", selectedCulture, "DynastyPrefix");
+
+                cultureBastardTextBox.DataBindings.Clear();
+                cultureBastardTextBox.DataBindings.Add("Text", selectedCulture, "BastardPrefix");
+
+                cultureMalePatronymTextBox.DataBindings.Clear();
+                cultureMalePatronymTextBox.DataBindings.Add("Text", selectedCulture, "MalePatronym");
+
+                cultureFemalePatronymTextBox.DataBindings.Clear();
+                cultureFemalePatronymTextBox.DataBindings.Add("Text", selectedCulture, "FemalePatronym");
+
+                cultureSuffixCheckBox.DataBindings.Clear();
+                cultureSuffixCheckBox.DataBindings.Add("Checked", selectedCulture, "IsSuffix");
+
+                culturePatGFTextBox.DataBindings.Clear();
+                culturePatGFTextBox.DataBindings.Add("Text", selectedCulture, "PaternalGrandFather");
+
+                cultureMatGFTextBox.DataBindings.Clear();
+                cultureMatGFTextBox.DataBindings.Add("Text", selectedCulture, "MaternalGrandFather");
+
+                cultureFatherTextBox.DataBindings.Clear();
+                cultureFatherTextBox.DataBindings.Add("Text", selectedCulture, "Father");
+
+                culturePatGMTextBox.DataBindings.Clear();
+                culturePatGMTextBox.DataBindings.Add("Text", selectedCulture, "PaternalGrandMother");
+
+                cultureMatGMTextBox.DataBindings.Clear();
+                cultureMatGMTextBox.DataBindings.Add("Text", selectedCulture, "MaternalGrandMother");
+
+                cultureMotherTextBox.DataBindings.Clear();
+                cultureMotherTextBox.DataBindings.Add("Text", selectedCulture, "Mother");
+            }
+        }        
        
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -102,9 +236,13 @@ namespace CK2Modder
             openFileDialog.InitialDirectory = WorkingLocation + "\\mod";
             openFileDialog.Multiselect = false;
             openFileDialog.Title = "Select a mod to open";
+
             if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
                 System.Console.WriteLine(openFileDialog.FileName);
+
+                if (CurrentMod != null)
+                    CloseMod();
 
                 setCurrentMod(Mod.LoadFromFile(openFileDialog.FileName));
             }            
@@ -270,6 +408,223 @@ namespace CK2Modder
             toolStripProgressBar.Value = e.ProgressPercentage;
         }
 
+
+        private void cultureBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // Store the ids
+            List<Culture> loadingCultures = new List<Culture>();
+
+            BackgroundWorker worker = sender as BackgroundWorker;
+            StreamReader stream = e.Argument as StreamReader;
+
+            String line;
+
+            while ((line = stream.ReadLine()) != null)
+            {
+                // Start of dynasty
+                if (line.EndsWith("= {") && !line.StartsWith("#"))
+                {
+                    Culture culture = new Culture();
+                    culture.Name = line.Remove(line.IndexOf(" = {"));
+
+                    int openingBrackets = 1;
+                    int closingBrackets = 0;
+
+                    String insideLine;
+
+                    do
+                    {
+                        insideLine = stream.ReadLine();
+
+                        if (insideLine.Contains("{"))
+                            openingBrackets++;
+                        if (insideLine.Contains("}"))
+                            closingBrackets++;
+
+                        // Add the name
+                        if (insideLine.Contains("graphical_culture"))
+                        {
+                            culture.Graphical_Culture = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
+                        }
+
+                        // Load subcultures
+                        if (insideLine.Contains("= {") && !insideLine.StartsWith("#") && !insideLine.Contains("male_names") && !insideLine.Contains("female_names"))
+                        {
+                            Culture subCulture = new Culture();
+                            subCulture.Name = insideLine.Remove(insideLine.IndexOf(" = {"));
+
+                            int openBrackets = 1;
+                            int closeBrackets = 0;
+                            String subCultureLine;
+                            do
+                            {
+                                subCultureLine = stream.ReadLine();
+
+                                if (subCultureLine.Contains("{"))
+                                    openBrackets++;
+                                if (subCultureLine.Contains("}"))
+                                    closeBrackets++;
+
+                                // Add the name
+                                if (subCultureLine.Contains("graphical_culture"))
+                                {
+                                    subCulture.Graphical_Culture = subCultureLine.Substring(subCultureLine.IndexOf("=") + 1).Trim();
+                                }
+                                else if (subCultureLine.Contains("color"))
+                                {
+                                    int start = subCultureLine.IndexOf("{") + 2;
+                                    int end = subCultureLine.IndexOf("}") - 1;
+                                    int length = end - start;
+
+                                    subCulture.Color = subCultureLine.Substring(start, length);
+                                }
+
+                                // Add the 2nd condition otherwise this would pick up both "male_names" and "female_names"
+                                else if (subCultureLine.Contains("male_names") && !subCultureLine.Contains("fe"))
+                                {
+                                    String nameLine = stream.ReadLine();
+                                    while (!nameLine.Contains("}"))
+                                    {
+                                        if (!nameLine.Trim().Equals(""))
+                                        {
+                                            if (subCulture.MaleNames.Equals(""))
+                                                subCulture.MaleNames += nameLine.Trim();
+                                            else
+                                                subCulture.MaleNames += "\r\n" + nameLine.Trim();
+                                        }
+                                        nameLine = stream.ReadLine();
+                                    }
+                                    closeBrackets++;
+                                }
+                                else if (subCultureLine.Contains("female_names"))
+                                {
+                                    String nameLine = stream.ReadLine();
+                                    while (!nameLine.Contains("}"))
+                                    {
+                                        if (!nameLine.Trim().Equals(""))
+                                        {
+                                            if (subCulture.FemaleNames.Equals(""))
+                                                subCulture.FemaleNames += nameLine.Trim();
+                                            else
+                                                subCulture.FemaleNames += "\r\n" + nameLine.Trim();
+                                        }
+                                        nameLine = stream.ReadLine();
+                                    }
+                                    closeBrackets++;
+                                }
+                                else if (subCultureLine.Contains("from_dynasty_prefix"))
+                                {
+                                    int start = subCultureLine.IndexOf('"') + 1;
+                                    int end = subCultureLine.IndexOf('"', start);
+                                    subCulture.DynastyPrefix = subCultureLine.Substring(start, end - start);
+                                }
+                                else if (subCultureLine.Contains("bastard_dynasty_prefix"))
+                                {
+                                    int start = subCultureLine.IndexOf('"') + 1;
+                                    int end = subCultureLine.IndexOf('"', start);
+                                    subCulture.BastardPrefix = subCultureLine.Substring(start, end - start);
+                                }
+                                else if (subCultureLine.Contains("male_patronym") && !subCultureLine.Contains("female_patronym"))
+                                {
+                                    int start = subCultureLine.IndexOf('"') + 1;
+                                    int end = subCultureLine.IndexOf('"', start);
+                                    subCulture.MalePatronym = subCultureLine.Substring(start, end - start);
+                                }
+                                else if (subCultureLine.Contains("female_patronym"))
+                                {
+                                    int start = subCultureLine.IndexOf('"') + 1;
+                                    int end = subCultureLine.IndexOf('"', start);
+                                    subCulture.FemalePatronym = subCultureLine.Substring(start, end - start);
+                                }
+                                else if (subCultureLine.Contains("prefix = "))
+                                {
+                                    int start = subCultureLine.IndexOf('=') + 1;
+                                    String yesOrNo = subCultureLine.Substring(start, subCultureLine.Length - start);
+
+                                    if(yesOrNo.Trim().Equals("yes"))
+                                        subCulture.IsSuffix = true;
+                                    else
+                                        subCulture.IsSuffix = false;
+                                }
+                                else if (subCultureLine.Contains("pat_grf_name_chance"))
+                                {
+                                    subCulture.PaternalGrandFather = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("mat_grf_name_chance"))
+                                {
+                                    subCulture.MaternalGrandFather = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("father_name_chance"))
+                                {
+                                    subCulture.Father = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("pat_grm_name_chance"))
+                                {
+                                    subCulture.PaternalGrandMother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("mat_grm_name_chance"))
+                                {
+                                    subCulture.MaternalGrandMother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("mother_name_chance"))
+                                {
+                                    subCulture.Mother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
+                                }
+                                else if (subCultureLine.Contains("modifier"))
+                                {
+                                    int start = subCultureLine.IndexOf('=') + 2;
+                                    int end = subCultureLine.Length - start;
+                                    subCulture.Modifier = subCultureLine.Substring(start, end);
+                                }
+
+                            } while (closeBrackets < openBrackets);
+
+                            culture.SubCultures.Add(subCulture);
+                            closingBrackets++;
+                        }
+                        
+                    } while (closingBrackets < openingBrackets);
+
+                    // Add the row to our list
+                    loadingCultures.Add(culture);
+                }
+            }
+
+            stream.Close();
+            e.Result = loadingCultures;
+        }
+
+        void cultureBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            List<Culture> rows = e.Result as List<Culture>;
+
+            TreeNode root = cultureTreeView.Nodes[0];
+
+            foreach (Culture c in rows)
+            {
+                TreeNode node = new TreeNode(c.Name);
+                node.Tag = c;
+                node.ContextMenuStrip = cultureSubContextMenuStrip;
+
+                foreach (Culture sub in c.SubCultures)
+                {
+                    TreeNode subNode = new TreeNode(sub.Name);
+                    subNode.Tag = sub;
+                    subNode.ContextMenuStrip = cultureContextMenuStrip;
+                    node.Nodes.Add(subNode);
+                }
+
+                root.Nodes.Add(node);
+
+                CurrentMod.Cultures.Add(c);
+            }
+
+            root.Expand();
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -298,13 +653,20 @@ namespace CK2Modder
 
             tabControl.Visible = true;
             dynastyGridView.DataSource = CurrentMod.Dynasties;
-            dynastyGridView.Visible = true;
+            dynastyGridView.Visible = true;            
 
             // Add data bindings
             textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
             textBoxDependencies.DataBindings.Add("Text", CurrentMod, "Dependencies");
             textBoxModRawOutput.DataBindings.Add("Text", CurrentMod, "RawOutput");
-            buttonImportDynasties.DataBindings.Add("Enabled", CurrentMod, "NotReplaceCommonPath");
+            buttonImportDynasties.DataBindings.Add("Enabled", CurrentMod, "AreDynastiesImported");
+            buttonImportCultures.DataBindings.Add("Enabled", CurrentMod, "AreCulturesImported");
+
+            // Setup the culture tree
+            cultureTreeView.Nodes.Clear();
+            TreeNode root = new TreeNode("Culture Groups");
+            root.ContextMenuStrip = cultureRootContextMenuStrip;
+            cultureTreeView.Nodes.Add(root);
 
             // Load the dynasties
             String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
@@ -312,6 +674,14 @@ namespace CK2Modder
             {
                 StreamReader stream = File.OpenText(dynastyFile);
                 dynastyBackgroundWorker.RunWorkerAsync(stream);
+            }
+
+            // Load the cultures
+            String cultureFile = WorkingLocation + "/" + CurrentMod.Path + "/common/cultures.txt";
+            if (File.Exists(cultureFile))
+            {
+                StreamReader stream = File.OpenText(cultureFile);
+                cultureBackgroundWorker.RunWorkerAsync(stream);
             }
 
             UserPreferences.Default.LastMod = WorkingLocation + "/mod/" + CurrentMod.Name + ".mod";
@@ -325,6 +695,7 @@ namespace CK2Modder
         private void buttonImportDynasties_Click(object sender, EventArgs e)
         {
             ImportAllVanillaDynasties();
+            CurrentMod.AreDynastiesImported = false;
         }
 
         private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -426,6 +797,7 @@ namespace CK2Modder
             // dataGridViewDynastyCharacters
             // 
             DataGridView dataGridViewDynastyCharacters = new DataGridView();
+            dataGridViewDynastyCharacters.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
             dataGridViewDynastyCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewDynastyCharacters.Location = new System.Drawing.Point(10, 265);
             dataGridViewDynastyCharacters.Name = "dataGridViewDynastyCharacters";
@@ -444,6 +816,7 @@ namespace CK2Modder
             // buttonClose
             //
             Button buttonClose = new Button();
+            buttonClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonClose.Location = new Point(636, 6);
             buttonClose.Text = "Close";
             buttonClose.Size = new Size(129, 23);
@@ -452,15 +825,6 @@ namespace CK2Modder
             // tabDynastyInfo
             // 
             TabPage tabDynastyInfo = new TabPage(dynasty.Name);
-            tabDynastyInfo.Controls.Add(labelDynastyID);
-            tabDynastyInfo.Controls.Add(textBoxDynastyID);
-            tabDynastyInfo.Controls.Add(labelDynastyCharacters);
-            tabDynastyInfo.Controls.Add(dataGridViewDynastyCharacters);
-            tabDynastyInfo.Controls.Add(textBoxDynastyCulture);
-            tabDynastyInfo.Controls.Add(labelDynastyCulture);
-            tabDynastyInfo.Controls.Add(textBoxDynastyName);
-            tabDynastyInfo.Controls.Add(labelDynastyName);
-            tabDynastyInfo.Controls.Add(buttonClose);
             tabDynastyInfo.Location = new System.Drawing.Point(4, 22);
             tabDynastyInfo.Name = "tabDynastyInfo";
             tabDynastyInfo.Padding = new System.Windows.Forms.Padding(3);
@@ -468,6 +832,16 @@ namespace CK2Modder
             tabDynastyInfo.TabIndex = this.tabControl.TabCount;
             tabDynastyInfo.Text = dynasty.Name + " Dynasty";
             tabDynastyInfo.BackColor = Color.Transparent;
+
+            tabDynastyInfo.Controls.Add(labelDynastyID);
+            tabDynastyInfo.Controls.Add(textBoxDynastyID);
+            tabDynastyInfo.Controls.Add(labelDynastyCharacters);            
+            tabDynastyInfo.Controls.Add(textBoxDynastyCulture);
+            tabDynastyInfo.Controls.Add(labelDynastyCulture);
+            tabDynastyInfo.Controls.Add(textBoxDynastyName);
+            tabDynastyInfo.Controls.Add(labelDynastyName);
+            tabDynastyInfo.Controls.Add(buttonClose);            
+            tabDynastyInfo.Controls.Add(dataGridViewDynastyCharacters);
 
             this.tabControl.TabPages.Add(tabDynastyInfo);
             this.tabControl.SelectedIndex = tabDynastyInfo.TabIndex;
@@ -524,6 +898,22 @@ namespace CK2Modder
                 stream.Close();
             }
 
+            // Write out the cultures
+            if (CurrentMod.Cultures.Count > 0)
+            {
+                if (!Directory.Exists(modPath + "/common"))
+                {
+                    Directory.CreateDirectory(modPath + "/common");
+                }
+
+                stream = File.CreateText(modPath + "/common/cultures.txt");
+
+                foreach (Culture culture in CurrentMod.Cultures)
+                    stream.Write(culture.ToString());
+
+                stream.Close();
+            }
+
             /*
             StreamWriter stream = File.CreateText(WorkingLocation + "/dynasties.modder");
             
@@ -550,6 +940,17 @@ namespace CK2Modder
             textBoxDependencies.DataBindings.Clear();
             textBoxModRawOutput.DataBindings.Clear();
             buttonImportDynasties.DataBindings.Clear();
+            buttonImportCultures.DataBindings.Clear();
+            
+            // Reset the tree view
+            cultureTreeView.Nodes.Clear();
+            TreeNode root = new TreeNode("Culture Groups");
+            root.ContextMenuStrip = cultureRootContextMenuStrip;
+            cultureTreeView.Nodes.Add(root);
+            root.Expand();
+
+            cultureInformationGroupBox.Visible = false;
+            cultureNamesGroupBox.Visible = false;
 
             UserPreferences.Default.LastMod = "";
             UserPreferences.Default.Save();
@@ -641,5 +1042,136 @@ namespace CK2Modder
             if (e.KeyCode == Keys.Return)
                 buttonDynastyFilter.PerformClick();
         }
+
+        /// <summary>
+        /// Removes a culture from the tree view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cultureToolStripMenuRemove_Click(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            if (SelectedCultureNode != null)
+            {
+                foreach (Culture group in CurrentMod.Cultures)
+                {
+                    int count = group.SubCultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
+
+                    if (count > 0)
+                    {
+                        SelectedCultureNode.Remove();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes a culture group from the tree view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cultureStripRemove_Click(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            if (SelectedCultureNode != null)
+            {
+                int count = CurrentMod.Cultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
+
+                if (count > 0)
+                {
+                    SelectedCultureNode.Remove();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add a new culture to a culture group
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cultureStripAdd_Click(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            if (SelectedCultureNode != null)
+            {
+                Culture group = CurrentMod.Cultures.Find(delegate(Culture c) { return c.Name.Equals(SelectedCultureNode.Text); });
+
+                if (group != null)
+                {
+
+                    Random rand = new Random(DateTime.Now.Millisecond);
+
+                    Culture newCulture = new Culture();
+                    newCulture.Name = "culture_" + rand.Next(10000, 99999);
+
+                    TreeNode node = new TreeNode(newCulture.Name);
+                    node.Tag = newCulture;
+                    node.ContextMenuStrip = cultureContextMenuStrip;
+
+                    group.SubCultures.Add(newCulture);
+                    SelectedCultureNode.Nodes.Add(node);
+                    SelectedCultureNode.Expand();
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Add a new culture group
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cultureGroupStripMenuAdd_Click(object sender, EventArgs e)
+        {
+            if (CurrentMod == null || SelectedCultureNode == null)
+                return;            
+
+            Random rand = new Random(DateTime.Now.Millisecond);
+
+            Culture newCulture = new Culture();
+            newCulture.Name = "culture_group_" + rand.Next(10000, 99999);
+
+            TreeNode node = new TreeNode(newCulture.Name);
+            node.Tag = newCulture;
+            node.ContextMenuStrip = cultureSubContextMenuStrip;
+
+            CurrentMod.Cultures.Add(newCulture);
+            SelectedCultureNode.Nodes.Add(node);
+            SelectedCultureNode.Expand();
+
+        }
+
+        private void buttonImportCultures_Click(object sender, EventArgs e)
+        {
+            ImportAllVanillaCultures();
+            CurrentMod.AreCulturesImported = false;
+        }
+
+        private void ImportAllVanillaCultures()
+        {
+            String absolutePath = WorkingLocation + VanillaCulturesFile;
+
+            if (File.Exists(absolutePath))
+            {
+                StreamReader stream = File.OpenText(absolutePath);
+
+
+                toolStripProgressBar.Visible = true;
+                toolStripProgressBar.Value = 0;
+                toolStripProgressBar.Maximum = 100;
+
+                cultureBackgroundWorker.RunWorkerAsync(stream);
+
+                // After importing vanilla data we want to replace the path to the dynasties
+                CurrentMod.ReplaceCommonPath = true;
+            }
+        }
+
     }
 }
