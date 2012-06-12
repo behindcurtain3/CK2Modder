@@ -254,14 +254,13 @@ namespace CK2Modder
 
             if (File.Exists(absolutePath))
             {
-                StreamReader stream = File.OpenText(absolutePath);
-                
+                StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);                
 
                 toolStripProgressBar.Visible = true;
                 toolStripProgressBar.Value = 0;
                 toolStripProgressBar.Maximum = 100;
 
-                dynastyBackgroundWorker.RunWorkerAsync(stream);
+                dynastyBackgroundWorker.RunWorkerAsync(reader);
 
                 // After importing vanilla data we want to replace the path to the dynasties
                 CurrentMod.ReplaceCommonPath = true;
@@ -672,16 +671,16 @@ namespace CK2Modder
             String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
             if (File.Exists(dynastyFile))
             {
-                StreamReader stream = File.OpenText(dynastyFile);
-                dynastyBackgroundWorker.RunWorkerAsync(stream);
+                StreamReader reader = new StreamReader(dynastyFile, true);
+                dynastyBackgroundWorker.RunWorkerAsync(reader);
             }
 
             // Load the cultures
             String cultureFile = WorkingLocation + "/" + CurrentMod.Path + "/common/cultures.txt";
             if (File.Exists(cultureFile))
             {
-                StreamReader stream = File.OpenText(cultureFile);
-                cultureBackgroundWorker.RunWorkerAsync(stream);
+                StreamReader reader = new StreamReader(cultureFile, true);
+                cultureBackgroundWorker.RunWorkerAsync(reader);
             }
 
             UserPreferences.Default.LastMod = WorkingLocation + "/mod/" + CurrentMod.Name + ".mod";
@@ -1159,14 +1158,13 @@ namespace CK2Modder
 
             if (File.Exists(absolutePath))
             {
-                StreamReader stream = File.OpenText(absolutePath);
-
+                StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);
 
                 toolStripProgressBar.Visible = true;
                 toolStripProgressBar.Value = 0;
                 toolStripProgressBar.Maximum = 100;
 
-                cultureBackgroundWorker.RunWorkerAsync(stream);
+                cultureBackgroundWorker.RunWorkerAsync(reader);
 
                 // After importing vanilla data we want to replace the path to the dynasties
                 CurrentMod.ReplaceCommonPath = true;

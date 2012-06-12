@@ -148,14 +148,16 @@ namespace CK2Modder
         {
             RawOutput = "name = \"" + Name + "\"\r\n";
             RawOutput += "path = \"" + Path + "\"\r\n";
-
+            
             if (ReplaceCommonPath)
             {
+                RawOutput += "\r\n";
                 RawOutput += "replace_path = \"common\"\r\n";
             }
 
             if (Dependencies != null && !Dependencies.Equals(""))
             {
+                RawOutput += "\r\n";
                 RawOutput += "dependencies = { " + Dependencies + " }\r\n";
             }
 

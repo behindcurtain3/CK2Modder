@@ -55,6 +55,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameData\history\characters\Character.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="NewModForm.cs">
       <SubType>Form</SubType>
