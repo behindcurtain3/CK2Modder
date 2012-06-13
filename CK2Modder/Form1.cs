@@ -948,6 +948,9 @@ namespace CK2Modder
                 return;
 
             String selected = characterFilesListBox.SelectedItem as String;
+            
+            if (selected == null)
+                return;
 
             if (selected.Equals("View All Characters"))
             {
@@ -969,6 +972,13 @@ namespace CK2Modder
                 return;
 
             String nodeName = e.Node.Text;
+
+            if (nodeName.Equals("Culture Groups"))
+            {
+                cultureInformationGroupBox.Visible = false;
+                cultureNamesGroupBox.Visible = false;
+                return;
+            }
 
             Culture selectedCulture = CurrentMod.Cultures.Find(delegate(Culture c) { return c.Name.Equals(nodeName); });
             if (selectedCulture == null)
@@ -1272,12 +1282,18 @@ namespace CK2Modder
 
             if (SelectedCultureNode != null)
             {
-                int count = CurrentMod.Cultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
-
-                if (count > 0)
+                if (MessageBox.Show("This will also remove all the cultures attached to this culture group. Are you sure you wish to continue?",
+                    "Warning",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
                 {
-                    SelectedCultureNode.Remove();
-                }
+                    int count = CurrentMod.Cultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
+
+                    if (count > 0)
+                    {
+                        SelectedCultureNode.Remove();
+                    }
+                }                
             }
         }
 
@@ -1346,6 +1362,16 @@ namespace CK2Modder
             CurrentMod.AreCulturesImported = false;
         }
 
+        private void cultureNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TextBox name = sender as TextBox;
+
+            if (SelectedCultureNode.Text.Equals("Culture Groups"))
+                return;
+
+            SelectedCultureNode.Text = name.Text;
+        }
+
         #endregion
 
         #region Import functions
@@ -1389,7 +1415,6 @@ namespace CK2Modder
         }
 
         #endregion
-
         
 
     }
