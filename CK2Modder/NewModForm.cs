@@ -47,7 +47,7 @@ namespace CK2Modder
 
             Mod mod = new Mod(nameTextBox.Text);
 
-            mainForm.setCurrentMod(mod);
+            mainForm.SetCurrentMod(mod);
             this.Close();
         }
     }

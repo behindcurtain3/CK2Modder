@@ -6,6 +6,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using CK2Modder.GameData.common;
+using CK2Modder.GameData.history.characters;
 
 namespace CK2Modder
 {
@@ -13,6 +14,11 @@ namespace CK2Modder
     {
         public BindingList<Dynasty> Dynasties;
         public List<Culture> Cultures;
+        public List<String> CharacterFiles;        
+        public BindingList<Character> Characters;
+
+        // Queue that holds character files to load since we only load one at a time store them here
+        public Queue<String> CharacterFilesToLoad;
 
         private String _rawOutput;
         public String RawOutput 
@@ -142,6 +148,10 @@ namespace CK2Modder
             // Setup dynasty list
             Dynasties = new BindingList<Dynasty>();
             Cultures = new List<Culture>();
+            CharacterFiles = new List<String>();
+            Characters = new BindingList<Character>();
+
+            CharacterFilesToLoad = new Queue<String>();
         }
 
         public void UpdateRawOutput()
