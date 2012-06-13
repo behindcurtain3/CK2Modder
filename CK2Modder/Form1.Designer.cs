@@ -32,8 +32,8 @@ namespace CK2Modder
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Culture Groups");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Culture Groups");
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +80,10 @@ namespace CK2Modder
             this.tabCharacters = new System.Windows.Forms.TabPage();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.characterFilesListBox = new System.Windows.Forms.ListBox();
+            this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.characterGridView = new System.Windows.Forms.DataGridView();
             this.culturesTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -132,10 +136,6 @@ namespace CK2Modder
             this.cultureContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cultureToolStripMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -148,6 +148,7 @@ namespace CK2Modder
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            this.characterFilesContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).BeginInit();
             this.culturesTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -169,7 +170,6 @@ namespace CK2Modder
             this.cultureSubContextMenuStrip.SuspendLayout();
             this.cultureRootContextMenuStrip.SuspendLayout();
             this.cultureContextMenuStrip.SuspendLayout();
-            this.characterFilesContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -576,14 +576,14 @@ namespace CK2Modder
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
             this.dynastyGridView.Name = "dynastyGridView";
@@ -631,6 +631,36 @@ namespace CK2Modder
             this.characterFilesListBox.TabIndex = 0;
             this.characterFilesListBox.SelectedIndexChanged += new System.EventHandler(this.characterFilesListBox_SelectedIndexChanged);
             // 
+            // characterFilesContextMenuStrip
+            // 
+            this.characterFilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.characterFilesMenuAdd,
+            this.editSelectedFileToolStripMenuItem,
+            this.deleteSelectedFileToolStripMenuItem});
+            this.characterFilesContextMenuStrip.Name = "characterFilesContextMenuStrip";
+            this.characterFilesContextMenuStrip.Size = new System.Drawing.Size(176, 70);
+            // 
+            // characterFilesMenuAdd
+            // 
+            this.characterFilesMenuAdd.Name = "characterFilesMenuAdd";
+            this.characterFilesMenuAdd.Size = new System.Drawing.Size(175, 22);
+            this.characterFilesMenuAdd.Text = "Add File...";
+            this.characterFilesMenuAdd.Click += new System.EventHandler(this.characterFilesMenuAdd_Click);
+            // 
+            // editSelectedFileToolStripMenuItem
+            // 
+            this.editSelectedFileToolStripMenuItem.Name = "editSelectedFileToolStripMenuItem";
+            this.editSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.editSelectedFileToolStripMenuItem.Text = "Edit Selected File...";
+            this.editSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.editSelectedFileToolStripMenuItem_Click);
+            // 
+            // deleteSelectedFileToolStripMenuItem
+            // 
+            this.deleteSelectedFileToolStripMenuItem.Name = "deleteSelectedFileToolStripMenuItem";
+            this.deleteSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteSelectedFileToolStripMenuItem.Text = "Delete Selected File";
+            this.deleteSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFileToolStripMenuItem_Click);
+            // 
             // characterGridView
             // 
             this.characterGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -677,10 +707,10 @@ namespace CK2Modder
             this.cultureTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureTreeView.Location = new System.Drawing.Point(0, 0);
             this.cultureTreeView.Name = "cultureTreeView";
-            treeNode8.Name = "Culture Groups";
-            treeNode8.Text = "Culture Groups";
+            treeNode1.Name = "Culture Groups";
+            treeNode1.Text = "Culture Groups";
             this.cultureTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode8});
+            treeNode1});
             this.cultureTreeView.ShowRootLines = false;
             this.cultureTreeView.Size = new System.Drawing.Size(150, 472);
             this.cultureTreeView.TabIndex = 0;
@@ -1152,36 +1182,6 @@ namespace CK2Modder
             // 
             this.characterBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.characterBackgroundWorker_DoWork);
             // 
-            // characterFilesContextMenuStrip
-            // 
-            this.characterFilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.characterFilesMenuAdd,
-            this.editSelectedFileToolStripMenuItem,
-            this.deleteSelectedFileToolStripMenuItem});
-            this.characterFilesContextMenuStrip.Name = "characterFilesContextMenuStrip";
-            this.characterFilesContextMenuStrip.Size = new System.Drawing.Size(176, 92);
-            // 
-            // characterFilesMenuAdd
-            // 
-            this.characterFilesMenuAdd.Name = "characterFilesMenuAdd";
-            this.characterFilesMenuAdd.Size = new System.Drawing.Size(175, 22);
-            this.characterFilesMenuAdd.Text = "Add File...";
-            this.characterFilesMenuAdd.Click += new System.EventHandler(this.characterFilesMenuAdd_Click);
-            // 
-            // deleteSelectedFileToolStripMenuItem
-            // 
-            this.deleteSelectedFileToolStripMenuItem.Name = "deleteSelectedFileToolStripMenuItem";
-            this.deleteSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.deleteSelectedFileToolStripMenuItem.Text = "Delete Selected File";
-            this.deleteSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFileToolStripMenuItem_Click);
-            // 
-            // editSelectedFileToolStripMenuItem
-            // 
-            this.editSelectedFileToolStripMenuItem.Name = "editSelectedFileToolStripMenuItem";
-            this.editSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.editSelectedFileToolStripMenuItem.Text = "Edit Selected File...";
-            this.editSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.editSelectedFileToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1210,6 +1210,7 @@ namespace CK2Modder
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            this.characterFilesContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).EndInit();
             this.culturesTabPage.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1234,7 +1235,6 @@ namespace CK2Modder
             this.cultureSubContextMenuStrip.ResumeLayout(false);
             this.cultureRootContextMenuStrip.ResumeLayout(false);
             this.cultureContextMenuStrip.ResumeLayout(false);
-            this.characterFilesContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

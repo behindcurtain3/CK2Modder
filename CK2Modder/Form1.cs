@@ -31,6 +31,7 @@ namespace CK2Modder
         public Mod CurrentMod { get; set; }
         public Culture SelectedCulture { get; set; }
         public TreeNode SelectedCultureNode { get; set; }
+        public Boolean IsCharacterGridListeningForRows { get; set; }
 
         #region Initialization
 
@@ -136,8 +137,9 @@ namespace CK2Modder
             characterGridView.Columns.Add(cultureColumn);
 
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
+            characterGridView.CellDoubleClick += new DataGridViewCellEventHandler(characterGridView_CellDoubleClick);
             cultureTreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(cultureTreeView_NodeMouseClick);
-        }
+        }        
 
         #endregion
 
@@ -282,8 +284,7 @@ namespace CK2Modder
         {
             toolStripProgressBar.Value = e.ProgressPercentage;
         }
-
-
+        
         private void cultureBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // Store the ids
@@ -646,6 +647,8 @@ namespace CK2Modder
 
             // character tab            
             characterFilesListBox.Items.Add(DefaultCharacterListView); // Add the default list value
+            characterFilesListBox.SelectedIndex = 0;
+            characterGridView.AllowUserToAddRows = false; // Default to not allowing user to add rows
 
             // Load the dynasties
             String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
@@ -697,6 +700,7 @@ namespace CK2Modder
             saveToolStripMenuItem.Enabled = true;
             closeModToolStripMenuItem.Enabled = true;
             closeWithoutSavingToolStripMenuItem.Enabled = true;
+            IsCharacterGridListeningForRows = false;
         }
 
         public void CloseMod()
@@ -886,6 +890,42 @@ namespace CK2Modder
                 
         }
 
+        private void ShowCharacter(Character c)
+        {
+            if (c == null)
+                return;
+
+            // 
+            // tabInfo
+            // 
+            TabPage tabInfo = new TabPage(c.Name);
+            tabInfo.Location = new System.Drawing.Point(4, 22);
+            tabInfo.Name = "tabCharacterInfo";
+            tabInfo.Padding = new System.Windows.Forms.Padding(3);
+            tabInfo.Size = new System.Drawing.Size(773, 484);
+            tabInfo.TabIndex = this.tabControl.TabCount;
+            tabInfo.Text = c.Name + " (" + c.ID + ")";
+            tabInfo.BackColor = Color.Transparent;
+            //
+            // Character Editor
+            //
+            CharacterEditor cTab = new CharacterEditor();
+            cTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            cTab.Location = new System.Drawing.Point(3, 3);
+            cTab.Size = new System.Drawing.Size(767, 478);
+            cTab.TabIndex = 0;
+
+            tabInfo.Controls.Add(cTab);
+
+            this.tabControl.TabPages.Add(tabInfo);
+            this.tabControl.SelectedIndex = tabInfo.TabIndex;
+
+            EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabInfo);
+            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 2; // go to characters
+            cTab.CloseButton.Click += closeHandler;
+            cTab.CloseButton.Click += closeHandler2;
+        }
+
         public void SaveMod()
         {
             if (CurrentMod == null)
@@ -959,14 +999,30 @@ namespace CK2Modder
             if (selected == null)
                 return;
 
+            // Remove the rows added event listener, we don't want this to fire in this scenario
+            if (IsCharacterGridListeningForRows)
+            {
+                characterGridView.RowsAdded -= characterGridView_RowsAdded;
+                IsCharacterGridListeningForRows = false;
+            }
+
             if (selected.Equals(DefaultCharacterListView))
             {
                 characterGridView.DataSource = CurrentMod.Characters;
+                characterGridView.AllowUserToAddRows = false;                
                 return;
             }
 
             BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.File.ToLower().Equals(selected) == true).ToList());
             characterGridView.DataSource = filteredList;
+            characterGridView.AllowUserToAddRows = true;
+
+            // Add the rows added event listener
+            if (!IsCharacterGridListeningForRows)
+            {
+                characterGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(characterGridView_RowsAdded);
+                IsCharacterGridListeningForRows = true;
+            }
             
         }
 
@@ -1107,6 +1163,13 @@ namespace CK2Modder
             DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
 
             ShowDynasty((Dynasty)row.DataBoundItem);
+        }
+
+        void characterGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow row = characterGridView.Rows[e.RowIndex];
+
+            ShowCharacter(row.DataBoundItem as Character);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1479,6 +1542,24 @@ namespace CK2Modder
             }
         }
 
+        private void characterGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            for(int i = e.RowIndex - 1; i < e.RowIndex - 1 + e.RowCount; i++)
+            {
+                Character c = characterGridView.Rows[i].DataBoundItem as Character;
+
+                if (c != null)
+                {
+                    // Set the character file to the currently selected file
+                    c.File = characterFilesListBox.SelectedItem as String;
+
+                    // Make sure the character is in the master list
+                    if (!CurrentMod.Characters.Contains(c))
+                        CurrentMod.Characters.Add(c);                    
+                }
+            }
+        }
+
         #endregion
 
         #region Import functions
@@ -1522,6 +1603,6 @@ namespace CK2Modder
         }
 
         #endregion
-                       
+                     
     }
 }
