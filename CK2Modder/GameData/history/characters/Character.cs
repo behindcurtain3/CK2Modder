@@ -30,6 +30,17 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        private int _dynasty = 0;
+        public int Dynasty
+        {
+            get { return _dynasty; }
+            set
+            {
+                _dynasty = value;
+                NotifyPropertyChanged("Dynasty");
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string name)
