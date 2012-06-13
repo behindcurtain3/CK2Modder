@@ -23,6 +23,10 @@ namespace CK2Modder
         public static readonly String VanillaDynastyFile = "/common/dynasties.txt";
         public static readonly String VanillaCulturesFile = "/common/cultures.txt";
 
+        // Display string
+        public static readonly String DefaultCultureRoot = "Culture Groups";
+        public static readonly String DefaultCharacterListView = "View All Characters";
+
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
         public Culture SelectedCulture { get; set; }
@@ -636,9 +640,12 @@ namespace CK2Modder
 
             // Setup the culture tree
             cultureTreeView.Nodes.Clear();
-            TreeNode root = new TreeNode("Culture Groups");
+            TreeNode root = new TreeNode(DefaultCultureRoot);
             root.ContextMenuStrip = cultureRootContextMenuStrip;
             cultureTreeView.Nodes.Add(root);
+
+            // character tab            
+            characterFilesListBox.Items.Add(DefaultCharacterListView); // Add the default list value
 
             // Load the dynasties
             String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
@@ -704,7 +711,7 @@ namespace CK2Modder
             dynastyGridView.DataSource = null;
             dynastyGridView.Visible = false;
 
-            // Add data bindings
+            // Remove data bindings
             textBoxModName.DataBindings.Clear();
             textBoxDependencies.DataBindings.Clear();
             textBoxModRawOutput.DataBindings.Clear();
@@ -713,14 +720,14 @@ namespace CK2Modder
 
             // Reset the culture tree view
             cultureTreeView.Nodes.Clear();
-            TreeNode root = new TreeNode("Culture Groups");
+            TreeNode root = new TreeNode(DefaultCultureRoot);
             root.ContextMenuStrip = cultureRootContextMenuStrip;
             cultureTreeView.Nodes.Add(root);
             root.Expand();
 
             // reset the characters tab
             characterFilesListBox.Items.Clear();
-            characterFilesListBox.Items.Add("View All Characters"); // Add the default list value
+            characterGridView.DataSource = null;
 
             cultureInformationGroupBox.Visible = false;
             cultureNamesGroupBox.Visible = false;
@@ -952,7 +959,7 @@ namespace CK2Modder
             if (selected == null)
                 return;
 
-            if (selected.Equals("View All Characters"))
+            if (selected.Equals(DefaultCharacterListView))
             {
                 characterGridView.DataSource = CurrentMod.Characters;
                 return;
@@ -973,7 +980,7 @@ namespace CK2Modder
 
             String nodeName = e.Node.Text;
 
-            if (nodeName.Equals("Culture Groups"))
+            if (nodeName.Equals(DefaultCultureRoot))
             {
                 cultureInformationGroupBox.Visible = false;
                 cultureNamesGroupBox.Visible = false;
@@ -1004,7 +1011,7 @@ namespace CK2Modder
                 cultureNamesGroupBox.Visible = true;
 
                 // isCulture will be true if this is a culture, false if a culture group
-                Boolean isCulture = (selectedCulture.SubCultures.Count == 0 && !SelectedCultureNode.Parent.Text.Equals("Culture Groups"));
+                Boolean isCulture = (selectedCulture.SubCultures.Count == 0 && !SelectedCultureNode.Parent.Text.Equals(DefaultCultureRoot));
 
                 cultureNameTextBox.Text = selectedCulture.Name;
                 cultureGfxTextBox.Text = selectedCulture.Graphical_Culture;
@@ -1265,6 +1272,10 @@ namespace CK2Modder
                     if (count > 0)
                     {
                         SelectedCultureNode.Remove();
+                        
+                        // Hide the editing panes
+                        cultureInformationGroupBox.Visible = false;
+                        cultureNamesGroupBox.Visible = false;                        
                     }
                 }
             }
@@ -1292,6 +1303,10 @@ namespace CK2Modder
                     if (count > 0)
                     {
                         SelectedCultureNode.Remove();
+
+                        // Hide the editing panes
+                        cultureInformationGroupBox.Visible = false;
+                        cultureNamesGroupBox.Visible = false;
                     }
                 }                
             }
@@ -1366,10 +1381,102 @@ namespace CK2Modder
         {
             TextBox name = sender as TextBox;
 
-            if (SelectedCultureNode.Text.Equals("Culture Groups"))
+            if (SelectedCultureNode.Text.Equals(DefaultCultureRoot))
                 return;
 
             SelectedCultureNode.Text = name.Text;
+        }
+
+        private void deleteSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+
+            String selectedFile = characterFilesListBox.SelectedItem as String;
+
+            if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
+                return;
+
+            if(MessageBox.Show("Deleting the file will delete all the characters in the file. Do you wish to continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
+            {
+                characterFilesListBox.Items.Remove(selectedFile);
+                CurrentMod.CharacterFiles.Remove(selectedFile);
+
+                foreach (Character c in CurrentMod.Characters.ToList())
+                    if (c.File.Equals(selectedFile))
+                        CurrentMod.Characters.Remove(c);
+
+                // Set the view to all characters
+                characterFilesListBox.SelectedIndex = 0;
+            }
+        }
+
+        private void editSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String selected = characterFilesListBox.SelectedItem as String;
+
+            if (selected == null || selected.Equals(DefaultCharacterListView))
+                return;
+
+            CharacterFileForm fileForm = new CharacterFileForm(selected);
+
+            if (fileForm.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                // If the user hit ok without changing the name don't do anything
+                if (selected.Equals(fileForm.FileName))
+                    return;
+
+                if(fileForm.FileName.Equals(""))
+                {
+                    MessageBox.Show("The file must have a name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (CurrentMod.CharacterFiles.Contains(fileForm.FileName))
+                {
+                    MessageBox.Show("The name you entered already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else
+                {
+                    CurrentMod.CharacterFiles.Remove(selected);
+                    CurrentMod.CharacterFiles.Add(fileForm.FileName);
+                    characterFilesListBox.Items.Remove(selected);
+                    characterFilesListBox.Items.Add(fileForm.FileName);
+
+                    foreach (Character c in CurrentMod.Characters)
+                    {
+                        if (c.File.Equals(selected))
+                            c.File = fileForm.FileName;
+                    }
+                }
+            }
+        }
+
+        private void characterFilesMenuAdd_Click(object sender, EventArgs e)
+        {
+            CharacterFileForm fileForm = new CharacterFileForm();
+
+            if (fileForm.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                if (fileForm.FileName.Equals(""))
+                {
+                    MessageBox.Show("The file must have a name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (CurrentMod.CharacterFiles.Contains(fileForm.FileName))
+                {
+                    MessageBox.Show("The name you entered already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else
+                {
+                    CurrentMod.CharacterFiles.Add(fileForm.FileName);
+                    characterFilesListBox.Items.Add(fileForm.FileName);
+                }
+            }
         }
 
         #endregion
@@ -1415,7 +1522,6 @@ namespace CK2Modder
         }
 
         #endregion
-        
-
+                       
     }
 }

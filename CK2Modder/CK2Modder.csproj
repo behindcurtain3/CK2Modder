@@ -56,6 +56,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GameData\history\characters\Character.cs" />
+    <Compile Include="GameData\history\characters\CharacterFileForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GameData\history\characters\CharacterFileForm.Designer.cs">
+      <DependentUpon>CharacterFileForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Mod.cs" />
     <Compile Include="NewModForm.cs">
       <SubType>Form</SubType>
@@ -72,6 +78,9 @@
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameData\history\characters\CharacterFileForm.resx">
+      <DependentUpon>CharacterFileForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewModForm.resx">
       <DependentUpon>NewModForm.cs</DependentUpon>
