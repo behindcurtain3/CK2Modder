@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace CK2Modder.GameData.common
 {
@@ -13,7 +14,12 @@ namespace CK2Modder.GameData.common
         {
             get { return _name; }
             set 
-            { 
+            {
+                if (value.Equals(""))
+                {
+                    MessageBox.Show("The name cannot be blank.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 _name = value.Trim();
                 NotifyPropertyChanged("Name");
             }
