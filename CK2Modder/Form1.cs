@@ -1252,7 +1252,7 @@ namespace CK2Modder
                 return;
             }
 
-            BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.File.ToLower().Equals(selected) == true).ToList());
+            BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.File.Equals(selected) == true).ToList());
             characterGridView.DataSource = filteredList;
             characterGridView.AllowUserToAddRows = true;
 
