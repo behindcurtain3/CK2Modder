@@ -30,6 +30,9 @@ namespace CK2Modder.GameData.history.characters
         public TextBox Mother { get { return motherTextBox; } }
         public ListBox LifeEvents { get { return characterLifeEventsListBox; } }
         public ComboBox TraitComboBox { get { return traitComboBox; } }
+        public TextBox DNA { get { return dnaTextBox; } }
+        public TextBox Properties { get { return propertiesTextBox; } }
+        public TextBox Nickname { get { return nicknameTextBox; } }
 
         public CharacterEditor()
         {

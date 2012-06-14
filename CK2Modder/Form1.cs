@@ -525,10 +525,10 @@ namespace CK2Modder
                     String insideLine;
                     do
                     {
-                        insideLine = stream.ReadLine();
+                        insideLine = stream.ReadLine().Trim();
 
                         // Skip comment lines
-                        if (insideLine.Trim().StartsWith("#"))
+                        if (insideLine.StartsWith("#"))
                             continue;
 
                         if (insideLine.Contains("{"))
@@ -593,6 +593,12 @@ namespace CK2Modder
                             c.Dynasty = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
 
+                        // Nickname
+                        else if (insideLine.StartsWith("give_nickname"))
+                        {
+                            c.Nickname = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
+                        }
+
                         // Stats
                         else if (insideLine.Contains("martial=") && !insideLine.Contains("trait"))
                         {
@@ -616,7 +622,7 @@ namespace CK2Modder
                         }
 
                         // Traits
-                        else if (insideLine.Contains("add_trait"))
+                        else if (insideLine.StartsWith("add_trait"))
                         {
                             if (insideLine.Contains('"'))
                             {
@@ -640,11 +646,59 @@ namespace CK2Modder
                             c.Mother = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
 
+                        // custom look
+                        else if (insideLine.Contains("dna=") || insideLine.Contains("dna ="))
+                        {
+                            int start = insideLine.IndexOf('"') + 1;
+                            int end = insideLine.IndexOf('"', start);
+                            c.DNA = insideLine.Substring(start, end - start);
+                        }
+                        else if (insideLine.Contains("properties=") || insideLine.Contains("properties ="))
+                        {
+                            int start = insideLine.IndexOf('"') + 1;
+                            int end = insideLine.IndexOf('"', start);
+                            c.Properties = insideLine.Substring(start, end - start);
+                        }
+
                         // life events
+                        // some events are all on one line read them here
+                        else if ((insideLine.Contains("={") || insideLine.Contains("= {")) && (insideLine.Contains("}")))
+                        {
+                            // i'm sure this could be done better....
+                            String trimmed = insideLine.Trim();
+                            int end = insideLine.Trim().IndexOf("=");
+
+                            LifeEvent ev = new LifeEvent();
+                            ev.Date = trimmed.Substring(0, end);
+
+                            // Read the info now
+                            int start = trimmed.IndexOf("{");
+                            end = trimmed.IndexOf("}") - 1;
+
+                            String containedData = trimmed.Substring(start + 1, end - start);
+                            String[] data = containedData.Split('=');
+                            String key = data[0].Trim();
+                            String value = data[1].Trim();
+
+                            if(!value.Contains('"') && Regex.Match(value, @"\d+").Success)
+                            {
+                                // int
+                                int vint = Int32.Parse(Regex.Match(value, @"\d+").Value);
+                                ev.Events.Add(new KeyValuePair<string,object>(key, vint));
+
+                            }
+                            else
+                            {
+                                value = value.Replace('"', ' ').Trim();
+                                ev.Events.Add(new KeyValuePair<string, object>(key, value));
+                            }                            
+                            c.Events.Add(ev);
+                        }
+                        // most are spread out over several lines
                         else if (insideLine.Contains("={") || insideLine.Contains("= {"))
                         {
                             int end = insideLine.Trim().IndexOf(" ");
-                            if(end == -1)
+                            if (end == -1)
                                 end = insideLine.Trim().IndexOf("=");
 
                             LifeEvent ev = new LifeEvent();
@@ -658,10 +712,19 @@ namespace CK2Modder
                                 {
                                     String[] values = eventLines.Split('=');
                                     String key = values[0].Trim();
-                                    String value = values[1].Trim();                                    
-                                    value = value.Replace('"', ' ').Trim();
+                                    String value = values[1].Trim();
+                                    if (!value.Contains('"') && Regex.Match(value, @"\d+").Success)
+                                    {
+                                        // int
+                                        int vint = Int32.Parse(Regex.Match(value, @"\d+").Value);
+                                        ev.Events.Add(new KeyValuePair<string, object>(key, vint));
 
-                                    ev.Events.Add(new KeyValuePair<string, object>(key, value));
+                                    }
+                                    else
+                                    {
+                                        value = value.Replace('"', ' ').Trim();
+                                        ev.Events.Add(new KeyValuePair<string, object>(key, value));
+                                    }
                                 }
                                 eventLines = stream.ReadLine();
                             }
@@ -1028,6 +1091,7 @@ namespace CK2Modder
             editor.Religion.DataBindings.Add("Text", c, "Religion");
             editor.Culture.DataBindings.Add("Text", c, "Culture");
             editor.Female.DataBindings.Add("Checked", c, "Female");
+            editor.Nickname.DataBindings.Add("Text", c, "Nickname");
 
             editor.Father.DataBindings.Add("Text", c, "Father");
             editor.Mother.DataBindings.Add("Text", c, "Mother");
@@ -1040,6 +1104,9 @@ namespace CK2Modder
             editor.Intrigue.DataBindings.Add("Text", c, "Intrigue");
             editor.Stewardship.DataBindings.Add("Text", c, "Stewardship");
             editor.Learning.DataBindings.Add("Text", c, "Learning");
+
+            editor.DNA.DataBindings.Add("Text", c, "DNA");
+            editor.Properties.DataBindings.Add("Text", c, "Properties");
 
             // Add the tab and select it
             this.tabControl.TabPages.Add(tabInfo);

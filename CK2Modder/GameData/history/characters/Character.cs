@@ -118,6 +118,17 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        private String _nickName = "";
+        public String Nickname
+        {
+            get { return _nickName; }
+            set
+            {
+                _nickName = value;
+                NotifyPropertyChanged("Nickname");
+            }
+        }
+
         private int _martial;
         public int Martial
         {
@@ -220,21 +231,46 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        private String _dna = "";
+        public String DNA
+        {
+            get { return _dna; }
+            set
+            {
+                _dna = value;
+                NotifyPropertyChanged("DNA");
+            }
+        }
+
+        private String _properties = "";
+        public String Properties
+        {
+            get { return _properties; }
+            set
+            {
+                _properties = value;
+                NotifyPropertyChanged("Properties");
+            }
+        }
+
         public override string ToString()
         {
             String result = "";
 
             result += ID.ToString() + " = {\r\n";
             result += "\tname=\"" + Name + "\"\r\n";
-            if (Female) result += "\tfemale=yes\r\n";
-            if (Dynasty != 0) result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
-            if (!Religion.Equals("")) result += "\treligion=\"" + Religion + "\"\r\n";
-            if (!Culture.Equals("")) result += "\tculture=\"" + Culture + "\"\r\n";
-            if (Martial > 0) result += "\tmartial=" + Martial.ToString() + "\r\n";
-            if (Diplomacy > 0) result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
-            if (Intrigue > 0) result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
-            if (Stewardship > 0) result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
-            if (Learning > 0) result += "\tlearning=" + Learning.ToString() + "\r\n";
+            if (Female)                 result += "\tfemale=yes\r\n";
+            if (Dynasty != 0)           result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
+            if (!Religion.Equals(""))   result += "\treligion=\"" + Religion + "\"\r\n";
+            if (!Culture.Equals(""))    result += "\tculture=\"" + Culture + "\"\r\n";
+            if (Martial > 0)            result += "\tmartial=" + Martial.ToString() + "\r\n";
+            if (Diplomacy > 0)          result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
+            if (Intrigue > 0)           result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
+            if (Stewardship > 0)        result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
+            if (Learning > 0)           result += "\tlearning=" + Learning.ToString() + "\r\n";
+            if (!DNA.Equals(""))        result += "\tdna=\"" + DNA + "\"\r\n";
+            if (!Properties.Equals("")) result += "\tproperties=\"" + Properties + "\"\r\n";
+            if (!Nickname.Equals(""))   result += "\tgive_nickname=" + Nickname + "\r\n";
 
             foreach (String trait in Traits)
             {

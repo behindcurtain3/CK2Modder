@@ -46,10 +46,14 @@
             this.fatherTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.characterEventsSaveButton = new System.Windows.Forms.Button();
             this.characterLifeEventsListBox = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.learningTextBox = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.stewardshipTextBox = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.intrigueTextBox = new System.Windows.Forms.TextBox();
@@ -62,15 +66,19 @@
             this.addTraitButton = new System.Windows.Forms.Button();
             this.traitComboBox = new System.Windows.Forms.ComboBox();
             this.traitsListBox = new System.Windows.Forms.ListBox();
-            this.learningTextBox = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.propertiesTextBox = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.dnaTextBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.nicknameTextBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // closeButton
@@ -179,7 +187,7 @@
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.fatherTextBox);
             this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Location = new System.Drawing.Point(3, 212);
+            this.groupBox2.Location = new System.Drawing.Point(0, 231);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(260, 82);
             this.groupBox2.TabIndex = 7;
@@ -231,6 +239,24 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Life Events";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 123);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(204, 23);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "Delete Selected";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(113, 94);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(97, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Edit Selected...";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // characterEventsSaveButton
             // 
             this.characterEventsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -251,6 +277,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.nicknameTextBox);
+            this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.femaleCheckBox);
             this.groupBox1.Controls.Add(this.cultureTextBox);
             this.groupBox1.Controls.Add(this.label5);
@@ -264,7 +292,7 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(260, 203);
+            this.groupBox1.Size = new System.Drawing.Size(260, 222);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Character Information";
@@ -287,6 +315,23 @@
             this.groupBox4.TabIndex = 10;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Stats";
+            // 
+            // learningTextBox
+            // 
+            this.learningTextBox.Location = new System.Drawing.Point(98, 123);
+            this.learningTextBox.MaxLength = 2;
+            this.learningTextBox.Name = "learningTextBox";
+            this.learningTextBox.Size = new System.Drawing.Size(54, 20);
+            this.learningTextBox.TabIndex = 20;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(17, 126);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(51, 13);
+            this.label16.TabIndex = 19;
+            this.label16.Text = "Learning:";
             // 
             // stewardshipTextBox
             // 
@@ -361,7 +406,7 @@
             this.groupBox5.Controls.Add(this.addTraitButton);
             this.groupBox5.Controls.Add(this.traitComboBox);
             this.groupBox5.Controls.Add(this.traitsListBox);
-            this.groupBox5.Location = new System.Drawing.Point(3, 300);
+            this.groupBox5.Location = new System.Drawing.Point(3, 319);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(260, 141);
             this.groupBox5.TabIndex = 8;
@@ -379,10 +424,114 @@
             // 
             // traitComboBox
             // 
+            this.traitComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.traitComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.traitComboBox.FormattingEnabled = true;
+            this.traitComboBox.Items.AddRange(new object[] {
+            "amateurish_plotter",
+            "ambitious",
+            "arbitrary",
+            "bastard",
+            "brave",
+            "brilliant_strategist",
+            "celibate",
+            "charismatic_negotiator",
+            "charitable",
+            "chaste",
+            "clubfooted",
+            "content",
+            "craven",
+            "cruel",
+            "crusader",
+            "cynical",
+            "deceitful",
+            "detached_priest",
+            "depressed",
+            "diligent",
+            "drunkard",
+            "duelist",
+            "dwarf",
+            "elusive_shadow",
+            "envious",
+            "excommunicated",
+            "fair",
+            "falconer",
+            "flamboyant_schemer",
+            "fortune_builder",
+            "gardener",
+            "genius",
+            "gluttonous",
+            "greedy",
+            "gregarious",
+            "grey_eminence",
+            "harelip",
+            "has_bubonic_plague",
+            "has_measles",
+            "has_small_pox",
+            "has_tuberculosis",
+            "has_typhoid_fever",
+            "has_typhus",
+            "hedonist",
+            "homosexual",
+            "humble",
+            "honest",
+            "hunchback",
+            "hunter",
+            "ill",
+            "imbecile",
+            "impaler",
+            "inbred",
+            "incapable",
+            "indulgent_wastrel",
+            "infirm",
+            "intricate_webweaver",
+            "just",
+            "kind",
+            "kinslayer",
+            "legit_bastard",
+            "leper",
+            "lisp",
+            "lunatic",
+            "lustful",
+            "maimed ",
+            "martial_cleric",
+            "mastermind_theologian",
+            "midas_touched",
+            "misguided_warrior",
+            "mystic",
+            "naive_appeaser",
+            "paranoid",
+            "patient",
+            "pneumonic ",
+            "poet",
+            "possessed",
+            "pregnant",
+            "proud",
+            "quick",
+            "scholar",
+            "scholarly_theologian",
+            "shy",
+            "skilled_tactician",
+            "slothful",
+            "slow",
+            "stressed",
+            "strong",
+            "stutter",
+            "syphilitic",
+            "temperate",
+            "thrifty_clerk",
+            "tough_soldier",
+            "trusting",
+            "twin",
+            "ugly",
+            "underhanded_rogue",
+            "weak",
+            "wroth",
+            "wounded",
+            "zealous"});
             this.traitComboBox.Location = new System.Drawing.Point(22, 94);
             this.traitComboBox.Name = "traitComboBox";
-            this.traitComboBox.Size = new System.Drawing.Size(121, 21);
+            this.traitComboBox.Size = new System.Drawing.Size(136, 21);
             this.traitComboBox.TabIndex = 1;
             this.traitComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.traitComboBox_KeyDown);
             // 
@@ -394,46 +543,73 @@
             this.traitsListBox.Size = new System.Drawing.Size(217, 69);
             this.traitsListBox.TabIndex = 0;
             // 
-            // learningTextBox
+            // groupBox6
             // 
-            this.learningTextBox.Location = new System.Drawing.Point(98, 123);
-            this.learningTextBox.MaxLength = 2;
-            this.learningTextBox.Name = "learningTextBox";
-            this.learningTextBox.Size = new System.Drawing.Size(54, 20);
-            this.learningTextBox.TabIndex = 20;
+            this.groupBox6.Controls.Add(this.propertiesTextBox);
+            this.groupBox6.Controls.Add(this.dnaTextBox);
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Controls.Add(this.label9);
+            this.groupBox6.Location = new System.Drawing.Point(269, 335);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(200, 82);
+            this.groupBox6.TabIndex = 12;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Appearance";
             // 
-            // label16
+            // propertiesTextBox
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(17, 126);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(51, 13);
-            this.label16.TabIndex = 19;
-            this.label16.Text = "Learning:";
+            this.propertiesTextBox.Location = new System.Drawing.Point(87, 45);
+            this.propertiesTextBox.Name = "propertiesTextBox";
+            this.propertiesTextBox.Size = new System.Drawing.Size(107, 20);
+            this.propertiesTextBox.TabIndex = 19;
             // 
-            // button1
+            // label8
             // 
-            this.button1.Location = new System.Drawing.Point(113, 94);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Edit Selected...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(19, 48);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 13);
+            this.label8.TabIndex = 18;
+            this.label8.Text = "Properties:";
             // 
-            // button2
+            // dnaTextBox
             // 
-            this.button2.Location = new System.Drawing.Point(6, 123);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(204, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Delete Selected";
-            this.button2.UseVisualStyleBackColor = true;
+            this.dnaTextBox.Location = new System.Drawing.Point(87, 19);
+            this.dnaTextBox.Name = "dnaTextBox";
+            this.dnaTextBox.Size = new System.Drawing.Size(107, 20);
+            this.dnaTextBox.TabIndex = 17;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(19, 22);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(33, 13);
+            this.label9.TabIndex = 16;
+            this.label9.Text = "DNA:";
+            // 
+            // nicknameTextBox
+            // 
+            this.nicknameTextBox.Location = new System.Drawing.Point(77, 185);
+            this.nicknameTextBox.Name = "nicknameTextBox";
+            this.nicknameTextBox.Size = new System.Drawing.Size(120, 20);
+            this.nicknameTextBox.TabIndex = 9;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(10, 188);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(58, 13);
+            this.label10.TabIndex = 10;
+            this.label10.Text = "Nickname:";
             // 
             // CharacterEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox2);
@@ -441,7 +617,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.closeButton);
             this.Name = "CharacterEditor";
-            this.Size = new System.Drawing.Size(765, 444);
+            this.Size = new System.Drawing.Size(765, 482);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -450,6 +626,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -494,6 +672,13 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.TextBox propertiesTextBox;
+        private System.Windows.Forms.TextBox dnaTextBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox nicknameTextBox;
+        private System.Windows.Forms.Label label10;
 
 
     }

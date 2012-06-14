@@ -117,4 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Life Events represent several abilities and characteristics that can effect players 
+in the game.
+
+Each life event has a date that it takes place on and one or more attributes that 
+modify the character it is attached to.</value>
+  </data>
 </root>

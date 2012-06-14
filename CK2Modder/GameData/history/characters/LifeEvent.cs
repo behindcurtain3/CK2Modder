@@ -34,7 +34,7 @@ namespace CK2Modder.GameData.history.characters
             {
                 if (pair.Value is Int32)
                 {
-                    result += "\t\t" + pair.Key + "=" + pair.Key.ToString() + "\r\n";
+                    result += "\t\t" + pair.Key + "=" + pair.Value.ToString() + "\r\n";
                 }
                 else
                 {
@@ -53,23 +53,26 @@ namespace CK2Modder.GameData.history.characters
         {
             String result = "";
 
-            result += Date + "={ ";
+            result += Date + ": ";
 
+            int count = 0;
             foreach (KeyValuePair<String, object> pair in Events)
             {
+                if (count >= 1)
+                    result += ", ";
+
                 if(pair.Value is Int32)
                 {
-                    result += "" + pair.Key + "=" + pair.Key.ToString() + " ";
+                    result += "" + pair.Key + "=" + pair.Value.ToString();
                 }
                 else
                 {
                     String value = pair.Value as String;
-                    result += "" + pair.Key + "=\"" + value + "\" ";
+                    result += "" + pair.Key + "=\"" + value + "\"";
                 }
-                
-            }
 
-            result += "}";
+                count++;
+            }
 
             return result;
         }
