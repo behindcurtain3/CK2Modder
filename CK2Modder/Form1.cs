@@ -527,6 +527,10 @@ namespace CK2Modder
                     {
                         insideLine = stream.ReadLine();
 
+                        // Skip comment lines
+                        if (insideLine.Trim().StartsWith("#"))
+                            continue;
+
                         if (insideLine.Contains("{"))
                             openingBrackets++;
                         if (insideLine.Contains("}"))
@@ -538,6 +542,18 @@ namespace CK2Modder
                             int start = insideLine.IndexOf('"') + 1;
                             int end = insideLine.IndexOf('"', start);
                             c.Name = insideLine.Substring(start, end - start);
+                        }
+
+                        // Is female?
+                        else if (insideLine.Contains("female"))
+                        {
+                            int start = insideLine.IndexOf('=') + 1;
+                            String yesOrNo = insideLine.Substring(start, insideLine.Length - start);
+
+                            if (yesOrNo.Trim().Equals("yes"))
+                                c.Female = true;
+                            else
+                                c.Female = false;
                         }
 
                         // Add the culture
@@ -575,6 +591,70 @@ namespace CK2Modder
                         else if (insideLine.Contains("dynasty"))
                         {
                             c.Dynasty = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // Stats
+                        else if (insideLine.Contains("martial") && !insideLine.Contains("trait"))
+                        {
+                            c.Martial = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+                        else if (insideLine.Contains("diplomacy"))
+                        {
+                            c.Diplomacy = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+                        else if (insideLine.Contains("intrigue"))
+                        {
+                            c.Intrigue = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+                        else if (insideLine.Contains("stewardship"))
+                        {
+                            c.Stewardship = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // Traits
+                        else if (insideLine.Contains("add_trait"))
+                        {
+                            if (insideLine.Contains('"'))
+                            {
+                                int start = insideLine.IndexOf('"') + 1;
+                                int end = insideLine.IndexOf('"', start);
+                                c.Traits.Add(insideLine.Substring(start, end - start));
+                            }
+                            else
+                            {
+                                c.Traits.Add(insideLine.Substring(insideLine.IndexOf("=") + 1).Trim());
+                            }
+                        }
+
+                        // Mother & Father
+                        else if (insideLine.Contains("father=") || insideLine.Contains("father ="))
+                        {
+                            c.Father = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+                        else if (insideLine.Contains("mother=") || insideLine.Contains("mother ="))
+                        {
+                            c.Mother = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+
+                        // life events
+                        else if (insideLine.Contains("={") || insideLine.Contains("= {"))
+                        {
+                            int end = insideLine.Trim().IndexOf(" ");
+                            if(end == -1)
+                                end = insideLine.Trim().IndexOf("=");
+
+                            String date = insideLine.Trim().Substring(0, end);
+                                                      
+                            String eventLines = stream.ReadLine();
+                            while(!eventLines.Contains("}"))
+                            {
+                                if (!eventLines.Equals("") && !eventLines.Trim().StartsWith("#"))
+                                {
+                                    c.Events.Add(date + " " + eventLines.Trim());
+                                }
+                                eventLines = stream.ReadLine();
+                            }
+                            closingBrackets++;
                         }
 
                     } while (closingBrackets < openingBrackets);
@@ -909,21 +989,56 @@ namespace CK2Modder
             //
             // Character Editor
             //
-            CharacterEditor cTab = new CharacterEditor();
-            cTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            cTab.Location = new System.Drawing.Point(3, 3);
-            cTab.Size = new System.Drawing.Size(767, 478);
-            cTab.TabIndex = 0;
+            CharacterEditor editor = new CharacterEditor();
+            editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            editor.Location = new System.Drawing.Point(3, 3);
+            editor.Size = new System.Drawing.Size(767, 478);
+            editor.TabIndex = 0;
 
-            tabInfo.Controls.Add(cTab);
+            tabInfo.Controls.Add(editor);
 
+            // Add data bindings
+            editor.ID.DataBindings.Add("Text", c, "ID");
+            editor.CharacterName.DataBindings.Add("Text", c, "Name");
+            editor.Dynasty.DataBindings.Add("Text", c, "Dynasty");
+            editor.Religion.DataBindings.Add("Text", c, "Religion");
+            editor.Culture.DataBindings.Add("Text", c, "Culture");
+            editor.Female.DataBindings.Add("Checked", c, "Female");
+
+            editor.Father.DataBindings.Add("Text", c, "Father");
+            editor.Mother.DataBindings.Add("Text", c, "Mother");
+
+            editor.Traits.DataSource = c.Traits;
+            editor.LifeEvents.DataSource = c.Events;
+
+            editor.Martial.DataBindings.Add("Text", c, "Martial");
+            editor.Diplomacy.DataBindings.Add("Text", c, "Diplomacy");
+            editor.Intrigue.DataBindings.Add("Text", c, "Intrigue");
+            editor.Stewardship.DataBindings.Add("Text", c, "Stewardship");            
+
+            // Add the tab and select it
             this.tabControl.TabPages.Add(tabInfo);
             this.tabControl.SelectedIndex = tabInfo.TabIndex;
 
+            // Events
             EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabInfo);
             EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 2; // go to characters
-            cTab.CloseButton.Click += closeHandler;
-            cTab.CloseButton.Click += closeHandler2;
+            editor.CloseButton.Click += closeHandler;
+            editor.CloseButton.Click += closeHandler2;
+
+            editor.CharacterName.TextChanged += new EventHandler(delegate(object Sender, EventArgs e)
+                {
+                    tabInfo.Text = editor.CharacterName.Text + " (" + editor.ID.Text + ")";
+                });
+            editor.ID.TextChanged += new EventHandler(delegate(object Sender, EventArgs e)
+                {
+                    tabInfo.Text = editor.CharacterName.Text + " (" + editor.ID.Text + ")";
+                });
+        }
+
+        void CharacterName_TextChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public void SaveMod()
