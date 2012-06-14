@@ -594,21 +594,25 @@ namespace CK2Modder
                         }
 
                         // Stats
-                        else if (insideLine.Contains("martial") && !insideLine.Contains("trait"))
+                        else if (insideLine.Contains("martial=") && !insideLine.Contains("trait"))
                         {
                             c.Martial = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
-                        else if (insideLine.Contains("diplomacy"))
+                        else if (insideLine.Contains("diplomacy="))
                         {
                             c.Diplomacy = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
-                        else if (insideLine.Contains("intrigue"))
+                        else if (insideLine.Contains("intrigue="))
                         {
                             c.Intrigue = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
-                        else if (insideLine.Contains("stewardship"))
+                        else if (insideLine.Contains("stewardship="))
                         {
                             c.Stewardship = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
+                        }
+                        else if (insideLine.Contains("learning="))
+                        {
+                            c.Learning = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
                         }
 
                         // Traits
@@ -643,17 +647,25 @@ namespace CK2Modder
                             if(end == -1)
                                 end = insideLine.Trim().IndexOf("=");
 
-                            String date = insideLine.Trim().Substring(0, end);
-                                                      
+                            LifeEvent ev = new LifeEvent();
+
+                            ev.Date = insideLine.Trim().Substring(0, end);
+
                             String eventLines = stream.ReadLine();
-                            while(!eventLines.Contains("}"))
+                            while (!eventLines.Contains("}"))
                             {
                                 if (!eventLines.Equals("") && !eventLines.Trim().StartsWith("#"))
                                 {
-                                    c.Events.Add(date + " " + eventLines.Trim());
+                                    String[] values = eventLines.Split('=');
+                                    String key = values[0].Trim();
+                                    String value = values[1].Trim();                                    
+                                    value = value.Replace('"', ' ').Trim();
+
+                                    ev.Events.Add(new KeyValuePair<string, object>(key, value));
                                 }
                                 eventLines = stream.ReadLine();
                             }
+                            c.Events.Add(ev);
                             closingBrackets++;
                         }
 
@@ -785,12 +797,21 @@ namespace CK2Modder
 
         public void CloseMod()
         {
+            // Menu options
             saveToolStripMenuItem.Enabled = false;
             closeModToolStripMenuItem.Enabled = false;
             closeWithoutSavingToolStripMenuItem.Enabled = false;
 
             CurrentMod = null;
+
+            // Hide the tabs
             this.tabControl.Visible = false;
+
+            // Remove extra tabs
+            while (tabControl.TabCount > 4)
+            {
+                tabControl.TabPages.RemoveAt(4);
+            }
 
             dynastyGridView.DataSource = null;
             dynastyGridView.Visible = false;
@@ -811,7 +832,10 @@ namespace CK2Modder
 
             // reset the characters tab
             characterFilesListBox.Items.Clear();
-            characterGridView.DataSource = null;
+
+            characterGridView.RowsAdded -= characterGridView_RowsAdded;
+            IsCharacterGridListeningForRows = false;
+            characterGridView.DataSource = null;            
 
             cultureInformationGroupBox.Visible = false;
             cultureNamesGroupBox.Visible = false;
@@ -1014,7 +1038,8 @@ namespace CK2Modder
             editor.Martial.DataBindings.Add("Text", c, "Martial");
             editor.Diplomacy.DataBindings.Add("Text", c, "Diplomacy");
             editor.Intrigue.DataBindings.Add("Text", c, "Intrigue");
-            editor.Stewardship.DataBindings.Add("Text", c, "Stewardship");            
+            editor.Stewardship.DataBindings.Add("Text", c, "Stewardship");
+            editor.Learning.DataBindings.Add("Text", c, "Learning");
 
             // Add the tab and select it
             this.tabControl.TabPages.Add(tabInfo);
@@ -1034,11 +1059,26 @@ namespace CK2Modder
                 {
                     tabInfo.Text = editor.CharacterName.Text + " (" + editor.ID.Text + ")";
                 });
-        }
 
-        void CharacterName_TextChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
+            editor.Traits.KeyDown += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
+                {
+                    if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+                    {
+                        // Delete the entry
+                        c.Traits.RemoveAt(editor.Traits.SelectedIndex);
+                    }
+                });
+
+            // Add a new trait to the list
+            editor.AddTraitButton.Click += new EventHandler(delegate(object sender, EventArgs e)
+                {
+                    if (!editor.TraitComboBox.Text.Equals(""))
+                    {
+                        c.Traits.Add(editor.TraitComboBox.Text);
+                        editor.TraitComboBox.Text = "";
+                        editor.TraitComboBox.SelectedIndex = -1;
+                    }
+                });
         }
 
         public void SaveMod()
@@ -1091,13 +1131,30 @@ namespace CK2Modder
                 stream.Close();
             }
 
-            /*
-            StreamWriter stream = File.CreateText(WorkingLocation + "/dynasties.modder");
-            
+            // Write out the characters
+            if (CurrentMod.CharacterFiles.Count > 0)
+            {
+                if (!Directory.Exists(modPath + "/history/characters"))
+                {
+                    Directory.CreateDirectory(modPath + "/history/characters");
+                }
 
-            foreach (Dynasty dynasty in dynasties)
-                stream.Write(dynasty.ToString());
-            */
+                foreach (String name in CurrentMod.CharacterFiles)
+                {
+                    stream = new StreamWriter(modPath + "/history/characters/" + name + ".txt", false, Encoding.Default);
+                    //stream = File.CreateText(modPath + "/history/characters/" + name + ".txt");
+
+                    foreach (Character c in CurrentMod.Characters)
+                    {
+                        if (c.File.Equals(name))
+                        {
+                            stream.Write(c.ToString());
+                        }
+                    }
+
+                    stream.Close();
+                }
+            }
         }
 
         #endregion

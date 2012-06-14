@@ -11,10 +11,8 @@ namespace CK2Modder.GameData.history.characters
     public partial class CharacterEditor : UserControl
     {
         // Expose some of the controls
-        public Button CloseButton
-        {
-            get { return closeButton; }
-        }
+        public Button CloseButton { get { return closeButton; } }
+        public Button AddTraitButton { get { return addTraitButton; } }
 
         public TextBox ID { get { return idTextBox; } }
         public TextBox CharacterName { get { return nameTextBox; } }
@@ -26,37 +24,24 @@ namespace CK2Modder.GameData.history.characters
         public TextBox Diplomacy { get { return diplomacyTextBox; } }
         public TextBox Intrigue { get { return intrigueTextBox; } }
         public TextBox Stewardship { get { return stewardshipTextBox; } }
+        public TextBox Learning { get { return learningTextBox; } }
         public CheckBox Female { get { return femaleCheckBox; } }
         public TextBox Father { get { return fatherTextBox; } }
         public TextBox Mother { get { return motherTextBox; } }
         public ListBox LifeEvents { get { return characterLifeEventsListBox; } }
+        public ComboBox TraitComboBox { get { return traitComboBox; } }
 
         public CharacterEditor()
         {
             InitializeComponent();            
-        }
+        }        
 
-        private void characterLifeEventComboBox_TextUpdate(object sender, EventArgs e)
+        private void traitComboBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (characterLifeEventComboBox.Text.Equals("birth") || characterLifeEventComboBox.Text.Equals("death"))
+            if (e.KeyCode == Keys.Enter)
             {
-                characterLifeEventIDTextBox.Enabled = false;
-            }
-            else
-            {
-                characterLifeEventIDTextBox.Enabled = true;
-            }
-        }
-
-        private void characterLifeEventComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (characterLifeEventComboBox.Text.Equals("birth") || characterLifeEventComboBox.Text.Equals("death"))
-            {
-                characterLifeEventIDTextBox.Enabled = false;
-            }
-            else
-            {
-                characterLifeEventIDTextBox.Enabled = true;
+                // Submit the form
+                addTraitButton.PerformClick();
             }
         }
     }

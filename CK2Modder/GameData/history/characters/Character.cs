@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace CK2Modder.GameData.history.characters
 {
@@ -54,6 +55,11 @@ namespace CK2Modder.GameData.history.characters
             get { return _name; }
             set
             {
+                if (value.Equals(""))
+                {
+                    MessageBox.Show("The character name cannot be blank.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 _name = value;
                 NotifyPropertyChanged("Name");
             }
@@ -156,11 +162,22 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        private int _learning;
+        public int Learning
+        {
+            get { return _learning; }
+            set
+            {
+                _learning = value;
+                NotifyPropertyChanged("Learning");
+            }
+        }
+
         /// <summary>
         /// A string array that holds the traits of this character
         /// </summary>
-        private List<String> _traits = new List<String>();
-        public List<String> Traits
+        private BindingList<String> _traits = new BindingList<String>();
+        public BindingList<String> Traits
         {
             get { return _traits; }
             set
@@ -192,8 +209,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private List<String> _events = new List<String>();
-        public List<String> Events
+        private List<LifeEvent> _events = new List<LifeEvent>();
+        public List<LifeEvent> Events
         {
             get { return _events; }
             set
@@ -201,6 +218,41 @@ namespace CK2Modder.GameData.history.characters
                 _events = value;
                 NotifyPropertyChanged("Events");
             }
+        }
+
+        public override string ToString()
+        {
+            String result = "";
+
+            result += ID.ToString() + " = {\r\n";
+            result += "\tname=\"" + Name + "\"\r\n";
+            if (Female) result += "\tfemale=yes\r\n";
+            if (Dynasty != 0) result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
+            if (!Religion.Equals("")) result += "\treligion=\"" + Religion + "\"\r\n";
+            if (!Culture.Equals("")) result += "\tculture=\"" + Culture + "\"\r\n";
+            if (Martial > 0) result += "\tmartial=" + Martial.ToString() + "\r\n";
+            if (Diplomacy > 0) result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
+            if (Intrigue > 0) result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
+            if (Stewardship > 0) result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
+            if (Learning > 0) result += "\tlearning=" + Learning.ToString() + "\r\n";
+
+            foreach (String trait in Traits)
+            {
+                result += "\tadd_trait=\"" + trait + "\"\r\n";
+            }
+
+            if (Father > 0) result += "\tfather=" + Father.ToString() + "\r\n";
+            if (Mother > 0) result += "\tmother=" + Mother.ToString() + "\r\n";
+
+            // Life events
+            foreach (LifeEvent ev in Events)
+            {
+                result += ev.GetRawOutput();
+            }
+
+            result += "}\r\n";
+
+            return result;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

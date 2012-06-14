@@ -83,6 +83,13 @@
     <Compile Include="GameData\history\characters\CharacterEditor.Designer.cs">
       <DependentUpon>CharacterEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameData\history\characters\LifeEvent.cs" />
+    <Compile Include="GameData\history\characters\LifeEventEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GameData\history\characters\LifeEventEditor.Designer.cs">
+      <DependentUpon>LifeEventEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Mod.cs" />
     <Compile Include="NewModForm.cs">
       <SubType>Form</SubType>
@@ -105,6 +112,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GameData\history\characters\CharacterEditor.resx">
       <DependentUpon>CharacterEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameData\history\characters\LifeEventEditor.resx">
+      <DependentUpon>LifeEventEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewModForm.resx">
       <DependentUpon>NewModForm.cs</DependentUpon>
