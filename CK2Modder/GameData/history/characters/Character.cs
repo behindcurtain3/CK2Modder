@@ -55,11 +55,13 @@ namespace CK2Modder.GameData.history.characters
             get { return _name; }
             set
             {
+                /*
                 if (value.Equals(""))
                 {
-                    MessageBox.Show("The character name cannot be blank.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The character name cannot be blank. Character ID: " + ID.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+                */
                 _name = value;
                 NotifyPropertyChanged("Name");
             }
@@ -220,8 +222,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private List<LifeEvent> _events = new List<LifeEvent>();
-        public List<LifeEvent> Events
+        private String _events = "";
+        public String Events
         {
             get { return _events; }
             set
@@ -281,10 +283,11 @@ namespace CK2Modder.GameData.history.characters
             if (Mother > 0) result += "\tmother=" + Mother.ToString() + "\r\n";
 
             // Life events
-            foreach (LifeEvent ev in Events)
-            {
-                result += ev.GetRawOutput();
-            }
+            if (!Events.Equals(""))
+            {                
+                Events = Events.Replace("\r", "");
+                result += "\t" + Events.Replace("\n", System.Environment.NewLine + "\t") + "\r\n";
+            }            
 
             result += "}\r\n";
 

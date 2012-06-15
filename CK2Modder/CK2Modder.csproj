@@ -62,6 +62,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameData\common\Culture.cs" />
+    <Compile Include="GameData\common\DynastyEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GameData\common\DynastyEditor.Designer.cs">
+      <DependentUpon>DynastyEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="GameData\gfx\CoatOfArms.cs" />
     <Compile Include="GameData\common\Dynasty.cs" />
     <Compile Include="Form1.cs">
@@ -106,6 +112,9 @@
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameData\common\DynastyEditor.resx">
+      <DependentUpon>DynastyEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameData\history\characters\CharacterFileForm.resx">
       <DependentUpon>CharacterFileForm.cs</DependentUpon>

@@ -46,11 +46,9 @@
             this.fatherTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.characterEventsSaveButton = new System.Windows.Forms.Button();
-            this.characterLifeEventsListBox = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.nicknameTextBox = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.learningTextBox = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -68,11 +66,10 @@
             this.traitsListBox = new System.Windows.Forms.ListBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.propertiesTextBox = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.dnaTextBox = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.nicknameTextBox = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.eventsTextBox = new System.Windows.Forms.RichTextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -83,8 +80,8 @@
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.Location = new System.Drawing.Point(687, 3);
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Location = new System.Drawing.Point(687, 456);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
             this.closeButton.TabIndex = 11;
@@ -228,52 +225,16 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.button2);
-            this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Controls.Add(this.characterEventsSaveButton);
-            this.groupBox3.Controls.Add(this.characterLifeEventsListBox);
-            this.groupBox3.Location = new System.Drawing.Point(269, 3);
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.eventsTextBox);
+            this.groupBox3.Location = new System.Drawing.Point(491, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(216, 163);
+            this.groupBox3.Size = new System.Drawing.Size(271, 430);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Life Events";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 123);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(204, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Delete Selected";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(113, 94);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 23);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Edit Selected...";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // characterEventsSaveButton
-            // 
-            this.characterEventsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.characterEventsSaveButton.Location = new System.Drawing.Point(6, 94);
-            this.characterEventsSaveButton.Name = "characterEventsSaveButton";
-            this.characterEventsSaveButton.Size = new System.Drawing.Size(101, 23);
-            this.characterEventsSaveButton.TabIndex = 5;
-            this.characterEventsSaveButton.Text = "New Event...";
-            this.characterEventsSaveButton.UseVisualStyleBackColor = true;
-            // 
-            // characterLifeEventsListBox
-            // 
-            this.characterLifeEventsListBox.FormattingEnabled = true;
-            this.characterLifeEventsListBox.Location = new System.Drawing.Point(6, 19);
-            this.characterLifeEventsListBox.Name = "characterLifeEventsListBox";
-            this.characterLifeEventsListBox.Size = new System.Drawing.Size(204, 69);
-            this.characterLifeEventsListBox.TabIndex = 0;
             // 
             // groupBox1
             // 
@@ -297,6 +258,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Character Information";
             // 
+            // nicknameTextBox
+            // 
+            this.nicknameTextBox.Location = new System.Drawing.Point(77, 185);
+            this.nicknameTextBox.Name = "nicknameTextBox";
+            this.nicknameTextBox.Size = new System.Drawing.Size(120, 20);
+            this.nicknameTextBox.TabIndex = 9;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(10, 188);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(58, 13);
+            this.label10.TabIndex = 10;
+            this.label10.Text = "Nickname:";
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.learningTextBox);
@@ -309,7 +286,7 @@
             this.groupBox4.Controls.Add(this.label13);
             this.groupBox4.Controls.Add(this.martialTextBox);
             this.groupBox4.Controls.Add(this.label11);
-            this.groupBox4.Location = new System.Drawing.Point(269, 172);
+            this.groupBox4.Location = new System.Drawing.Point(269, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(216, 157);
             this.groupBox4.TabIndex = 10;
@@ -549,9 +526,9 @@
             this.groupBox6.Controls.Add(this.dnaTextBox);
             this.groupBox6.Controls.Add(this.label8);
             this.groupBox6.Controls.Add(this.label9);
-            this.groupBox6.Location = new System.Drawing.Point(269, 335);
+            this.groupBox6.Location = new System.Drawing.Point(269, 168);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(200, 82);
+            this.groupBox6.Size = new System.Drawing.Size(216, 82);
             this.groupBox6.TabIndex = 12;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Appearance";
@@ -563,6 +540,13 @@
             this.propertiesTextBox.Size = new System.Drawing.Size(107, 20);
             this.propertiesTextBox.TabIndex = 19;
             // 
+            // dnaTextBox
+            // 
+            this.dnaTextBox.Location = new System.Drawing.Point(87, 19);
+            this.dnaTextBox.Name = "dnaTextBox";
+            this.dnaTextBox.Size = new System.Drawing.Size(107, 20);
+            this.dnaTextBox.TabIndex = 17;
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -571,13 +555,6 @@
             this.label8.Size = new System.Drawing.Size(57, 13);
             this.label8.TabIndex = 18;
             this.label8.Text = "Properties:";
-            // 
-            // dnaTextBox
-            // 
-            this.dnaTextBox.Location = new System.Drawing.Point(87, 19);
-            this.dnaTextBox.Name = "dnaTextBox";
-            this.dnaTextBox.Size = new System.Drawing.Size(107, 20);
-            this.dnaTextBox.TabIndex = 17;
             // 
             // label9
             // 
@@ -588,21 +565,17 @@
             this.label9.TabIndex = 16;
             this.label9.Text = "DNA:";
             // 
-            // nicknameTextBox
+            // eventsTextBox
             // 
-            this.nicknameTextBox.Location = new System.Drawing.Point(77, 185);
-            this.nicknameTextBox.Name = "nicknameTextBox";
-            this.nicknameTextBox.Size = new System.Drawing.Size(120, 20);
-            this.nicknameTextBox.TabIndex = 9;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(10, 188);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(58, 13);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Nickname:";
+            this.eventsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.eventsTextBox.Location = new System.Drawing.Point(6, 19);
+            this.eventsTextBox.Name = "eventsTextBox";
+            this.eventsTextBox.Size = new System.Drawing.Size(259, 405);
+            this.eventsTextBox.TabIndex = 0;
+            this.eventsTextBox.Text = "";
+            this.eventsTextBox.WordWrap = false;
             // 
             // CharacterEditor
             // 
@@ -652,8 +625,6 @@
         private System.Windows.Forms.TextBox fatherTextBox;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button characterEventsSaveButton;
-        private System.Windows.Forms.ListBox characterLifeEventsListBox;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox stewardshipTextBox;
@@ -670,8 +641,6 @@
         private System.Windows.Forms.ListBox traitsListBox;
         private System.Windows.Forms.TextBox learningTextBox;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox propertiesTextBox;
         private System.Windows.Forms.TextBox dnaTextBox;
@@ -679,6 +648,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox nicknameTextBox;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.RichTextBox eventsTextBox;
 
 
     }

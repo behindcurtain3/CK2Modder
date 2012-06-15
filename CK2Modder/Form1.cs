@@ -22,6 +22,7 @@ namespace CK2Modder
 
         public static readonly String VanillaDynastyFile = "/common/dynasties.txt";
         public static readonly String VanillaCulturesFile = "/common/cultures.txt";
+        public static readonly String VanillaCharactersPath = "/history/characters/";
 
         // Display string
         public static readonly String DefaultCultureRoot = "Culture Groups";
@@ -664,72 +665,42 @@ namespace CK2Modder
                         // some events are all on one line read them here
                         else if ((insideLine.Contains("={") || insideLine.Contains("= {")) && (insideLine.Contains("}")))
                         {
-                            // i'm sure this could be done better....
-                            String trimmed = insideLine.Trim();
-                            int end = insideLine.Trim().IndexOf("=");
-
-                            LifeEvent ev = new LifeEvent();
-                            ev.Date = trimmed.Substring(0, end);
-
-                            // Read the info now
-                            int start = trimmed.IndexOf("{");
-                            end = trimmed.IndexOf("}") - 1;
-
-                            String containedData = trimmed.Substring(start + 1, end - start);
-                            String[] data = containedData.Split('=');
-                            String key = data[0].Trim();
-                            String value = data[1].Trim();
-
-                            if(!value.Contains('"') && Regex.Match(value, @"\d+").Success)
-                            {
-                                // int
-                                int vint = Int32.Parse(Regex.Match(value, @"\d+").Value);
-                                ev.Events.Add(new KeyValuePair<string,object>(key, vint));
-
-                            }
+                            if(c.Events.Equals(""))
+                                c.Events += insideLine;
                             else
-                            {
-                                value = value.Replace('"', ' ').Trim();
-                                ev.Events.Add(new KeyValuePair<string, object>(key, value));
-                            }                            
-                            c.Events.Add(ev);
+                                c.Events += "\r\n" + insideLine;                           
                         }
                         // most are spread out over several lines
                         else if (insideLine.Contains("={") || insideLine.Contains("= {"))
                         {
-                            int end = insideLine.Trim().IndexOf(" ");
-                            if (end == -1)
-                                end = insideLine.Trim().IndexOf("=");
-
-                            LifeEvent ev = new LifeEvent();
-
-                            ev.Date = insideLine.Trim().Substring(0, end);
-
-                            String eventLines = stream.ReadLine();
-                            while (!eventLines.Contains("}"))
+                            String eventLine = insideLine;
+                            Boolean finished = false;
+                            do
                             {
-                                if (!eventLines.Equals("") && !eventLines.Trim().StartsWith("#"))
+                                if (c.Events.Equals(""))
+                                    c.Events += eventLine;
+                                else
                                 {
-                                    String[] values = eventLines.Split('=');
-                                    String key = values[0].Trim();
-                                    String value = values[1].Trim();
-                                    if (!value.Contains('"') && Regex.Match(value, @"\d+").Success)
-                                    {
-                                        // int
-                                        int vint = Int32.Parse(Regex.Match(value, @"\d+").Value);
-                                        ev.Events.Add(new KeyValuePair<string, object>(key, vint));
+                                    c.Events += "\r\n";
 
-                                    }
-                                    else
+                                    if (!eventLine.Contains("{"))
                                     {
-                                        value = value.Replace('"', ' ').Trim();
-                                        ev.Events.Add(new KeyValuePair<string, object>(key, value));
+                                        eventLine = eventLine.Trim();
+
+                                        if (!eventLine.Contains("}"))
+                                            c.Events += "\t";
                                     }
+
+                                    c.Events += eventLine;
                                 }
-                                eventLines = stream.ReadLine();
-                            }
-                            c.Events.Add(ev);
-                            closingBrackets++;
+                                
+                                if (eventLine.Contains("}"))
+                                    finished = true;
+                                else
+                                    eventLine = stream.ReadLine();
+                            } while (!finished);
+                            
+                            closingBrackets++;                            
                         }
 
                     } while (closingBrackets < openingBrackets);
@@ -789,10 +760,13 @@ namespace CK2Modder
 
             // Add data bindings
             textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
+            userDirectoryTextBox.DataBindings.Add("Text", CurrentMod, "UserDirectory");
             textBoxDependencies.DataBindings.Add("Text", CurrentMod, "Dependencies");
             textBoxModRawOutput.DataBindings.Add("Text", CurrentMod, "RawOutput");
             buttonImportDynasties.DataBindings.Add("Enabled", CurrentMod, "AreDynastiesImported");
             buttonImportCultures.DataBindings.Add("Enabled", CurrentMod, "AreCulturesImported");
+            buttonImportCharacters.DataBindings.Add("Enabled", CurrentMod, "AreCharactersImported");
+            replacePathsListBox.DataSource = CurrentMod.ReplacePaths;
 
             // Setup the culture tree
             cultureTreeView.Nodes.Clear();
@@ -809,7 +783,7 @@ namespace CK2Modder
             String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
             if (File.Exists(dynastyFile))
             {
-                StreamReader reader = new StreamReader(dynastyFile, true);
+                StreamReader reader = new StreamReader(dynastyFile, Encoding.Default, true);
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
             }
 
@@ -817,7 +791,7 @@ namespace CK2Modder
             String cultureFile = WorkingLocation + "/" + CurrentMod.Path + "/common/cultures.txt";
             if (File.Exists(cultureFile))
             {
-                StreamReader reader = new StreamReader(cultureFile, true);
+                StreamReader reader = new StreamReader(cultureFile, Encoding.Default, true);
                 cultureBackgroundWorker.RunWorkerAsync(reader);
             }
 
@@ -838,7 +812,7 @@ namespace CK2Modder
                         CurrentMod.CharacterFilesToLoad.Enqueue(filePath);
 
                         characterFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(file));
-                    }                    
+                    }
                 }
 
                 // Start loading character files
@@ -848,7 +822,8 @@ namespace CK2Modder
                     characterBackgroundWorker.RunWorkerAsync(reader);
                 }
             }
-            
+
+            CurrentMod.UpdateRawOutput();
             UserPreferences.Default.LastMod = WorkingLocation + "/mod/" + CurrentMod.Name + ".mod";
             UserPreferences.Default.Save();
 
@@ -885,6 +860,7 @@ namespace CK2Modder
             textBoxModRawOutput.DataBindings.Clear();
             buttonImportDynasties.DataBindings.Clear();
             buttonImportCultures.DataBindings.Clear();
+            buttonImportCharacters.DataBindings.Clear();
 
             // Reset the culture tree view
             cultureTreeView.Nodes.Clear();
@@ -935,96 +911,7 @@ namespace CK2Modder
         {
             if (dynasty == null)
                 return;
-
-            // SETUP THE UI            
-            // 
-            // labelDynastyID
-            // 
-            Label labelDynastyID = new Label();
-            labelDynastyID.AutoSize = true;
-            labelDynastyID.Location = new System.Drawing.Point(7, 7);
-            labelDynastyID.Name = "labelDynastyID";
-            labelDynastyID.Size = new System.Drawing.Size(79, 13);
-            labelDynastyID.TabIndex = 0;
-            labelDynastyID.Text = "Dynasty ID:";
-            // 
-            // textBoxDynastyID
-            // 
-            TextBox textBoxDynastyID = new TextBox();
-            textBoxDynastyID.Location = new System.Drawing.Point(10, 23);
-            textBoxDynastyID.Name = "textBoxDynastyID";
-            textBoxDynastyID.Size = new System.Drawing.Size(279, 20);
-            textBoxDynastyID.TabIndex = 1;
-            textBoxDynastyID.Text = dynasty.ID.ToString();
-            textBoxDynastyID.DataBindings.Add("Text", dynasty, "ID");
-            // 
-            // labelDynastyName
-            // 
-            Label labelDynastyName = new Label();
-            labelDynastyName.AutoSize = true;
-            labelDynastyName.Location = new System.Drawing.Point(7, 58);
-            labelDynastyName.Name = "labelDynastyName";
-            labelDynastyName.Size = new System.Drawing.Size(79, 13);
-            labelDynastyName.TabIndex = 0;
-            labelDynastyName.Text = "Dynasty Name:";
-            // 
-            // textBoxDynastyName
-            // 
-            TextBox textBoxDynastyName = new TextBox();
-            textBoxDynastyName.Location = new System.Drawing.Point(10, 74);
-            textBoxDynastyName.Name = "textBoxDynastyName";
-            textBoxDynastyName.Size = new System.Drawing.Size(279, 20);
-            textBoxDynastyName.TabIndex = 1;
-            textBoxDynastyName.Text = dynasty.Name;
-            textBoxDynastyName.DataBindings.Add("Text", dynasty, "Name");
-            // 
-            // labelDynastyCulture
-            // 
-            Label labelDynastyCulture = new Label();
-            labelDynastyCulture.AutoSize = true;
-            labelDynastyCulture.Location = new System.Drawing.Point(7, 109);
-            labelDynastyCulture.Name = "labelDynastyCulture";
-            labelDynastyCulture.Size = new System.Drawing.Size(43, 13);
-            labelDynastyCulture.TabIndex = 2;
-            labelDynastyCulture.Text = "Culture:";
-            // 
-            // textBoxDynastyCulture
-            // 
-            TextBox textBoxDynastyCulture = new TextBox();
-            textBoxDynastyCulture.Location = new System.Drawing.Point(10, 125);
-            textBoxDynastyCulture.Name = "textBoxDynastyCulture";
-            textBoxDynastyCulture.Size = new System.Drawing.Size(279, 20);
-            textBoxDynastyCulture.TabIndex = 3;
-            textBoxDynastyCulture.Text = dynasty.Culture;
-            textBoxDynastyCulture.DataBindings.Add("Text", dynasty, "Culture");
-            // 
-            // dataGridViewDynastyCharacters
-            // 
-            DataGridView dataGridViewDynastyCharacters = new DataGridView();
-            dataGridViewDynastyCharacters.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
-            dataGridViewDynastyCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDynastyCharacters.Location = new System.Drawing.Point(10, 265);
-            dataGridViewDynastyCharacters.Name = "dataGridViewDynastyCharacters";
-            dataGridViewDynastyCharacters.Size = new System.Drawing.Size(755, 213);
-            dataGridViewDynastyCharacters.TabIndex = 5;
-            // 
-            // labelDynastyCharacters
-            // 
-            Label labelDynastyCharacters = new Label();
-            labelDynastyCharacters.AutoSize = true;
-            labelDynastyCharacters.Location = new System.Drawing.Point(7, 249);
-            labelDynastyCharacters.Name = "labelDynastyCharacters";
-            labelDynastyCharacters.Size = new System.Drawing.Size(99, 13);
-            labelDynastyCharacters.Text = "Dynasty Characters";
-            //
-            // buttonClose
-            //
-            Button buttonClose = new Button();
-            buttonClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonClose.Location = new Point(636, 6);
-            buttonClose.Text = "Close";
-            buttonClose.Size = new Size(129, 23);
-            buttonClose.TabIndex = 4;
+            
             // 
             // tabDynastyInfo
             // 
@@ -1037,24 +924,33 @@ namespace CK2Modder
             tabDynastyInfo.Text = dynasty.Name + " Dynasty";
             tabDynastyInfo.BackColor = Color.Transparent;
 
-            tabDynastyInfo.Controls.Add(labelDynastyID);
-            tabDynastyInfo.Controls.Add(textBoxDynastyID);
-            tabDynastyInfo.Controls.Add(labelDynastyCharacters);            
-            tabDynastyInfo.Controls.Add(textBoxDynastyCulture);
-            tabDynastyInfo.Controls.Add(labelDynastyCulture);
-            tabDynastyInfo.Controls.Add(textBoxDynastyName);
-            tabDynastyInfo.Controls.Add(labelDynastyName);
-            tabDynastyInfo.Controls.Add(buttonClose);            
-            tabDynastyInfo.Controls.Add(dataGridViewDynastyCharacters);
+            DynastyEditor editor = new DynastyEditor();
+            editor.Dock = System.Windows.Forms.DockStyle.Fill;
+            editor.Location = new System.Drawing.Point(3, 3);
+            editor.Size = new System.Drawing.Size(767, 478);
+            editor.TabIndex = 0;
+
+            tabDynastyInfo.Controls.Add(editor);
+
+            editor.ID.DataBindings.Add("Text", dynasty, "ID");
+            editor.DynastyName.DataBindings.Add("Text", dynasty, "Name");
+            editor.Culture.DataBindings.Add("Text", dynasty, "Culture");
+            editor.Characters.DataSource = CurrentMod.Characters.Where(c => c.Dynasty == dynasty.ID).ToList();
 
             this.tabControl.TabPages.Add(tabDynastyInfo);
             this.tabControl.SelectedIndex = tabDynastyInfo.TabIndex;
 
             EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabDynastyInfo);
             EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 1; // go to dynasties tab
-            buttonClose.Click += closeHandler;
-            buttonClose.Click += closeHandler2;
-                
+            editor.CloseButton.Click += closeHandler;
+            editor.CloseButton.Click += closeHandler2;
+
+            editor.Characters.CellDoubleClick += new DataGridViewCellEventHandler(delegate(object sender, DataGridViewCellEventArgs e)
+                {
+                    DataGridViewRow row = editor.Characters.Rows[e.RowIndex];
+
+                    ShowCharacter(row.DataBoundItem as Character);
+                });                
         }
 
         private void ShowCharacter(Character c)
@@ -1097,7 +993,7 @@ namespace CK2Modder
             editor.Mother.DataBindings.Add("Text", c, "Mother");
 
             editor.Traits.DataSource = c.Traits;
-            editor.LifeEvents.DataSource = c.Events;
+            editor.LifeEvents.DataBindings.Add("Text", c, "Events");
 
             editor.Martial.DataBindings.Add("Text", c, "Martial");
             editor.Diplomacy.DataBindings.Add("Text", c, "Diplomacy");
@@ -1679,6 +1575,12 @@ namespace CK2Modder
             CurrentMod.AreCulturesImported = false;
         }
 
+        private void buttonImportCharacters_Click(object sender, EventArgs e)
+        {
+            ImportAllVanillaCharacters();
+            CurrentMod.AreCharactersImported = false;
+        }        
+
         private void cultureNameTextBox_TextChanged(object sender, EventArgs e)
         {
             TextBox name = sender as TextBox;
@@ -1694,7 +1596,6 @@ namespace CK2Modder
             if (CurrentMod == null)
                 return;
 
-
             String selectedFile = characterFilesListBox.SelectedItem as String;
 
             if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
@@ -1702,6 +1603,13 @@ namespace CK2Modder
 
             if(MessageBox.Show("Deleting the file will delete all the characters in the file. Do you wish to continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
             {
+                String originalFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + selectedFile + ".txt";
+
+                if (File.Exists(originalFile))
+                {
+                    File.Delete(originalFile);
+                }
+
                 characterFilesListBox.Items.Remove(selectedFile);
                 CurrentMod.CharacterFiles.Remove(selectedFile);
 
@@ -1742,15 +1650,28 @@ namespace CK2Modder
                 }
                 else
                 {
-                    CurrentMod.CharacterFiles.Remove(selected);
-                    CurrentMod.CharacterFiles.Add(fileForm.FileName);
-                    characterFilesListBox.Items.Remove(selected);
-                    characterFilesListBox.Items.Add(fileForm.FileName);
+                    String originalFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + selected + ".txt";
+                    String newFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + fileForm.FileName + ".txt";
 
-                    foreach (Character c in CurrentMod.Characters)
+                    // Rename the actual file
+                    if(File.Exists(originalFile) && !File.Exists(newFile))
                     {
-                        if (c.File.Equals(selected))
-                            c.File = fileForm.FileName;
+                        // Copy the file, then delete the original
+                        File.Copy(originalFile, newFile);
+                        File.Delete(originalFile);
+
+                        // Update the UI
+                        CurrentMod.CharacterFiles.Remove(selected);
+                        CurrentMod.CharacterFiles.Add(fileForm.FileName);
+                        characterFilesListBox.Items.Remove(selected);
+                        characterFilesListBox.Items.Add(fileForm.FileName);
+
+                        // Update the characters
+                        foreach (Character c in CurrentMod.Characters)
+                        {
+                            if (c.File.Equals(selected))
+                                c.File = fileForm.FileName;
+                        }
                     }
                 }
             }
@@ -1799,6 +1720,31 @@ namespace CK2Modder
             }
         }
 
+        private void addPathButton_Click(object sender, EventArgs e)
+        {
+            if(!replacePathsComboBox.Text.Equals(""))
+            {
+                CurrentMod.ReplacePaths.Add(replacePathsComboBox.Text);
+                replacePathsComboBox.Text = "";
+                CurrentMod.UpdateRawOutput();
+            }
+        }
+
+        private void replacePathsListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back)
+            {
+                CurrentMod.ReplacePaths.RemoveAt(replacePathsListBox.SelectedIndex);
+                CurrentMod.UpdateRawOutput();
+            }
+        }
+
+        private void replacePathsComboBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                addPathButton.PerformClick();
+        }
+
         #endregion
 
         #region Import functions
@@ -1816,9 +1762,6 @@ namespace CK2Modder
                 toolStripProgressBar.Maximum = 100;
 
                 cultureBackgroundWorker.RunWorkerAsync(reader);
-
-                // After importing vanilla data we want to replace the path to the dynasties
-                CurrentMod.ReplaceCommonPath = true;
             }
         }
 
@@ -1835,13 +1778,38 @@ namespace CK2Modder
                 toolStripProgressBar.Maximum = 100;
 
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
+            }
+        }
 
-                // After importing vanilla data we want to replace the path to the dynasties
-                CurrentMod.ReplaceCommonPath = true;
+        private void ImportAllVanillaCharacters()
+        {
+            String absolutePath = WorkingLocation + VanillaCharactersPath;
+
+            if (Directory.Exists(absolutePath))
+            {
+                foreach (String file in Directory.GetFiles(absolutePath))
+                {
+                    String fileName = Path.GetFileNameWithoutExtension(file);
+
+                    if (!CurrentMod.CharacterFiles.Contains(fileName))
+                    {
+                        CurrentMod.CharacterFiles.Add(fileName);
+                        CurrentMod.CharacterFilesToLoad.Enqueue(file);
+
+                        characterFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(fileName));
+                    } 
+                }
+
+                if (!characterBackgroundWorker.IsBusy)
+                {
+                    StreamReader reader = new StreamReader(CurrentMod.CharacterFilesToLoad.Peek(), Encoding.Default, true);
+                    characterBackgroundWorker.RunWorkerAsync(reader);
+                }
             }
         }
 
         #endregion
-                     
+
+                            
     }
 }

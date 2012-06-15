@@ -66,11 +66,15 @@ namespace CK2Modder
             set { _useArchive = value; }
         }
 
-        private String _userDirectory;
+        private String _userDirectory = "";
         public String UserDirectory
         {
             get { return _userDirectory; }
-            set { _userDirectory = value; }
+            set 
+            { 
+                _userDirectory = value;
+                NotifyPropertyChanged("UserDirectory");
+            }
         }
 
         private String _dependencies;
@@ -85,31 +89,14 @@ namespace CK2Modder
             }
         }
 
-        private Boolean _replaceCommonPath;
-        public Boolean ReplaceCommonPath
+        private BindingList<String> _replacePaths = new BindingList<String>();
+        public BindingList<String> ReplacePaths
         {
-            get { return _replaceCommonPath; }
-            set 
-            { 
-                _replaceCommonPath = value;
-                NotReplaceCommonPath = !value;
-                UpdateRawOutput();
-                NotifyPropertyChanged("ReplaceCommonPath");
-            }
-        }
-
-        /// <summary>
-        /// This looks wierd but its used to disable buttons when the replace
-        /// common path variable is true.
-        /// </summary>
-        private Boolean _notReplaceCommonPath;
-        public Boolean NotReplaceCommonPath
-        {
-            get { return _notReplaceCommonPath; }
+            get { return _replacePaths; }
             set
             {
-                _notReplaceCommonPath = value;
-                NotifyPropertyChanged("NotReplaceCommonPath");
+                _replacePaths = value;
+                NotifyPropertyChanged("ReplacePaths");
             }
         }
 
@@ -137,13 +124,24 @@ namespace CK2Modder
             }
         }
 
+        private Boolean _areCharactersImported = true;
+        public Boolean AreCharactersImported
+        {
+            get { return _areCharactersImported; }
+            set
+            {
+                _areCharactersImported = value;
+                UpdateRawOutput();
+                NotifyPropertyChanged("AreCharactersImported");
+            }
+        }
+
         public Mod(String name)
         {
             Name = name;
             Dependencies = "";
             UserDirectory = "";
             UseArchive = false;
-            ReplaceCommonPath = false;
 
             // Setup dynasty list
             Dynasties = new BindingList<Dynasty>();
@@ -158,12 +156,13 @@ namespace CK2Modder
         {
             RawOutput = "name = \"" + Name + "\"\r\n";
             RawOutput += "path = \"" + Path + "\"\r\n";
-            
-            if (ReplaceCommonPath)
+            if (!UserDirectory.Equals("")) RawOutput += "user_dir = \"" + UserDirectory + "\"\r\n";
+            RawOutput += "\r\n";
+
+            foreach (String path in ReplacePaths)
             {
-                RawOutput += "\r\n";
-                RawOutput += "replace_path = \"common\"\r\n";
-            }
+                RawOutput += "replace_path = \"" + path + "\"\r\n";
+            }            
 
             if (Dependencies != null && !Dependencies.Equals(""))
             {
@@ -172,9 +171,10 @@ namespace CK2Modder
             }
 
             RawOutput += "\r\n";
-            RawOutput += "### CK2 Modder settings ###\r\n";
-            RawOutput += "# areDynastiesImported = " + AreDynastiesImported.ToString() + "\r\n";
+            RawOutput += "### CK2 Modder settings ###\r\n";            
             RawOutput += "# areCulturesImported = " + AreCulturesImported.ToString() + "\r\n";
+            RawOutput += "# areDynastiesImported = " + AreDynastiesImported.ToString() + "\r\n";
+            RawOutput += "# areCharactersImported = " + AreCharactersImported.ToString() + "\r\n";
         }
 
         public static Mod LoadFromFile(String file)
@@ -196,15 +196,19 @@ namespace CK2Modder
 
                     mod = new Mod(line.Substring(start, end - start));
                 }
-                else if (line.Equals("replace_path = \"common\""))
+                else if (line.Contains("user_dir"))
                 {
-                    mod.ReplaceCommonPath = true;
+                    int start = line.IndexOf('"') + 1;
+                    int end = line.IndexOf('"', start);
+
+                    mod.UserDirectory = line.Substring(start, end - start);
                 }
-                else if (line.StartsWith("# areDynastiesImported = "))
+                else if (line.Contains("replace_path"))
                 {
-                    int start = line.IndexOf("=") + 1;
-                    String answer = line.Substring(start, line.Length - start);
-                    mod.AreDynastiesImported = Boolean.Parse(answer.Trim());
+                    int start = line.IndexOf('"') + 1;
+                    int end = line.IndexOf('"', start);
+
+                    mod.ReplacePaths.Add(line.Substring(start, end - start));
                 }
                 else if (line.StartsWith("# areCulturesImported = "))
                 {
@@ -212,6 +216,19 @@ namespace CK2Modder
                     String answer = line.Substring(start, line.Length - start);
                     mod.AreCulturesImported = Boolean.Parse(answer.Trim());
                 }
+                else if (line.StartsWith("# areDynastiesImported = "))
+                {
+                    int start = line.IndexOf("=") + 1;
+                    String answer = line.Substring(start, line.Length - start);
+                    mod.AreDynastiesImported = Boolean.Parse(answer.Trim());
+                }
+                else if (line.StartsWith("# areCharactersImported = "))
+                {
+                    int start = line.IndexOf("=") + 1;
+                    String answer = line.Substring(start, line.Length - start);
+                    mod.AreCharactersImported = Boolean.Parse(answer.Trim());
+                }
+                
             }
 
             return mod;

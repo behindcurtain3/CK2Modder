@@ -28,7 +28,7 @@ namespace CK2Modder.GameData.history.characters
         public CheckBox Female { get { return femaleCheckBox; } }
         public TextBox Father { get { return fatherTextBox; } }
         public TextBox Mother { get { return motherTextBox; } }
-        public ListBox LifeEvents { get { return characterLifeEventsListBox; } }
+        public RichTextBox LifeEvents { get { return eventsTextBox; } }
         public ComboBox TraitComboBox { get { return traitComboBox; } }
         public TextBox DNA { get { return dnaTextBox; } }
         public TextBox Properties { get { return propertiesTextBox; } }

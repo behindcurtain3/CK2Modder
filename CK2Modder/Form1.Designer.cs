@@ -32,8 +32,8 @@ namespace CK2Modder
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Culture Groups");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,38 +53,23 @@ namespace CK2Modder
             this.workingLocationStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabModProperties = new System.Windows.Forms.TabPage();
-            this.label5 = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.addPathButton = new System.Windows.Forms.Button();
+            this.replacePathsComboBox = new System.Windows.Forms.ComboBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.replacePathsListBox = new System.Windows.Forms.ListBox();
+            this.textBoxDependencies = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxModName = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonImportCultures = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.buttonImportCharacters = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.buttonImportDynasties = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textBoxDependencies = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxModRawOutput = new System.Windows.Forms.TextBox();
-            this.textBoxModName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tabDynasties = new System.Windows.Forms.TabPage();
-            this.textBoxDynastyFilterByCulture = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textBoxDynastyFilterByName = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.buttonDynastyClearFilter = new System.Windows.Forms.Button();
-            this.buttonDynastyFilter = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.textBoxDynastyFilterByID = new System.Windows.Forms.TextBox();
-            this.dynastyGridView = new System.Windows.Forms.DataGridView();
-            this.tabCharacters = new System.Windows.Forms.TabPage();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.characterFilesListBox = new System.Windows.Forms.ListBox();
-            this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
-            this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.characterGridView = new System.Windows.Forms.DataGridView();
             this.culturesTabPage = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.cultureTreeView = new System.Windows.Forms.TreeView();
@@ -125,6 +110,24 @@ namespace CK2Modder
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.cultureMaleNamesRichTextBox = new System.Windows.Forms.RichTextBox();
             this.cultureFemaleNamesRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.tabDynasties = new System.Windows.Forms.TabPage();
+            this.textBoxDynastyFilterByCulture = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxDynastyFilterByName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.buttonDynastyClearFilter = new System.Windows.Forms.Button();
+            this.buttonDynastyFilter = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxDynastyFilterByID = new System.Windows.Forms.TextBox();
+            this.dynastyGridView = new System.Windows.Forms.DataGridView();
+            this.tabCharacters = new System.Windows.Forms.TabPage();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.characterFilesListBox = new System.Windows.Forms.ListBox();
+            this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.characterGridView = new System.Windows.Forms.DataGridView();
             this.dynastyBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.cultureBackgroundWorker = new System.ComponentModel.BackgroundWorker();
@@ -136,20 +139,14 @@ namespace CK2Modder
             this.cultureContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cultureToolStripMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.label5 = new System.Windows.Forms.Label();
+            this.userDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabModProperties.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tabDynasties.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).BeginInit();
-            this.tabCharacters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
-            this.characterFilesContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).BeginInit();
             this.culturesTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -167,6 +164,15 @@ namespace CK2Modder
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            this.tabDynasties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).BeginInit();
+            this.tabCharacters.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            this.characterFilesContextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).BeginInit();
             this.cultureSubContextMenuStrip.SuspendLayout();
             this.cultureRootContextMenuStrip.SuspendLayout();
             this.cultureContextMenuStrip.SuspendLayout();
@@ -309,9 +315,9 @@ namespace CK2Modder
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabModProperties);
+            this.tabControl.Controls.Add(this.culturesTabPage);
             this.tabControl.Controls.Add(this.tabDynasties);
             this.tabControl.Controls.Add(this.tabCharacters);
-            this.tabControl.Controls.Add(this.culturesTabPage);
             this.tabControl.Location = new System.Drawing.Point(3, 27);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
@@ -322,55 +328,140 @@ namespace CK2Modder
             // tabModProperties
             // 
             this.tabModProperties.BackColor = System.Drawing.Color.Transparent;
-            this.tabModProperties.Controls.Add(this.label5);
-            this.tabModProperties.Controls.Add(this.button4);
+            this.tabModProperties.Controls.Add(this.groupBox4);
             this.tabModProperties.Controls.Add(this.groupBox1);
-            this.tabModProperties.Controls.Add(this.label4);
-            this.tabModProperties.Controls.Add(this.textBoxDependencies);
-            this.tabModProperties.Controls.Add(this.label3);
             this.tabModProperties.Controls.Add(this.label2);
             this.tabModProperties.Controls.Add(this.textBoxModRawOutput);
-            this.tabModProperties.Controls.Add(this.textBoxModName);
-            this.tabModProperties.Controls.Add(this.label1);
             this.tabModProperties.Location = new System.Drawing.Point(4, 22);
             this.tabModProperties.Name = "tabModProperties";
             this.tabModProperties.Padding = new System.Windows.Forms.Padding(3);
             this.tabModProperties.Size = new System.Drawing.Size(773, 484);
             this.tabModProperties.TabIndex = 0;
-            this.tabModProperties.Text = "Mod Properties";
+            this.tabModProperties.Text = "Mod";
             // 
-            // label5
+            // groupBox4
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(15, 454);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(373, 13);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Note: Importing any data will cause the mod to override the vanilla game data.";
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.userDirectoryTextBox);
+            this.groupBox4.Controls.Add(this.addPathButton);
+            this.groupBox4.Controls.Add(this.replacePathsComboBox);
+            this.groupBox4.Controls.Add(this.label23);
+            this.groupBox4.Controls.Add(this.replacePathsListBox);
+            this.groupBox4.Controls.Add(this.textBoxDependencies);
+            this.groupBox4.Controls.Add(this.label1);
+            this.groupBox4.Controls.Add(this.textBoxModName);
+            this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Controls.Add(this.label3);
+            this.groupBox4.Location = new System.Drawing.Point(3, 7);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(401, 241);
+            this.groupBox4.TabIndex = 9;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Mod Information";
             // 
-            // button4
+            // addPathButton
             // 
-            this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(281, 81);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Add...";
-            this.button4.UseVisualStyleBackColor = true;
+            this.addPathButton.Location = new System.Drawing.Point(279, 208);
+            this.addPathButton.Name = "addPathButton";
+            this.addPathButton.Size = new System.Drawing.Size(75, 23);
+            this.addPathButton.TabIndex = 11;
+            this.addPathButton.Text = "Add";
+            this.addPathButton.UseVisualStyleBackColor = true;
+            this.addPathButton.Click += new System.EventHandler(this.addPathButton_Click);
+            // 
+            // replacePathsComboBox
+            // 
+            this.replacePathsComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.replacePathsComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.replacePathsComboBox.FormattingEnabled = true;
+            this.replacePathsComboBox.Items.AddRange(new object[] {
+            "common",
+            "common/event_modifiers",
+            "common/traits",
+            "decisions",
+            "events",
+            "history/characters",
+            "history/diplomacy",
+            "history/provinces",
+            "history/titles",
+            "history/wars"});
+            this.replacePathsComboBox.Location = new System.Drawing.Point(105, 208);
+            this.replacePathsComboBox.Name = "replacePathsComboBox";
+            this.replacePathsComboBox.Size = new System.Drawing.Size(168, 21);
+            this.replacePathsComboBox.TabIndex = 10;
+            this.replacePathsComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.replacePathsComboBox_KeyDown);
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(20, 133);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(80, 13);
+            this.label23.TabIndex = 9;
+            this.label23.Text = "Replace Paths:";
+            // 
+            // replacePathsListBox
+            // 
+            this.replacePathsListBox.FormattingEnabled = true;
+            this.replacePathsListBox.Location = new System.Drawing.Point(105, 133);
+            this.replacePathsListBox.Name = "replacePathsListBox";
+            this.replacePathsListBox.Size = new System.Drawing.Size(249, 69);
+            this.replacePathsListBox.TabIndex = 8;
+            this.replacePathsListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.replacePathsListBox_KeyDown);
+            // 
+            // textBoxDependencies
+            // 
+            this.textBoxDependencies.Location = new System.Drawing.Point(105, 79);
+            this.textBoxDependencies.Name = "textBoxDependencies";
+            this.textBoxDependencies.Size = new System.Drawing.Size(249, 20);
+            this.textBoxDependencies.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(20, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Name:";
+            // 
+            // textBoxModName
+            // 
+            this.textBoxModName.Location = new System.Drawing.Point(105, 27);
+            this.textBoxModName.Name = "textBoxModName";
+            this.textBoxModName.Size = new System.Drawing.Size(249, 20);
+            this.textBoxModName.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(102, 102);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(198, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Ex: \"someothermod\", \"myawesomemod\"";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(20, 82);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(79, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Dependencies:";
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.buttonImportCultures);
-            this.groupBox1.Controls.Add(this.button3);
+            this.groupBox1.Controls.Add(this.buttonImportCharacters);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.buttonImportDynasties);
-            this.groupBox1.Location = new System.Drawing.Point(9, 162);
+            this.groupBox1.Location = new System.Drawing.Point(9, 254);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(395, 289);
+            this.groupBox1.Size = new System.Drawing.Size(395, 197);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Import Vanilla Data";
@@ -385,15 +476,16 @@ namespace CK2Modder
             this.buttonImportCultures.UseVisualStyleBackColor = true;
             this.buttonImportCultures.Click += new System.EventHandler(this.buttonImportCultures_Click);
             // 
-            // button3
+            // buttonImportCharacters
             // 
-            this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(132, 65);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(123, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Import Characters";
-            this.button3.UseVisualStyleBackColor = true;
+            this.buttonImportCharacters.Enabled = false;
+            this.buttonImportCharacters.Location = new System.Drawing.Point(132, 65);
+            this.buttonImportCharacters.Name = "buttonImportCharacters";
+            this.buttonImportCharacters.Size = new System.Drawing.Size(123, 23);
+            this.buttonImportCharacters.TabIndex = 6;
+            this.buttonImportCharacters.Text = "Import Characters";
+            this.buttonImportCharacters.UseVisualStyleBackColor = true;
+            this.buttonImportCharacters.Click += new System.EventHandler(this.buttonImportCharacters_Click);
             // 
             // button2
             // 
@@ -414,31 +506,6 @@ namespace CK2Modder
             this.buttonImportDynasties.Text = "Import Dynasties";
             this.buttonImportDynasties.UseVisualStyleBackColor = true;
             this.buttonImportDynasties.Click += new System.EventHandler(this.buttonImportDynasties_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 109);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(198, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Ex: \"someothermod\", \"myawesomemod\"";
-            // 
-            // textBoxDependencies
-            // 
-            this.textBoxDependencies.Location = new System.Drawing.Point(9, 82);
-            this.textBoxDependencies.Name = "textBoxDependencies";
-            this.textBoxDependencies.Size = new System.Drawing.Size(266, 20);
-            this.textBoxDependencies.TabIndex = 6;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 66);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(79, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Dependencies:";
             // 
             // label2
             // 
@@ -462,214 +529,6 @@ namespace CK2Modder
             this.textBoxModRawOutput.ReadOnly = true;
             this.textBoxModRawOutput.Size = new System.Drawing.Size(332, 455);
             this.textBoxModRawOutput.TabIndex = 2;
-            // 
-            // textBoxModName
-            // 
-            this.textBoxModName.Location = new System.Drawing.Point(9, 23);
-            this.textBoxModName.Name = "textBoxModName";
-            this.textBoxModName.Size = new System.Drawing.Size(266, 20);
-            this.textBoxModName.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Mod Name:";
-            // 
-            // tabDynasties
-            // 
-            this.tabDynasties.BackColor = System.Drawing.Color.Transparent;
-            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByCulture);
-            this.tabDynasties.Controls.Add(this.label8);
-            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByName);
-            this.tabDynasties.Controls.Add(this.label7);
-            this.tabDynasties.Controls.Add(this.buttonDynastyClearFilter);
-            this.tabDynasties.Controls.Add(this.buttonDynastyFilter);
-            this.tabDynasties.Controls.Add(this.label6);
-            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByID);
-            this.tabDynasties.Controls.Add(this.dynastyGridView);
-            this.tabDynasties.Location = new System.Drawing.Point(4, 22);
-            this.tabDynasties.Name = "tabDynasties";
-            this.tabDynasties.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDynasties.Size = new System.Drawing.Size(773, 484);
-            this.tabDynasties.TabIndex = 1;
-            this.tabDynasties.Text = "Dynasties";
-            // 
-            // textBoxDynastyFilterByCulture
-            // 
-            this.textBoxDynastyFilterByCulture.Location = new System.Drawing.Point(444, 8);
-            this.textBoxDynastyFilterByCulture.Name = "textBoxDynastyFilterByCulture";
-            this.textBoxDynastyFilterByCulture.Size = new System.Drawing.Size(140, 20);
-            this.textBoxDynastyFilterByCulture.TabIndex = 8;
-            this.textBoxDynastyFilterByCulture.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByCulture_KeyDown);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(380, 11);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(58, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "By Culture:";
-            // 
-            // textBoxDynastyFilterByName
-            // 
-            this.textBoxDynastyFilterByName.Location = new System.Drawing.Point(237, 8);
-            this.textBoxDynastyFilterByName.Name = "textBoxDynastyFilterByName";
-            this.textBoxDynastyFilterByName.Size = new System.Drawing.Size(137, 20);
-            this.textBoxDynastyFilterByName.TabIndex = 6;
-            this.textBoxDynastyFilterByName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByName_KeyDown);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(178, 11);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 13);
-            this.label7.TabIndex = 5;
-            this.label7.Text = "By Name:";
-            // 
-            // buttonDynastyClearFilter
-            // 
-            this.buttonDynastyClearFilter.Location = new System.Drawing.Point(681, 7);
-            this.buttonDynastyClearFilter.Name = "buttonDynastyClearFilter";
-            this.buttonDynastyClearFilter.Size = new System.Drawing.Size(75, 23);
-            this.buttonDynastyClearFilter.TabIndex = 4;
-            this.buttonDynastyClearFilter.Text = "Clear Filters";
-            this.buttonDynastyClearFilter.UseVisualStyleBackColor = true;
-            this.buttonDynastyClearFilter.Click += new System.EventHandler(this.buttonDynastyClearFilter_Click);
-            // 
-            // buttonDynastyFilter
-            // 
-            this.buttonDynastyFilter.Location = new System.Drawing.Point(600, 6);
-            this.buttonDynastyFilter.Name = "buttonDynastyFilter";
-            this.buttonDynastyFilter.Size = new System.Drawing.Size(75, 23);
-            this.buttonDynastyFilter.TabIndex = 3;
-            this.buttonDynastyFilter.Text = "Filter";
-            this.buttonDynastyFilter.UseVisualStyleBackColor = true;
-            this.buttonDynastyFilter.Click += new System.EventHandler(this.buttonDynastyFilterByID_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 11);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(60, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Filter by ID:";
-            // 
-            // textBoxDynastyFilterByID
-            // 
-            this.textBoxDynastyFilterByID.Location = new System.Drawing.Point(72, 8);
-            this.textBoxDynastyFilterByID.Name = "textBoxDynastyFilterByID";
-            this.textBoxDynastyFilterByID.Size = new System.Drawing.Size(100, 20);
-            this.textBoxDynastyFilterByID.TabIndex = 1;
-            this.textBoxDynastyFilterByID.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByID_KeyDown);
-            // 
-            // dynastyGridView
-            // 
-            this.dynastyGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
-            this.dynastyGridView.Name = "dynastyGridView";
-            this.dynastyGridView.Size = new System.Drawing.Size(767, 443);
-            this.dynastyGridView.TabIndex = 0;
-            // 
-            // tabCharacters
-            // 
-            this.tabCharacters.BackColor = System.Drawing.Color.Transparent;
-            this.tabCharacters.Controls.Add(this.splitContainer4);
-            this.tabCharacters.Location = new System.Drawing.Point(4, 22);
-            this.tabCharacters.Name = "tabCharacters";
-            this.tabCharacters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCharacters.Size = new System.Drawing.Size(773, 484);
-            this.tabCharacters.TabIndex = 2;
-            this.tabCharacters.Text = "Characters";
-            // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.characterFilesListBox);
-            this.splitContainer4.Panel1MinSize = 125;
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.characterGridView);
-            this.splitContainer4.Panel2MinSize = 250;
-            this.splitContainer4.Size = new System.Drawing.Size(767, 478);
-            this.splitContainer4.SplitterDistance = 200;
-            this.splitContainer4.TabIndex = 0;
-            // 
-            // characterFilesListBox
-            // 
-            this.characterFilesListBox.ContextMenuStrip = this.characterFilesContextMenuStrip;
-            this.characterFilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.characterFilesListBox.FormattingEnabled = true;
-            this.characterFilesListBox.Location = new System.Drawing.Point(0, 0);
-            this.characterFilesListBox.Name = "characterFilesListBox";
-            this.characterFilesListBox.Size = new System.Drawing.Size(200, 478);
-            this.characterFilesListBox.TabIndex = 0;
-            this.characterFilesListBox.SelectedIndexChanged += new System.EventHandler(this.characterFilesListBox_SelectedIndexChanged);
-            // 
-            // characterFilesContextMenuStrip
-            // 
-            this.characterFilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.characterFilesMenuAdd,
-            this.editSelectedFileToolStripMenuItem,
-            this.deleteSelectedFileToolStripMenuItem});
-            this.characterFilesContextMenuStrip.Name = "characterFilesContextMenuStrip";
-            this.characterFilesContextMenuStrip.Size = new System.Drawing.Size(176, 70);
-            // 
-            // characterFilesMenuAdd
-            // 
-            this.characterFilesMenuAdd.Name = "characterFilesMenuAdd";
-            this.characterFilesMenuAdd.Size = new System.Drawing.Size(175, 22);
-            this.characterFilesMenuAdd.Text = "Add File...";
-            this.characterFilesMenuAdd.Click += new System.EventHandler(this.characterFilesMenuAdd_Click);
-            // 
-            // editSelectedFileToolStripMenuItem
-            // 
-            this.editSelectedFileToolStripMenuItem.Name = "editSelectedFileToolStripMenuItem";
-            this.editSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.editSelectedFileToolStripMenuItem.Text = "Edit Selected File...";
-            this.editSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.editSelectedFileToolStripMenuItem_Click);
-            // 
-            // deleteSelectedFileToolStripMenuItem
-            // 
-            this.deleteSelectedFileToolStripMenuItem.Name = "deleteSelectedFileToolStripMenuItem";
-            this.deleteSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.deleteSelectedFileToolStripMenuItem.Text = "Delete Selected File";
-            this.deleteSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFileToolStripMenuItem_Click);
-            // 
-            // characterGridView
-            // 
-            this.characterGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.characterGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.characterGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.characterGridView.Location = new System.Drawing.Point(0, 0);
-            this.characterGridView.Name = "characterGridView";
-            this.characterGridView.Size = new System.Drawing.Size(563, 478);
-            this.characterGridView.TabIndex = 0;
             // 
             // culturesTabPage
             // 
@@ -1114,6 +973,198 @@ namespace CK2Modder
             this.cultureFemaleNamesRichTextBox.Text = "";
             this.cultureFemaleNamesRichTextBox.WordWrap = false;
             // 
+            // tabDynasties
+            // 
+            this.tabDynasties.BackColor = System.Drawing.Color.Transparent;
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByCulture);
+            this.tabDynasties.Controls.Add(this.label8);
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByName);
+            this.tabDynasties.Controls.Add(this.label7);
+            this.tabDynasties.Controls.Add(this.buttonDynastyClearFilter);
+            this.tabDynasties.Controls.Add(this.buttonDynastyFilter);
+            this.tabDynasties.Controls.Add(this.label6);
+            this.tabDynasties.Controls.Add(this.textBoxDynastyFilterByID);
+            this.tabDynasties.Controls.Add(this.dynastyGridView);
+            this.tabDynasties.Location = new System.Drawing.Point(4, 22);
+            this.tabDynasties.Name = "tabDynasties";
+            this.tabDynasties.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDynasties.Size = new System.Drawing.Size(773, 484);
+            this.tabDynasties.TabIndex = 1;
+            this.tabDynasties.Text = "Dynasties";
+            // 
+            // textBoxDynastyFilterByCulture
+            // 
+            this.textBoxDynastyFilterByCulture.Location = new System.Drawing.Point(444, 8);
+            this.textBoxDynastyFilterByCulture.Name = "textBoxDynastyFilterByCulture";
+            this.textBoxDynastyFilterByCulture.Size = new System.Drawing.Size(140, 20);
+            this.textBoxDynastyFilterByCulture.TabIndex = 8;
+            this.textBoxDynastyFilterByCulture.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByCulture_KeyDown);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(380, 11);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(58, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "By Culture:";
+            // 
+            // textBoxDynastyFilterByName
+            // 
+            this.textBoxDynastyFilterByName.Location = new System.Drawing.Point(237, 8);
+            this.textBoxDynastyFilterByName.Name = "textBoxDynastyFilterByName";
+            this.textBoxDynastyFilterByName.Size = new System.Drawing.Size(137, 20);
+            this.textBoxDynastyFilterByName.TabIndex = 6;
+            this.textBoxDynastyFilterByName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByName_KeyDown);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(178, 11);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "By Name:";
+            // 
+            // buttonDynastyClearFilter
+            // 
+            this.buttonDynastyClearFilter.Location = new System.Drawing.Point(681, 7);
+            this.buttonDynastyClearFilter.Name = "buttonDynastyClearFilter";
+            this.buttonDynastyClearFilter.Size = new System.Drawing.Size(75, 23);
+            this.buttonDynastyClearFilter.TabIndex = 4;
+            this.buttonDynastyClearFilter.Text = "Clear Filters";
+            this.buttonDynastyClearFilter.UseVisualStyleBackColor = true;
+            this.buttonDynastyClearFilter.Click += new System.EventHandler(this.buttonDynastyClearFilter_Click);
+            // 
+            // buttonDynastyFilter
+            // 
+            this.buttonDynastyFilter.Location = new System.Drawing.Point(600, 6);
+            this.buttonDynastyFilter.Name = "buttonDynastyFilter";
+            this.buttonDynastyFilter.Size = new System.Drawing.Size(75, 23);
+            this.buttonDynastyFilter.TabIndex = 3;
+            this.buttonDynastyFilter.Text = "Filter";
+            this.buttonDynastyFilter.UseVisualStyleBackColor = true;
+            this.buttonDynastyFilter.Click += new System.EventHandler(this.buttonDynastyFilterByID_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 11);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Filter by ID:";
+            // 
+            // textBoxDynastyFilterByID
+            // 
+            this.textBoxDynastyFilterByID.Location = new System.Drawing.Point(72, 8);
+            this.textBoxDynastyFilterByID.Name = "textBoxDynastyFilterByID";
+            this.textBoxDynastyFilterByID.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDynastyFilterByID.TabIndex = 1;
+            this.textBoxDynastyFilterByID.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDynastyFilterByID_KeyDown);
+            // 
+            // dynastyGridView
+            // 
+            this.dynastyGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
+            this.dynastyGridView.Name = "dynastyGridView";
+            this.dynastyGridView.Size = new System.Drawing.Size(767, 443);
+            this.dynastyGridView.TabIndex = 0;
+            // 
+            // tabCharacters
+            // 
+            this.tabCharacters.BackColor = System.Drawing.Color.Transparent;
+            this.tabCharacters.Controls.Add(this.splitContainer4);
+            this.tabCharacters.Location = new System.Drawing.Point(4, 22);
+            this.tabCharacters.Name = "tabCharacters";
+            this.tabCharacters.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCharacters.Size = new System.Drawing.Size(773, 484);
+            this.tabCharacters.TabIndex = 2;
+            this.tabCharacters.Text = "Characters";
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.characterFilesListBox);
+            this.splitContainer4.Panel1MinSize = 125;
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.characterGridView);
+            this.splitContainer4.Panel2MinSize = 250;
+            this.splitContainer4.Size = new System.Drawing.Size(767, 478);
+            this.splitContainer4.SplitterDistance = 200;
+            this.splitContainer4.TabIndex = 0;
+            // 
+            // characterFilesListBox
+            // 
+            this.characterFilesListBox.ContextMenuStrip = this.characterFilesContextMenuStrip;
+            this.characterFilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.characterFilesListBox.FormattingEnabled = true;
+            this.characterFilesListBox.Location = new System.Drawing.Point(0, 0);
+            this.characterFilesListBox.Name = "characterFilesListBox";
+            this.characterFilesListBox.Size = new System.Drawing.Size(200, 478);
+            this.characterFilesListBox.TabIndex = 0;
+            this.characterFilesListBox.SelectedIndexChanged += new System.EventHandler(this.characterFilesListBox_SelectedIndexChanged);
+            // 
+            // characterFilesContextMenuStrip
+            // 
+            this.characterFilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.characterFilesMenuAdd,
+            this.editSelectedFileToolStripMenuItem,
+            this.deleteSelectedFileToolStripMenuItem});
+            this.characterFilesContextMenuStrip.Name = "characterFilesContextMenuStrip";
+            this.characterFilesContextMenuStrip.Size = new System.Drawing.Size(176, 70);
+            // 
+            // characterFilesMenuAdd
+            // 
+            this.characterFilesMenuAdd.Name = "characterFilesMenuAdd";
+            this.characterFilesMenuAdd.Size = new System.Drawing.Size(175, 22);
+            this.characterFilesMenuAdd.Text = "Add File...";
+            this.characterFilesMenuAdd.Click += new System.EventHandler(this.characterFilesMenuAdd_Click);
+            // 
+            // editSelectedFileToolStripMenuItem
+            // 
+            this.editSelectedFileToolStripMenuItem.Name = "editSelectedFileToolStripMenuItem";
+            this.editSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.editSelectedFileToolStripMenuItem.Text = "Edit Selected File...";
+            this.editSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.editSelectedFileToolStripMenuItem_Click);
+            // 
+            // deleteSelectedFileToolStripMenuItem
+            // 
+            this.deleteSelectedFileToolStripMenuItem.Name = "deleteSelectedFileToolStripMenuItem";
+            this.deleteSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.deleteSelectedFileToolStripMenuItem.Text = "Delete Selected File";
+            this.deleteSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFileToolStripMenuItem_Click);
+            // 
+            // characterGridView
+            // 
+            this.characterGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.characterGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.characterGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.characterGridView.Location = new System.Drawing.Point(0, 0);
+            this.characterGridView.Name = "characterGridView";
+            this.characterGridView.Size = new System.Drawing.Size(563, 478);
+            this.characterGridView.TabIndex = 0;
+            // 
             // dynastyBackgroundWorker
             // 
             this.dynastyBackgroundWorker.WorkerReportsProgress = true;
@@ -1182,6 +1233,22 @@ namespace CK2Modder
             // 
             this.characterBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.characterBackgroundWorker_DoWork);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 56);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "User Directory:";
+            // 
+            // userDirectoryTextBox
+            // 
+            this.userDirectoryTextBox.Location = new System.Drawing.Point(105, 53);
+            this.userDirectoryTextBox.Name = "userDirectoryTextBox";
+            this.userDirectoryTextBox.Size = new System.Drawing.Size(249, 20);
+            this.userDirectoryTextBox.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1201,17 +1268,9 @@ namespace CK2Modder
             this.tabControl.ResumeLayout(false);
             this.tabModProperties.ResumeLayout(false);
             this.tabModProperties.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.tabDynasties.ResumeLayout(false);
-            this.tabDynasties.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).EndInit();
-            this.tabCharacters.ResumeLayout(false);
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
-            this.characterFilesContextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).EndInit();
             this.culturesTabPage.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1232,6 +1291,16 @@ namespace CK2Modder
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            this.tabDynasties.ResumeLayout(false);
+            this.tabDynasties.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).EndInit();
+            this.tabCharacters.ResumeLayout(false);
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            this.characterFilesContextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).EndInit();
             this.cultureSubContextMenuStrip.ResumeLayout(false);
             this.cultureRootContextMenuStrip.ResumeLayout(false);
             this.cultureContextMenuStrip.ResumeLayout(false);
@@ -1270,10 +1339,8 @@ namespace CK2Modder
         private System.Windows.Forms.Button buttonImportDynasties;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button buttonImportCharacters;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem workingLocationToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
@@ -1344,6 +1411,13 @@ namespace CK2Modder
         private System.Windows.Forms.ToolStripMenuItem characterFilesMenuAdd;
         private System.Windows.Forms.ToolStripMenuItem deleteSelectedFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editSelectedFileToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button addPathButton;
+        private System.Windows.Forms.ComboBox replacePathsComboBox;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.ListBox replacePathsListBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox userDirectoryTextBox;
     }
 }
 
