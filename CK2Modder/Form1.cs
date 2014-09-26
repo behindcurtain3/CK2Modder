@@ -810,7 +810,7 @@ namespace CK2Modder
             characterGridView.AllowUserToAddRows = false; // Default to not allowing user to add rows
 
             // Load the dynasties
-            String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + "/common/dynasties.txt";
+            String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + VanillaDynastyFile;
             if (File.Exists(dynastyFile))
             {
                 StreamReader reader = new StreamReader(dynastyFile, Encoding.Default, true);
@@ -818,7 +818,7 @@ namespace CK2Modder
             }
 
             // Load the cultures
-            String cultureFile = WorkingLocation + "/" + CurrentMod.Path + "/common/cultures.txt";
+            String cultureFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCulturesFile;
             if (File.Exists(cultureFile))
             {
                 StreamReader reader = new StreamReader(cultureFile, Encoding.Default, true);
@@ -826,7 +826,7 @@ namespace CK2Modder
             }
 
             // Load characters
-            String charactersFolder = WorkingLocation + "/" + CurrentMod.Path + "/history/characters/";
+            String charactersFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath;
             if (Directory.Exists(charactersFolder))
             {
                 // Go through each file and add it to the listview
@@ -1107,7 +1107,12 @@ namespace CK2Modder
                     Directory.CreateDirectory(modPath + "/common");
                 }
 
-                stream = File.CreateText(modPath + "/common/dynasties.txt");
+                if (!Directory.Exists(modPath + "/common/dynasties"))
+                {
+                    Directory.CreateDirectory(modPath + "/common/dynasties");
+                }
+
+                stream = File.CreateText(modPath + "/common/dynasties/00_dynasties.txt");
 
                 foreach (Dynasty dynasty in CurrentMod.Dynasties)
                     stream.Write(dynasty.ToString());
@@ -1123,7 +1128,12 @@ namespace CK2Modder
                     Directory.CreateDirectory(modPath + "/common");
                 }
 
-                stream = File.CreateText(modPath + "/common/cultures.txt");
+                if (!Directory.Exists(modPath + "/common/cultures"))
+                {
+                    Directory.CreateDirectory(modPath + "/common/cultures");
+                }
+
+                stream = File.CreateText(modPath + "/common/cultures/00_cultures.txt");
 
                 foreach (Culture culture in CurrentMod.Cultures)
                     stream.Write(culture.ToString());
