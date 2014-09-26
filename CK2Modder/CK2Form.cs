@@ -1110,7 +1110,7 @@ namespace CK2Modder
                     Directory.CreateDirectory(modPath + "/common/dynasties");
                 }
 
-                stream = File.CreateText(modPath + "/common/dynasties/00_dynasties.txt");
+                stream = File.CreateText(modPath + VanillaDynastyFile);
 
                 foreach (Dynasty dynasty in CurrentMod.Dynasties)
                     stream.Write(dynasty.ToString());
@@ -1131,7 +1131,7 @@ namespace CK2Modder
                     Directory.CreateDirectory(modPath + "/common/cultures");
                 }
 
-                stream = File.CreateText(modPath + "/common/cultures/00_cultures.txt");
+                stream = File.CreateText(modPath + VanillaCulturesFile);
 
                 foreach (Culture culture in CurrentMod.Cultures)
                     stream.Write(culture.ToString());
@@ -1142,15 +1142,14 @@ namespace CK2Modder
             // Write out the characters
             if (CurrentMod.CharacterFiles.Count > 0)
             {
-                if (!Directory.Exists(modPath + "/history/characters"))
+                if (!Directory.Exists(modPath + VanillaCharactersPath))
                 {
-                    Directory.CreateDirectory(modPath + "/history/characters");
+                    Directory.CreateDirectory(modPath + VanillaCharactersPath);
                 }
 
                 foreach (String name in CurrentMod.CharacterFiles)
                 {
-                    stream = new StreamWriter(modPath + "/history/characters/" + name + ".txt", false, Encoding.Default);
-                    //stream = File.CreateText(modPath + "/history/characters/" + name + ".txt");
+                    stream = new StreamWriter(modPath + VanillaCharactersPath + "/" + name + ".txt", false, Encoding.Default);
 
                     foreach (Character c in CurrentMod.Characters)
                     {
