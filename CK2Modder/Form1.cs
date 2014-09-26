@@ -20,8 +20,8 @@ namespace CK2Modder
         public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
         public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
 
-        public static readonly String VanillaDynastyFile = "/common/dynasties.txt";
-        public static readonly String VanillaCulturesFile = "/common/cultures.txt";
+        public static readonly String VanillaDynastyFile = "/common/dynasties/00_dynasties.txt";
+        public static readonly String VanillaCulturesFile = "/common/cultures/00_cultures.txt";
         public static readonly String VanillaCharactersPath = "/history/characters/";
 
         // Display string
@@ -66,8 +66,14 @@ namespace CK2Modder
 
             InitializeComponent();
 
-            while (!Directory.Exists(WorkingLocation))
-                SelectWorkingLocation();
+            if(!Directory.Exists(WorkingLocation))
+            {
+                if (!SelectWorkingLocation())
+                {
+                    MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
+                }
+            }
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
@@ -160,7 +166,7 @@ namespace CK2Modder
             while ((line = stream.ReadLine()) != null)
             {
                 // Start of dynasty
-                if (line.EndsWith("= {") && !line.StartsWith("#"))
+                if ((line.Contains("= {") || line.Contains("={")) && !line.StartsWith("#"))
                 {
                     Dynasty dynasty = new Dynasty();
                     dynasty.ID = Int32.Parse(Regex.Match(line, @"\d+").Value);
@@ -177,15 +183,23 @@ namespace CK2Modder
 
                         if (insideLine.Contains("{"))
                             openingBrackets++;
-                        else if (insideLine.Contains("}"))
+                        if (insideLine.Contains("}"))
                             closingBrackets++;
 
                         // Add the name
                         if (insideLine.Contains("name"))
                         {
-                            int start = insideLine.IndexOf('"') + 1;
-                            int end = insideLine.IndexOf('"', start);
-                            dynasty.Name = insideLine.Substring(start, end - start);
+                            // Names are added in two ways with "" or without
+                            if (insideLine.Contains('"'))
+                            {
+                                int start = insideLine.IndexOf('"') + 1;
+                                int end = insideLine.IndexOf('"', start);
+                                dynasty.Name = insideLine.Substring(start, end - start);
+                            }
+                            else
+                            {
+                                dynasty.Name = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
+                            }
                         }
 
                         // Add the culture
@@ -540,9 +554,17 @@ namespace CK2Modder
                         // Add the name
                         if (insideLine.Contains("name") && !insideLine.Contains("nickname"))
                         {
-                            int start = insideLine.IndexOf('"') + 1;
-                            int end = insideLine.IndexOf('"', start);
-                            c.Name = insideLine.Substring(start, end - start);
+                            // Names are added in two ways with "" or without
+                            if (insideLine.Contains('"'))
+                            {
+                                int start = insideLine.IndexOf('"') + 1;
+                                int end = insideLine.IndexOf('"', start);
+                                c.Name = insideLine.Substring(start, end - start);
+                            }
+                            else
+                            {
+                                c.Name = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
+                            }
                         }
 
                         // Is female?
@@ -673,10 +695,23 @@ namespace CK2Modder
                         // most are spread out over several lines
                         else if (insideLine.Contains("={") || insideLine.Contains("= {"))
                         {
-                            String eventLine = insideLine;
-                            Boolean finished = false;
+                            int eventOpeningBraces = 0;
+                            int eventClosingBraces = 0;
+                            String eventLine = null;
+
                             do
                             {
+                                eventLine = (eventLine == null) ? insideLine : stream.ReadLine();
+
+                                // Do this check because we already counted the first { when the counter was initialized
+                                if (eventLine.Contains("{"))
+                                    eventOpeningBraces++;
+
+                                if (eventLine.Contains("}"))
+                                    eventClosingBraces++;
+
+                                //Console.WriteLine(String.Format("{0} {1} - {2}", eventOpeningBraces, eventClosingBraces, eventLine));
+
                                 if (c.Events.Equals(""))
                                     c.Events += eventLine;
                                 else
@@ -693,14 +728,9 @@ namespace CK2Modder
 
                                     c.Events += eventLine;
                                 }
-                                
-                                if (eventLine.Contains("}"))
-                                    finished = true;
-                                else
-                                    eventLine = stream.ReadLine();
-                            } while (!finished);
-                            
-                            closingBrackets++;                            
+                            } while (eventOpeningBraces > eventClosingBraces);
+
+                            closingBrackets++;
                         }
 
                     } while (closingBrackets < openingBrackets);
@@ -861,6 +891,7 @@ namespace CK2Modder
             buttonImportDynasties.DataBindings.Clear();
             buttonImportCultures.DataBindings.Clear();
             buttonImportCharacters.DataBindings.Clear();
+            userDirectoryTextBox.DataBindings.Clear();
 
             // Reset the culture tree view
             cultureTreeView.Nodes.Clear();
@@ -883,7 +914,7 @@ namespace CK2Modder
             UserPreferences.Default.Save();
         }
                
-        private void SelectWorkingLocation()
+        private bool SelectWorkingLocation()
         {
             folderBrowserDialog = new FolderBrowserDialog();
             //folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
@@ -893,17 +924,23 @@ namespace CK2Modder
 
             if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(folderBrowserDialog.SelectedPath + "/ck2.exe"))
+                if (File.Exists(folderBrowserDialog.SelectedPath + "/CK2game.exe"))
                 {
                     WorkingLocation = folderBrowserDialog.SelectedPath;
                     workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
                     UserPreferences.Default.WorkingLocation = WorkingLocation;
                     UserPreferences.Default.Save();
+                    return true;
                 }
                 else
                 {
                     MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
                 }
+            }
+            else
+            {
+                return false;
             }
         }
 
