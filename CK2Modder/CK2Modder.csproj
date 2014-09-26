@@ -70,11 +70,11 @@
     </Compile>
     <Compile Include="GameData\gfx\CoatOfArms.cs" />
     <Compile Include="GameData\common\Dynasty.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="CK2Form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="CK2Form.Designer.cs">
+      <DependentUpon>CK2Form.cs</DependentUpon>
     </Compile>
     <Compile Include="GameData\history\characters\Character.cs" />
     <Compile Include="GameData\history\characters\CharacterFileForm.cs">
@@ -96,7 +96,7 @@
     <Compile Include="GameData\history\characters\LifeEventEditor.Designer.cs">
       <DependentUpon>LifeEventEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mod.cs" />
+    <Compile Include="GameData\Mod.cs" />
     <Compile Include="NewModForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,8 +110,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UserPreferences.settings</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="CK2Form.resx">
+      <DependentUpon>CK2Form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameData\common\DynastyEditor.resx">
       <DependentUpon>DynastyEditor.cs</DependentUpon>
