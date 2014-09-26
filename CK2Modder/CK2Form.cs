@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
-using System.Threading;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Globalization;
+using CK2Modder.GameData;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
 
 namespace CK2Modder
 {
-    public partial class Form1 : Form
+    public partial class CK2Form : Form
     {
         public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
         public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
@@ -36,7 +34,7 @@ namespace CK2Modder
 
         #region Initialization
 
-        public Form1(string filename)
+        public CK2Form(string filename)
         {
             Initialize();
 
@@ -48,7 +46,7 @@ namespace CK2Modder
 
         }
 
-        public Form1()
+        public CK2Form()
         {
             Initialize();
 

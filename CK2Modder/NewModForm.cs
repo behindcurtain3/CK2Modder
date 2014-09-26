@@ -12,9 +12,9 @@ namespace CK2Modder
 {
     public partial class NewModForm : Form
     {
-        Form1 mainForm;
+        CK2Form mainForm;
 
-        public NewModForm(Form1 form)
+        public NewModForm(CK2Form form)
         {
             InitializeComponent();
 

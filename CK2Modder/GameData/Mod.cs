@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
 
-namespace CK2Modder
+namespace CK2Modder.GameData
 {
     public class Mod : INotifyPropertyChanged
     {

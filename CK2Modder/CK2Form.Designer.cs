@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace CK2Modder
 {
-    partial class Form1
+    partial class CK2Form
     {
         /// <summary>
         /// Required designer variable.

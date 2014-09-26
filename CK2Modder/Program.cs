@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace CK2Modder
@@ -17,9 +15,9 @@ namespace CK2Modder
             Application.SetCompatibleTextRenderingDefault(false);
 
             if (args.Length > 0)
-                Application.Run(new Form1(args[0]));
+                Application.Run(new CK2Form(args[0]));
             else
-                Application.Run(new Form1());
+                Application.Run(new CK2Form());
         }
     }
 }
