@@ -5,5 +5,4 @@ An app that assists with the creation and editing of mods for [Crusader Kings II
 
 ###Current Features
 * Create and edit mods
-* Import, create and/or cultures, culture groups, and dynasties
-* Import and edit characters
+* Import, create and/or edit cultures, culture groups, dynasties and characters

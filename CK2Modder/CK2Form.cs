@@ -1063,7 +1063,8 @@ namespace CK2Modder
                     if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
                     {
                         // Delete the entry
-                        c.Traits.RemoveAt(editor.Traits.SelectedIndex);
+                        if(editor.Traits.SelectedIndex >= 0 && editor.Traits.SelectedIndex < editor.Traits.Items.Count)
+                            c.Traits.RemoveAt(editor.Traits.SelectedIndex);
                     }
                 });
 
