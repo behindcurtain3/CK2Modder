@@ -187,7 +187,7 @@ namespace CK2Modder.GameData
 
             while ((line = stream.ReadLine()) != null)
             {
-                if (line.StartsWith("name = "))
+                if (line.StartsWith("name = ") || line.StartsWith("name="))
                 {
                     int start = line.IndexOf('"') + 1;
                     int end = line.IndexOf('"', start);

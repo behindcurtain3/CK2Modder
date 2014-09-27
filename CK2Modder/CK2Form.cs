@@ -839,7 +839,7 @@ namespace CK2Modder
                         CurrentMod.CharacterFiles.Add(file);
                         CurrentMod.CharacterFilesToLoad.Enqueue(filePath);
 
-                        characterFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(file));
+                        characterFilesListBox.Items.Add(file);
                     }
                 }
 
@@ -1340,13 +1340,20 @@ namespace CK2Modder
 
         void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.RowIndex >= dynastyGridView.Rows.Count)
+                return;
+
             DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
 
-            ShowDynasty((Dynasty)row.DataBoundItem);
+            ShowDynasty(row.DataBoundItem as Dynasty);
         }
 
         void characterGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            // Check for a bad row index, -1 technically means clicking on the row header
+            if (e.RowIndex < 0 || e.RowIndex >= characterGridView.Rows.Count)
+                return;
+
             DataGridViewRow row = characterGridView.Rows[e.RowIndex];
 
             ShowCharacter(row.DataBoundItem as Character);
