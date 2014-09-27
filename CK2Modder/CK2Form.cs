@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using CK2Modder.GameData;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
+using CK2Modder.Util;
 
 namespace CK2Modder
 {
@@ -521,225 +522,51 @@ namespace CK2Modder
             BackgroundWorker worker = sender as BackgroundWorker;
             StreamReader stream = e.Argument as StreamReader;
 
-            String line;
-
-            while ((line = stream.ReadLine()) != null)
+            List<String> lines = new List<string>();
+            String currentLine;
+            int bracketCounter = 0;
+            while ((currentLine = stream.ReadLine()) != null)
             {
-                // Start of character
-                if ((line.Contains("= {") || line.Contains("={")) && !line.StartsWith("#"))
+                // read through the lines of each character adding them to the lines list
+                // when the end of the character is reached load the character from the list
+                // and reset the list for the next character
+
+                // skip processing any commented out lines or empty lines
+                if (currentLine.StartsWith("#") || String.IsNullOrEmpty(currentLine))
+                    continue;
+
+                // check for brackets, they keep track of whether the entire character has been added yet
+                if (currentLine.Contains("{"))
+                    bracketCounter++;
+                if (currentLine.Contains("}"))
+                    bracketCounter--;
+
+                // add the current line
+                lines.Add(currentLine);
+
+                // end of a character
+                if (currentLine.Contains("}") && bracketCounter == 0)
                 {
-                    Character c = new Character();
-                    c.ID = Int32.Parse(Regex.Match(line, @"\d+").Value);
-                    c.File = Path.GetFileNameWithoutExtension(CurrentMod.CharacterFilesToLoad.Peek());
-
-                    int openingBrackets = 1;
-                    int closingBrackets = 0;
-
-                    String insideLine;
-                    do
+                    // attempt to the load the character
+                    Character c = CharacterLoader.Load(lines);
+                    
+                    // if successful add the character to the character list
+                    if (c != null)
                     {
-                        insideLine = stream.ReadLine().Trim();
+                        c.File = Path.GetFileNameWithoutExtension(CurrentMod.CharacterFilesToLoad.Peek());
+                        loadingCharacters.Add(c);
+                    }
 
-                        // Skip comment lines
-                        if (insideLine.StartsWith("#"))
-                            continue;
-
-                        if (insideLine.Contains("{"))
-                            openingBrackets++;
-                        if (insideLine.Contains("}"))
-                            closingBrackets++;
-
-                        // Add the name
-                        if (insideLine.Contains("name") && !insideLine.Contains("nickname"))
-                        {
-                            // Names are added in two ways with "" or without
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                c.Name = insideLine.Substring(start, end - start);
-                            }
-                            else
-                            {
-                                c.Name = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                            }
-                        }
-
-                        // Is female?
-                        else if (insideLine.Contains("female"))
-                        {
-                            int start = insideLine.IndexOf('=') + 1;
-                            String yesOrNo = insideLine.Substring(start, insideLine.Length - start);
-
-                            if (yesOrNo.Trim().Equals("yes"))
-                                c.Female = true;
-                            else
-                                c.Female = false;
-                        }
-
-                        // Add the culture
-                        else if (insideLine.Contains("culture"))
-                        {
-                            // Cultures are added in two ways with "" or without
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                c.Culture = insideLine.Substring(start, end - start);
-                            }
-                            else
-                            {
-                                c.Culture = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                            }
-                        }
-
-                        // Religion
-                        else if (insideLine.Contains("religion"))
-                        {
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                c.Religion = insideLine.Substring(start, end - start);
-                            }
-                            else
-                            {
-                                c.Religion = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                            }
-                        }
-
-                        // Add dynasty
-                        else if (insideLine.Contains("dynasty"))
-                        {
-                            c.Dynasty = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // Nickname
-                        else if (insideLine.StartsWith("give_nickname"))
-                        {
-                            c.Nickname = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                        }
-
-                        // Stats
-                        else if (insideLine.Contains("martial=") && !insideLine.Contains("trait"))
-                        {
-                            c.Martial = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-                        else if (insideLine.Contains("diplomacy="))
-                        {
-                            c.Diplomacy = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-                        else if (insideLine.Contains("intrigue="))
-                        {
-                            c.Intrigue = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-                        else if (insideLine.Contains("stewardship="))
-                        {
-                            c.Stewardship = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-                        else if (insideLine.Contains("learning="))
-                        {
-                            c.Learning = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // Traits
-                        else if (insideLine.StartsWith("add_trait"))
-                        {
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                c.Traits.Add(insideLine.Substring(start, end - start));
-                            }
-                            else
-                            {
-                                c.Traits.Add(insideLine.Substring(insideLine.IndexOf("=") + 1).Trim());
-                            }
-                        }
-
-                        // Mother & Father
-                        else if (insideLine.Contains("father=") || insideLine.Contains("father ="))
-                        {
-                            c.Father = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-                        else if (insideLine.Contains("mother=") || insideLine.Contains("mother ="))
-                        {
-                            c.Mother = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // custom look
-                        else if (insideLine.Contains("dna=") || insideLine.Contains("dna ="))
-                        {
-                            int start = insideLine.IndexOf('"') + 1;
-                            int end = insideLine.IndexOf('"', start);
-                            c.DNA = insideLine.Substring(start, end - start);
-                        }
-                        else if (insideLine.Contains("properties=") || insideLine.Contains("properties ="))
-                        {
-                            int start = insideLine.IndexOf('"') + 1;
-                            int end = insideLine.IndexOf('"', start);
-                            c.Properties = insideLine.Substring(start, end - start);
-                        }
-
-                        // life events
-                        // some events are all on one line read them here
-                        else if ((insideLine.Contains("={") || insideLine.Contains("= {")) && (insideLine.Contains("}")))
-                        {
-                            if(c.Events.Equals(""))
-                                c.Events += insideLine;
-                            else
-                                c.Events += "\r\n" + insideLine;                           
-                        }
-                        // most are spread out over several lines
-                        else if (insideLine.Contains("={") || insideLine.Contains("= {"))
-                        {
-                            int eventOpeningBraces = 0;
-                            int eventClosingBraces = 0;
-                            String eventLine = null;
-
-                            do
-                            {
-                                eventLine = (eventLine == null) ? insideLine : stream.ReadLine();
-
-                                // Do this check because we already counted the first { when the counter was initialized
-                                if (eventLine.Contains("{"))
-                                    eventOpeningBraces++;
-
-                                if (eventLine.Contains("}"))
-                                    eventClosingBraces++;
-
-                                //Console.WriteLine(String.Format("{0} {1} - {2}", eventOpeningBraces, eventClosingBraces, eventLine));
-
-                                if (c.Events.Equals(""))
-                                    c.Events += eventLine;
-                                else
-                                {
-                                    c.Events += "\r\n";
-
-                                    if (!eventLine.Contains("{"))
-                                    {
-                                        eventLine = eventLine.Trim();
-
-                                        if (!eventLine.Contains("}"))
-                                            c.Events += "\t";
-                                    }
-
-                                    c.Events += eventLine;
-                                }
-                            } while (eventOpeningBraces > eventClosingBraces);
-
-                            closingBrackets++;
-                        }
-
-                    } while (closingBrackets < openingBrackets);
-
-
-                    // Add the row to our list
-                    loadingCharacters.Add(c);
+                    // reset the list
+                    lines.Clear();
                 }
+
             }
 
+            // close the file stream
             stream.Close();
+
+            // set the result for this worker
             e.Result = loadingCharacters;
         }
 
@@ -1045,7 +872,7 @@ namespace CK2Modder
 
             // Events
             EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabInfo);
-            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 2; // go to characters
+            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 3;
             editor.CloseButton.Click += closeHandler;
             editor.CloseButton.Click += closeHandler2;
 
