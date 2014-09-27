@@ -21,6 +21,8 @@ namespace CK2Modder
 
         public static readonly String VanillaDynastyFile = "/common/dynasties/00_dynasties.txt";
         public static readonly String VanillaCulturesFile = "/common/cultures/00_cultures.txt";
+
+        public static readonly String VanillaDynastiesPath = "/common/dynasties/";
         public static readonly String VanillaCharactersPath = "/history/characters/";
 
         // Display string
@@ -153,130 +155,55 @@ namespace CK2Modder
 
         private void dynastyBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            int progress = 0;
-            // Store the ids
             List<Dynasty> loadingDynasties = new List<Dynasty>();
 
             BackgroundWorker worker = sender as BackgroundWorker;
             StreamReader stream = e.Argument as StreamReader;
 
-            String line;
-
-            while ((line = stream.ReadLine()) != null)
+            List<String> lines = new List<string>();
+            String currentLine;
+            int bracketCounter = 0;
+            while ((currentLine = stream.ReadLine()) != null)
             {
-                // Start of dynasty
-                if ((line.Contains("= {") || line.Contains("={")) && !line.StartsWith("#"))
+                // read through the lines of each dynasty adding them to the lines list
+                // when the end of the dynasty is reached load the dynasty from the list
+                // and reset the list for the next dynasty
+
+                // skip processing any commented out lines or empty lines
+                if (currentLine.StartsWith("#") || String.IsNullOrEmpty(currentLine))
+                    continue;
+
+                // check for brackets, they keep track of whether the entire character has been added yet
+                if (currentLine.Contains("{"))
+                    bracketCounter++;
+                if (currentLine.Contains("}"))
+                    bracketCounter--;
+
+                // add the current line
+                lines.Add(currentLine);
+
+                // end of a character
+                if (currentLine.Contains("}") && bracketCounter == 0)
                 {
-                    Dynasty dynasty = new Dynasty();
-                    dynasty.ID = Int32.Parse(Regex.Match(line, @"\d+").Value);
+                    // attempt to the load the dynasty
+                    Dynasty dynasty = DynastyLoader.Load(lines);
 
-                    int openingBrackets = 1;
-                    int closingBrackets = 0;
-                    int colorsFound = 0;
-
-                    String insideLine;
-
-                    do
+                    // if successful add the character to the character list
+                    if (dynasty != null)
                     {
-                        insideLine = stream.ReadLine();
+                        loadingDynasties.Add(dynasty);
+                    }
 
-                        if (insideLine.Contains("{"))
-                            openingBrackets++;
-                        if (insideLine.Contains("}"))
-                            closingBrackets++;
+                    // reset the list
+                    lines.Clear();
+                }
 
-                        // Add the name
-                        if (insideLine.Contains("name"))
-                        {
-                            // Names are added in two ways with "" or without
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                dynasty.Name = insideLine.Substring(start, end - start);
-                            }
-                            else
-                            {
-                                dynasty.Name = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                            }
-                        }
-
-                        // Add the culture
-                        else if (insideLine.Contains("culture"))
-                        {
-                            // Cultures are added in two ways with "" or without
-                            if (insideLine.Contains('"'))
-                            {
-                                int start = insideLine.IndexOf('"') + 1;
-                                int end = insideLine.IndexOf('"', start);
-                                dynasty.Culture = insideLine.Substring(start, end - start);
-                            }
-                            else
-                            {
-                                dynasty.Culture = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                            }
-                        }
-
-                        // Add the coat of arms
-                        else if (insideLine.Contains("coat_of_arms"))
-                        {
-                            dynasty.COA = new CoatOfArms();                            
-                        }
-
-                        // COA template
-                        else if (insideLine.Contains("template"))
-                        {
-                            dynasty.COA.Template = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // COA Texture_Internal
-                        // We need to check for this before "texture" because we are using contains
-                        else if (insideLine.Contains("texture_internal"))
-                        {
-                            dynasty.COA.Layer.Texture_Internal = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // COA Texture
-                        else if (insideLine.Contains("texture"))
-                        {
-                            dynasty.COA.Layer.Texture = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }                       
-
-                        // COA Emblem
-                        else if (insideLine.Contains("emblem"))
-                        {
-                            dynasty.COA.Layer.Emblem = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                        }
-
-                        // COA Color1
-                        else if (insideLine.Contains("color"))
-                        {
-                            if(colorsFound == 0)
-                                dynasty.COA.Layer.R = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                            else if (colorsFound == 1)
-                                dynasty.COA.Layer.G = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-                            else if (colorsFound == 2)
-                                dynasty.COA.Layer.B = Int32.Parse(Regex.Match(insideLine, @"\d+").Value);
-
-                            colorsFound++;
-                        }
-
-                    } while (closingBrackets < openingBrackets);
-
-
-                    // Add the row to our list
-                    loadingDynasties.Add(dynasty);
-
-                    // Update the progress
-                    progress += 10;
-                    if(progress > 100)
-                        progress = 100;
-
-                    worker.ReportProgress(progress);
-                }               
             }
-
+          
+            // clsoe the stream
             stream.Close();
+
+            // set the results
             e.Result = loadingDynasties;
         }
 
@@ -291,7 +218,17 @@ namespace CK2Modder
 
             foreach (Dynasty d in rows)
                 if(!CurrentMod.Dynasties.Contains(d))
-                    CurrentMod.Dynasties.Add(d);            
+                    CurrentMod.Dynasties.Add(d);
+
+            // Dequeue the current item
+            CurrentMod.DynastyFilesToLoad.Dequeue();
+
+            // Run the next file in the queue
+            if (CurrentMod.DynastyFilesToLoad.Count > 0)
+            {
+                StreamReader reader = new StreamReader(CurrentMod.DynastyFilesToLoad.Peek(), Encoding.Default, true);
+                dynastyBackgroundWorker.RunWorkerAsync(reader);
+            }
         }
 
         void dynastyBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -635,11 +572,31 @@ namespace CK2Modder
             characterGridView.AllowUserToAddRows = false; // Default to not allowing user to add rows
 
             // Load the dynasties
-            String dynastyFile = WorkingLocation + "/" + CurrentMod.Path + VanillaDynastyFile;
-            if (File.Exists(dynastyFile))
+            String dynastiesFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaDynastiesPath;
+            if(Directory.Exists(dynastiesFolder))
             {
-                StreamReader reader = new StreamReader(dynastyFile, Encoding.Default, true);
-                dynastyBackgroundWorker.RunWorkerAsync(reader);
+                // Go through each file and add it to the queue
+                String[] files = Directory.GetFiles(dynastiesFolder);
+
+                foreach (String filePath in files)
+                {
+                    String file = Path.GetFileNameWithoutExtension(filePath);
+
+                    if (!CurrentMod.DynastyFiles.Contains(file))
+                    {
+                        CurrentMod.DynastyFiles.Add(file);
+                        CurrentMod.DynastyFilesToLoad.Enqueue(filePath);
+
+                        // TODO: add file to list view
+                    }
+                }
+
+                // start loading the files
+                if (CurrentMod.DynastyFilesToLoad.Count > 0)
+                {
+                    StreamReader reader = new StreamReader(CurrentMod.DynastyFilesToLoad.Peek(), Encoding.Default, true);
+                    dynastyBackgroundWorker.RunWorkerAsync(reader);
+                }
             }
 
             // Load the cultures

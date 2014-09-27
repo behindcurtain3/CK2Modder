@@ -12,11 +12,15 @@ namespace CK2Modder.GameData
     {
         public BindingList<Dynasty> Dynasties;
         public List<Culture> Cultures;
-        public List<String> CharacterFiles;        
         public BindingList<Character> Characters;
 
-        // Queue that holds character files to load since we only load one at a time store them here
+        // List of files that are in used
+        public List<String> CharacterFiles;
+        public List<String> DynastyFiles;
+
+        // Queue's that hold files to load since only one file is loaded at a time
         public Queue<String> CharacterFilesToLoad;
+        public Queue<String> DynastyFilesToLoad;
 
         private String _rawOutput;
         public String RawOutput 
@@ -144,10 +148,13 @@ namespace CK2Modder.GameData
             // Setup dynasty list
             Dynasties = new BindingList<Dynasty>();
             Cultures = new List<Culture>();
-            CharacterFiles = new List<String>();
             Characters = new BindingList<Character>();
 
+            CharacterFiles = new List<String>();
+            DynastyFiles = new List<String>();
+
             CharacterFilesToLoad = new Queue<String>();
+            DynastyFilesToLoad = new Queue<String>();
         }
 
         public void UpdateRawOutput()

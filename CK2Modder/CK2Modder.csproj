@@ -111,6 +111,7 @@
       <DependentUpon>UserPreferences.settings</DependentUpon>
     </Compile>
     <Compile Include="Util\CharacterLoader.cs" />
+    <Compile Include="Util\DynastyLoader.cs" />
     <Compile Include="Util\Helpers.cs" />
     <EmbeddedResource Include="CK2Form.resx">
       <DependentUpon>CK2Form.cs</DependentUpon>
