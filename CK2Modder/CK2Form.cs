@@ -24,6 +24,7 @@ namespace CK2Modder
 
         public static readonly String VanillaDynastiesPath = "/common/dynasties/";
         public static readonly String VanillaCharactersPath = "/history/characters/";
+        public static readonly String VanillaCulturesPath = "/common/cultures/";
 
         // Display string
         public static readonly String DefaultCultureRoot = "Culture Groups";
@@ -243,180 +244,49 @@ namespace CK2Modder
             BackgroundWorker worker = sender as BackgroundWorker;
             StreamReader stream = e.Argument as StreamReader;
 
-            String line;
-
-            while ((line = stream.ReadLine()) != null)
+            List<String> lines = new List<string>();
+            String currentLine;
+            int bracketCounter = 0;
+            while ((currentLine = stream.ReadLine()) != null)
             {
-                // Start of dynasty
-                if (line.EndsWith("= {") && !line.StartsWith("#"))
+                // read through the lines of each culture adding them to the lines list
+                // when the end of the culture is reached load the culture from the list
+                // and reset the list for the next culture
+
+                // skip processing any commented out lines or empty lines
+                if (currentLine.StartsWith("#") || String.IsNullOrEmpty(currentLine))
+                    continue;
+
+                // check for brackets, they keep track of whether the entire character has been added yet
+                if (currentLine.Contains("{"))
+                    bracketCounter++;
+                if (currentLine.Contains("}"))
+                    bracketCounter--;
+
+                // add the current line
+                lines.Add(currentLine);
+
+                // end of a character
+                if (currentLine.Contains("}") && bracketCounter == 0)
                 {
-                    Culture culture = new Culture();
-                    culture.Name = line.Remove(line.IndexOf(" = {"));
+                    // attempt to the load the culture
+                    Culture culture = CultureLoader.Load(lines);
 
-                    int openingBrackets = 1;
-                    int closingBrackets = 0;
-
-                    String insideLine;
-
-                    do
+                    // if successful add the culture to the culture list
+                    if (culture != null)
                     {
-                        insideLine = stream.ReadLine();
+                        loadingCultures.Add(culture);
+                    }
 
-                        if (insideLine.Contains("{"))
-                            openingBrackets++;
-                        if (insideLine.Contains("}"))
-                            closingBrackets++;
-
-                        // Add the name
-                        if (insideLine.Contains("graphical_culture"))
-                        {
-                            culture.Graphical_Culture = insideLine.Substring(insideLine.IndexOf("=") + 1).Trim();
-                        }
-
-                        // Load subcultures
-                        if (insideLine.Contains("= {") && !insideLine.StartsWith("#") && !insideLine.Contains("male_names") && !insideLine.Contains("female_names"))
-                        {
-                            Culture subCulture = new Culture();
-                            subCulture.Name = insideLine.Remove(insideLine.IndexOf(" = {"));
-
-                            int openBrackets = 1;
-                            int closeBrackets = 0;
-                            String subCultureLine;
-                            do
-                            {
-                                subCultureLine = stream.ReadLine();
-
-                                if (subCultureLine.Contains("{"))
-                                    openBrackets++;
-                                if (subCultureLine.Contains("}"))
-                                    closeBrackets++;
-
-                                // Add the name
-                                if (subCultureLine.Contains("graphical_culture"))
-                                {
-                                    subCulture.Graphical_Culture = subCultureLine.Substring(subCultureLine.IndexOf("=") + 1).Trim();
-                                }
-                                else if (subCultureLine.Contains("color"))
-                                {
-                                    int start = subCultureLine.IndexOf("{") + 2;
-                                    int end = subCultureLine.IndexOf("}") - 1;
-                                    int length = end - start;
-
-                                    subCulture.Color = subCultureLine.Substring(start, length);
-                                }
-
-                                // Add the 2nd condition otherwise this would pick up both "male_names" and "female_names"
-                                else if (subCultureLine.Contains("male_names") && !subCultureLine.Contains("fe"))
-                                {
-                                    String nameLine = stream.ReadLine();
-                                    while (!nameLine.Contains("}"))
-                                    {
-                                        if (!nameLine.Trim().Equals(""))
-                                        {
-                                            if (subCulture.MaleNames.Equals(""))
-                                                subCulture.MaleNames += nameLine.Trim();
-                                            else
-                                                subCulture.MaleNames += "\r\n" + nameLine.Trim();
-                                        }
-                                        nameLine = stream.ReadLine();
-                                    }
-                                    closeBrackets++;
-                                }
-                                else if (subCultureLine.Contains("female_names"))
-                                {
-                                    String nameLine = stream.ReadLine();
-                                    while (!nameLine.Contains("}"))
-                                    {
-                                        if (!nameLine.Trim().Equals(""))
-                                        {
-                                            if (subCulture.FemaleNames.Equals(""))
-                                                subCulture.FemaleNames += nameLine.Trim();
-                                            else
-                                                subCulture.FemaleNames += "\r\n" + nameLine.Trim();
-                                        }
-                                        nameLine = stream.ReadLine();
-                                    }
-                                    closeBrackets++;
-                                }
-                                else if (subCultureLine.Contains("from_dynasty_prefix"))
-                                {
-                                    int start = subCultureLine.IndexOf('"') + 1;
-                                    int end = subCultureLine.IndexOf('"', start);
-                                    subCulture.DynastyPrefix = subCultureLine.Substring(start, end - start);
-                                }
-                                else if (subCultureLine.Contains("bastard_dynasty_prefix"))
-                                {
-                                    int start = subCultureLine.IndexOf('"') + 1;
-                                    int end = subCultureLine.IndexOf('"', start);
-                                    subCulture.BastardPrefix = subCultureLine.Substring(start, end - start);
-                                }
-                                else if (subCultureLine.Contains("male_patronym") && !subCultureLine.Contains("female_patronym"))
-                                {
-                                    int start = subCultureLine.IndexOf('"') + 1;
-                                    int end = subCultureLine.IndexOf('"', start);
-                                    subCulture.MalePatronym = subCultureLine.Substring(start, end - start);
-                                }
-                                else if (subCultureLine.Contains("female_patronym"))
-                                {
-                                    int start = subCultureLine.IndexOf('"') + 1;
-                                    int end = subCultureLine.IndexOf('"', start);
-                                    subCulture.FemalePatronym = subCultureLine.Substring(start, end - start);
-                                }
-                                else if (subCultureLine.Contains("prefix = "))
-                                {
-                                    int start = subCultureLine.IndexOf('=') + 1;
-                                    String yesOrNo = subCultureLine.Substring(start, subCultureLine.Length - start);
-
-                                    if(yesOrNo.Trim().Equals("yes"))
-                                        subCulture.IsSuffix = true;
-                                    else
-                                        subCulture.IsSuffix = false;
-                                }
-                                else if (subCultureLine.Contains("pat_grf_name_chance"))
-                                {
-                                    subCulture.PaternalGrandFather = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("mat_grf_name_chance"))
-                                {
-                                    subCulture.MaternalGrandFather = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("father_name_chance"))
-                                {
-                                    subCulture.Father = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("pat_grm_name_chance"))
-                                {
-                                    subCulture.PaternalGrandMother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("mat_grm_name_chance"))
-                                {
-                                    subCulture.MaternalGrandMother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("mother_name_chance"))
-                                {
-                                    subCulture.Mother = Int32.Parse(Regex.Match(subCultureLine, @"\d+").Value);
-                                }
-                                else if (subCultureLine.Contains("modifier"))
-                                {
-                                    int start = subCultureLine.IndexOf('=') + 2;
-                                    int end = subCultureLine.Length - start;
-                                    subCulture.Modifier = subCultureLine.Substring(start, end);
-                                }
-
-                            } while (closeBrackets < openBrackets);
-
-                            culture.SubCultures.Add(subCulture);
-                            closingBrackets++;
-                        }
-                        
-                    } while (closingBrackets < openingBrackets);
-
-                    // Add the row to our list
-                    loadingCultures.Add(culture);
+                    // reset the list
+                    lines.Clear();
                 }
             }
-
+            
+            // close the stream
             stream.Close();
+
+            // store the results
             e.Result = loadingCultures;
         }
 
@@ -448,7 +318,18 @@ namespace CK2Modder
                 CurrentMod.Cultures.Add(c);
             }
 
+            // Make sure the new tree structure is shown
             root.Expand();
+
+            // Dequeue the current item
+            CurrentMod.CultureFilesToLoad.Dequeue();
+
+            // Run the next file in the queue
+            if (CurrentMod.CultureFilesToLoad.Count > 0)
+            {
+                StreamReader reader = new StreamReader(CurrentMod.CultureFilesToLoad.Peek(), Encoding.Default, true);
+                cultureBackgroundWorker.RunWorkerAsync(reader);
+            }
         }
 
         private void characterBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -546,8 +427,7 @@ namespace CK2Modder
             dynastyGridView.Visible = true;
 
             characterGridView.DataSource = CurrentMod.Characters;
-
-
+            
             // Add data bindings
             textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
             userDirectoryTextBox.DataBindings.Add("Text", CurrentMod, "UserDirectory");
@@ -598,11 +478,29 @@ namespace CK2Modder
             }
 
             // Load the cultures
-            String cultureFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCulturesFile;
-            if (File.Exists(cultureFile))
+            String culturesFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaCulturesPath;
+            if (Directory.Exists(culturesFolder))
             {
-                StreamReader reader = new StreamReader(cultureFile, Encoding.Default, true);
-                cultureBackgroundWorker.RunWorkerAsync(reader);
+                // Go through each file and add it to the queue
+                String[] files = Directory.GetFiles(culturesFolder);
+
+                foreach (String filePath in files)
+                {
+                    String file = Path.GetFileNameWithoutExtension(filePath);
+
+                    if (!CurrentMod.CultureFiles.Contains(file))
+                    {
+                        CurrentMod.CultureFiles.Add(file);
+                        CurrentMod.CultureFilesToLoad.Enqueue(filePath);
+                    }
+                }
+
+                // start loading the files
+                if (CurrentMod.CultureFilesToLoad.Count > 0)
+                {
+                    StreamReader reader = new StreamReader(CurrentMod.CultureFilesToLoad.Peek(), Encoding.Default, true);
+                    cultureBackgroundWorker.RunWorkerAsync(reader);
+                }
             }
 
             // Load characters
