@@ -1049,8 +1049,6 @@ namespace CK2Modder
 
             if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                System.Console.WriteLine(openFileDialog.FileName);
-
                 if (CurrentMod != null)
                     CloseMod();
 
@@ -1070,8 +1068,23 @@ namespace CK2Modder
 
         private void modToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NewModForm newMod = new NewModForm(this);
-            newMod.ShowDialog(this);
+            newModDialog = new SaveFileDialog();
+            newModDialog.InitialDirectory = WorkingLocation + "\\mod";
+            newModDialog.AddExtension = true;
+            newModDialog.DefaultExt = ".mod";
+            newModDialog.FileName = "Mod Name";
+            newModDialog.Filter = "Mod File (*.mod)|*.mod";
+            newModDialog.Title = "Select a save location and name for the mod";
+
+            if (newModDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                if (CurrentMod != null)
+                    CloseMod();
+
+                // TODO: delete and remake the mod directory if it already exits to give the new mod a fresh start
+                Mod mod = new Mod(Path.GetFileNameWithoutExtension(newModDialog.FileName));
+                SetCurrentMod(mod);
+            }
         }
 
         private void closeModToolStripMenuItem_Click(object sender, EventArgs e)

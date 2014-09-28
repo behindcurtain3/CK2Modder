@@ -54,6 +54,8 @@ namespace CK2Modder
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabModProperties = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.userDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.addPathButton = new System.Windows.Forms.Button();
             this.replacePathsComboBox = new System.Windows.Forms.ComboBox();
             this.label23 = new System.Windows.Forms.Label();
@@ -139,8 +141,7 @@ namespace CK2Modder
             this.cultureContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cultureToolStripMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.label5 = new System.Windows.Forms.Label();
-            this.userDirectoryTextBox = new System.Windows.Forms.TextBox();
+            this.newModDialog = new System.Windows.Forms.SaveFileDialog();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -216,7 +217,7 @@ namespace CK2Modder
             // 
             this.modToolStripMenuItem.Name = "modToolStripMenuItem";
             this.modToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.modToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.modToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.modToolStripMenuItem.Text = "Mod";
             this.modToolStripMenuItem.Click += new System.EventHandler(this.modToolStripMenuItem_Click);
             // 
@@ -311,9 +312,9 @@ namespace CK2Modder
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabModProperties);
             this.tabControl.Controls.Add(this.culturesTabPage);
             this.tabControl.Controls.Add(this.tabDynasties);
@@ -358,6 +359,22 @@ namespace CK2Modder
             this.groupBox4.TabIndex = 9;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Mod Information";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 56);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "User Directory:";
+            // 
+            // userDirectoryTextBox
+            // 
+            this.userDirectoryTextBox.Location = new System.Drawing.Point(105, 53);
+            this.userDirectoryTextBox.Name = "userDirectoryTextBox";
+            this.userDirectoryTextBox.Size = new System.Drawing.Size(249, 20);
+            this.userDirectoryTextBox.TabIndex = 13;
             // 
             // addPathButton
             // 
@@ -453,8 +470,8 @@ namespace CK2Modder
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.buttonImportCultures);
             this.groupBox1.Controls.Add(this.buttonImportCharacters);
             this.groupBox1.Controls.Add(this.button2);
@@ -509,8 +526,8 @@ namespace CK2Modder
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(435, 7);
             this.label2.Name = "label2";
@@ -520,9 +537,9 @@ namespace CK2Modder
             // 
             // textBoxModRawOutput
             // 
-            this.textBoxModRawOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxModRawOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxModRawOutput.Location = new System.Drawing.Point(435, 23);
             this.textBoxModRawOutput.Multiline = true;
             this.textBoxModRawOutput.Name = "textBoxModRawOutput";
@@ -543,9 +560,9 @@ namespace CK2Modder
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(6, 6);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -576,9 +593,9 @@ namespace CK2Modder
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -597,9 +614,9 @@ namespace CK2Modder
             // 
             // cultureInformationGroupBox
             // 
-            this.cultureInformationGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cultureInformationGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cultureInformationGroupBox.BackColor = System.Drawing.Color.Transparent;
             this.cultureInformationGroupBox.Controls.Add(this.cultureSuffixCheckBox);
             this.cultureInformationGroupBox.Controls.Add(this.label13);
@@ -700,8 +717,8 @@ namespace CK2Modder
             // 
             // cultureGfxTextBox
             // 
-            this.cultureGfxTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cultureGfxTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cultureGfxTextBox.AutoCompleteCustomSource.AddRange(new string[] {
             "frankishgfx",
             "englishgfx",
@@ -734,8 +751,8 @@ namespace CK2Modder
             // 
             // cultureNameTextBox
             // 
-            this.cultureNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cultureNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cultureNameTextBox.Location = new System.Drawing.Point(130, 16);
             this.cultureNameTextBox.Name = "cultureNameTextBox";
             this.cultureNameTextBox.Size = new System.Drawing.Size(139, 20);
@@ -1065,9 +1082,9 @@ namespace CK2Modder
             // 
             // dynastyGridView
             // 
-            this.dynastyGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dynastyGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -1233,23 +1250,7 @@ namespace CK2Modder
             // 
             this.characterBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.characterBackgroundWorker_DoWork);
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(20, 56);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(77, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "User Directory:";
-            // 
-            // userDirectoryTextBox
-            // 
-            this.userDirectoryTextBox.Location = new System.Drawing.Point(105, 53);
-            this.userDirectoryTextBox.Name = "userDirectoryTextBox";
-            this.userDirectoryTextBox.Size = new System.Drawing.Size(249, 20);
-            this.userDirectoryTextBox.TabIndex = 13;
-            // 
-            // Form1
+            // CK2Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1259,7 +1260,7 @@ namespace CK2Modder
             this.Controls.Add(this.mainMenuStrip);
             this.MainMenuStrip = this.mainMenuStrip;
             this.MinimumSize = new System.Drawing.Size(800, 600);
-            this.Name = "Form1";
+            this.Name = "CK2Form";
             this.Text = "CK2 Modder";
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
@@ -1418,6 +1419,7 @@ namespace CK2Modder
         private System.Windows.Forms.ListBox replacePathsListBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox userDirectoryTextBox;
+        private System.Windows.Forms.SaveFileDialog newModDialog;
     }
 }
 
