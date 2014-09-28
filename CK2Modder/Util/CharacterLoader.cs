@@ -112,21 +112,14 @@ namespace CK2Modder.Util
                 {
                     List<String> eventLines = Helpers.ReadStringSequence(lines, i);
 
-                    // loop through each event line and add the appropriate padding
-                    foreach (String s in eventLines)
-                    {
-                        if(!c.Events.Equals(""))
-                        {
-                            c.Events += "\r\n";
+                    for(int j = 0; j < eventLines.Count; j++)
+                        eventLines[j] = new Regex("\t").Replace(eventLines[j], "", 1);
 
-                            if (!s.Contains("{"))
-                            {
-                                if (!s.Contains("}"))
-                                    c.Events += "\t";
-                            }                            
-                        }
-                        c.Events += s.Trim();
-                    }
+                    // setup the events
+                    if (c.Events == null)
+                        c.Events = eventLines.ToArray();
+                    else
+                        c.Events = c.Events.Concat(eventLines).ToArray();
 
                     // advance the current line position
                     i += eventLines.Count - 1;

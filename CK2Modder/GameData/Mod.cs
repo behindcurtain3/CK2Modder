@@ -13,7 +13,7 @@ namespace CK2Modder.GameData
     {
         public BindingList<Dynasty> Dynasties;
         public List<Culture> Cultures;
-        public BindingList<Character> Characters;
+        public List<Character> Characters;
 
         // List of files that are in used
         public List<String> CharacterFiles;
@@ -155,7 +155,7 @@ namespace CK2Modder.GameData
             // Setup dynasty list
             Dynasties = new BindingList<Dynasty>();
             Cultures = new List<Culture>();
-            Characters = new BindingList<Character>();
+            Characters = new List<Character>();
 
             CharacterFiles = new List<String>();
             DynastyFiles = new List<String>();

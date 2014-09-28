@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using RavSoft;
 
 namespace CK2Modder
 {
@@ -32,8 +33,8 @@ namespace CK2Modder
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Culture Groups");
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Culture Groups");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -123,13 +124,16 @@ namespace CK2Modder
             this.textBoxDynastyFilterByID = new System.Windows.Forms.TextBox();
             this.dynastyGridView = new System.Windows.Forms.DataGridView();
             this.tabCharacters = new System.Windows.Forms.TabPage();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer6 = new System.Windows.Forms.SplitContainer();
+            this.characterFilesFilter = new System.Windows.Forms.TextBox();
             this.characterFilesListBox = new System.Windows.Forms.ListBox();
+            this.splitContainer7 = new System.Windows.Forms.SplitContainer();
+            this.characterListBox = new System.Windows.Forms.ListBox();
+            this.characterPropertyGrid = new System.Windows.Forms.PropertyGrid();
             this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.characterGridView = new System.Windows.Forms.DataGridView();
             this.dynastyBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.cultureBackgroundWorker = new System.ComponentModel.BackgroundWorker();
@@ -142,6 +146,7 @@ namespace CK2Modder
             this.cultureToolStripMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.newModDialog = new System.Windows.Forms.SaveFileDialog();
+            this.characterFilter = new System.Windows.Forms.TextBox();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -168,12 +173,15 @@ namespace CK2Modder
             this.tabDynasties.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).BeginInit();
             this.tabCharacters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).BeginInit();
+            this.splitContainer6.Panel1.SuspendLayout();
+            this.splitContainer6.Panel2.SuspendLayout();
+            this.splitContainer6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).BeginInit();
+            this.splitContainer7.Panel1.SuspendLayout();
+            this.splitContainer7.Panel2.SuspendLayout();
+            this.splitContainer7.SuspendLayout();
             this.characterFilesContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).BeginInit();
             this.cultureSubContextMenuStrip.SuspendLayout();
             this.cultureRootContextMenuStrip.SuspendLayout();
             this.cultureContextMenuStrip.SuspendLayout();
@@ -217,7 +225,7 @@ namespace CK2Modder
             // 
             this.modToolStripMenuItem.Name = "modToolStripMenuItem";
             this.modToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.modToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.modToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.modToolStripMenuItem.Text = "Mod";
             this.modToolStripMenuItem.Click += new System.EventHandler(this.modToolStripMenuItem_Click);
             // 
@@ -320,6 +328,7 @@ namespace CK2Modder
             this.tabControl.Controls.Add(this.tabDynasties);
             this.tabControl.Controls.Add(this.tabCharacters);
             this.tabControl.Location = new System.Drawing.Point(3, 27);
+            this.tabControl.Multiline = true;
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(781, 510);
@@ -569,11 +578,13 @@ namespace CK2Modder
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.cultureTreeView);
+            this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Panel1MinSize = 125;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer1.Size = new System.Drawing.Size(761, 472);
             this.splitContainer1.SplitterDistance = 150;
             this.splitContainer1.TabIndex = 0;
@@ -583,10 +594,10 @@ namespace CK2Modder
             this.cultureTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureTreeView.Location = new System.Drawing.Point(0, 0);
             this.cultureTreeView.Name = "cultureTreeView";
-            treeNode1.Name = "Culture Groups";
-            treeNode1.Text = "Culture Groups";
+            treeNode5.Name = "Culture Groups";
+            treeNode5.Text = "Culture Groups";
             this.cultureTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode5});
             this.cultureTreeView.ShowRootLines = false;
             this.cultureTreeView.Size = new System.Drawing.Size(150, 472);
             this.cultureTreeView.TabIndex = 0;
@@ -603,13 +614,15 @@ namespace CK2Modder
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.cultureInformationGroupBox);
+            this.splitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.splitContainer2.Panel1MinSize = 250;
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.cultureNamesGroupBox);
-            this.splitContainer2.Size = new System.Drawing.Size(611, 478);
-            this.splitContainer2.SplitterDistance = 250;
+            this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer2.Size = new System.Drawing.Size(611, 481);
+            this.splitContainer2.SplitterDistance = 251;
             this.splitContainer2.TabIndex = 0;
             // 
             // cultureInformationGroupBox
@@ -639,7 +652,7 @@ namespace CK2Modder
             this.cultureInformationGroupBox.Controls.Add(this.label9);
             this.cultureInformationGroupBox.Location = new System.Drawing.Point(3, 3);
             this.cultureInformationGroupBox.Name = "cultureInformationGroupBox";
-            this.cultureInformationGroupBox.Size = new System.Drawing.Size(605, 244);
+            this.cultureInformationGroupBox.Size = new System.Drawing.Size(556, 236);
             this.cultureInformationGroupBox.TabIndex = 0;
             this.cultureInformationGroupBox.TabStop = false;
             this.cultureInformationGroupBox.Text = "Culture Information";
@@ -947,7 +960,7 @@ namespace CK2Modder
             this.cultureNamesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureNamesGroupBox.Location = new System.Drawing.Point(0, 0);
             this.cultureNamesGroupBox.Name = "cultureNamesGroupBox";
-            this.cultureNamesGroupBox.Size = new System.Drawing.Size(611, 224);
+            this.cultureNamesGroupBox.Size = new System.Drawing.Size(611, 226);
             this.cultureNamesGroupBox.TabIndex = 0;
             this.cultureNamesGroupBox.TabStop = false;
             this.cultureNamesGroupBox.Text = "Culture Names (Male left, Female right)";
@@ -962,12 +975,14 @@ namespace CK2Modder
             // splitContainer3.Panel1
             // 
             this.splitContainer3.Panel1.Controls.Add(this.cultureMaleNamesRichTextBox);
+            this.splitContainer3.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.cultureFemaleNamesRichTextBox);
-            this.splitContainer3.Size = new System.Drawing.Size(605, 205);
-            this.splitContainer3.SplitterDistance = 301;
+            this.splitContainer3.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.splitContainer3.Size = new System.Drawing.Size(605, 207);
+            this.splitContainer3.SplitterDistance = 271;
             this.splitContainer3.TabIndex = 0;
             // 
             // cultureMaleNamesRichTextBox
@@ -975,7 +990,7 @@ namespace CK2Modder
             this.cultureMaleNamesRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureMaleNamesRichTextBox.Location = new System.Drawing.Point(0, 0);
             this.cultureMaleNamesRichTextBox.Name = "cultureMaleNamesRichTextBox";
-            this.cultureMaleNamesRichTextBox.Size = new System.Drawing.Size(301, 205);
+            this.cultureMaleNamesRichTextBox.Size = new System.Drawing.Size(271, 207);
             this.cultureMaleNamesRichTextBox.TabIndex = 0;
             this.cultureMaleNamesRichTextBox.Text = "";
             this.cultureMaleNamesRichTextBox.WordWrap = false;
@@ -985,7 +1000,7 @@ namespace CK2Modder
             this.cultureFemaleNamesRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureFemaleNamesRichTextBox.Location = new System.Drawing.Point(0, 0);
             this.cultureFemaleNamesRichTextBox.Name = "cultureFemaleNamesRichTextBox";
-            this.cultureFemaleNamesRichTextBox.Size = new System.Drawing.Size(300, 205);
+            this.cultureFemaleNamesRichTextBox.Size = new System.Drawing.Size(330, 207);
             this.cultureFemaleNamesRichTextBox.TabIndex = 0;
             this.cultureFemaleNamesRichTextBox.Text = "";
             this.cultureFemaleNamesRichTextBox.WordWrap = false;
@@ -1087,14 +1102,14 @@ namespace CK2Modder
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
             this.dynastyGridView.Name = "dynastyGridView";
@@ -1103,44 +1118,93 @@ namespace CK2Modder
             // 
             // tabCharacters
             // 
-            this.tabCharacters.BackColor = System.Drawing.Color.Transparent;
-            this.tabCharacters.Controls.Add(this.splitContainer4);
+            this.tabCharacters.Controls.Add(this.splitContainer6);
             this.tabCharacters.Location = new System.Drawing.Point(4, 22);
             this.tabCharacters.Name = "tabCharacters";
             this.tabCharacters.Padding = new System.Windows.Forms.Padding(3);
             this.tabCharacters.Size = new System.Drawing.Size(773, 484);
-            this.tabCharacters.TabIndex = 2;
+            this.tabCharacters.TabIndex = 5;
             this.tabCharacters.Text = "Characters";
+            this.tabCharacters.UseVisualStyleBackColor = true;
             // 
-            // splitContainer4
+            // splitContainer6
             // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer4.Name = "splitContainer4";
+            this.splitContainer6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer6.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer6.Name = "splitContainer6";
             // 
-            // splitContainer4.Panel1
+            // splitContainer6.Panel1
             // 
-            this.splitContainer4.Panel1.Controls.Add(this.characterFilesListBox);
-            this.splitContainer4.Panel1MinSize = 125;
+            this.splitContainer6.Panel1.Controls.Add(this.characterFilesFilter);
+            this.splitContainer6.Panel1.Controls.Add(this.characterFilesListBox);
             // 
-            // splitContainer4.Panel2
+            // splitContainer6.Panel2
             // 
-            this.splitContainer4.Panel2.Controls.Add(this.characterGridView);
-            this.splitContainer4.Panel2MinSize = 250;
-            this.splitContainer4.Size = new System.Drawing.Size(767, 478);
-            this.splitContainer4.SplitterDistance = 200;
-            this.splitContainer4.TabIndex = 0;
+            this.splitContainer6.Panel2.Controls.Add(this.splitContainer7);
+            this.splitContainer6.Size = new System.Drawing.Size(767, 478);
+            this.splitContainer6.SplitterDistance = 150;
+            this.splitContainer6.TabIndex = 0;
+            // 
+            // characterFilesFilter
+            // 
+            this.characterFilesFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.characterFilesFilter.Location = new System.Drawing.Point(3, 3);
+            this.characterFilesFilter.Name = "characterFilesFilter";
+            this.characterFilesFilter.Size = new System.Drawing.Size(144, 20);
+            this.characterFilesFilter.TabIndex = 0;
+            this.characterFilesFilter.TextChanged += new System.EventHandler(this.characterFilesFilter_TextChanged);
             // 
             // characterFilesListBox
             // 
-            this.characterFilesListBox.ContextMenuStrip = this.characterFilesContextMenuStrip;
-            this.characterFilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.characterFilesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.characterFilesListBox.FormattingEnabled = true;
-            this.characterFilesListBox.Location = new System.Drawing.Point(0, 0);
+            this.characterFilesListBox.Location = new System.Drawing.Point(3, 26);
             this.characterFilesListBox.Name = "characterFilesListBox";
-            this.characterFilesListBox.Size = new System.Drawing.Size(200, 478);
+            this.characterFilesListBox.Size = new System.Drawing.Size(144, 446);
             this.characterFilesListBox.TabIndex = 0;
             this.characterFilesListBox.SelectedIndexChanged += new System.EventHandler(this.characterFilesListBox_SelectedIndexChanged);
+            // 
+            // splitContainer7
+            // 
+            this.splitContainer7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer7.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer7.Name = "splitContainer7";
+            // 
+            // splitContainer7.Panel1
+            // 
+            this.splitContainer7.Panel1.Controls.Add(this.characterFilter);
+            this.splitContainer7.Panel1.Controls.Add(this.characterListBox);
+            // 
+            // splitContainer7.Panel2
+            // 
+            this.splitContainer7.Panel2.AutoScroll = true;
+            this.splitContainer7.Panel2.Controls.Add(this.characterPropertyGrid);
+            this.splitContainer7.Size = new System.Drawing.Size(613, 478);
+            this.splitContainer7.SplitterDistance = 150;
+            this.splitContainer7.TabIndex = 0;
+            // 
+            // characterListBox
+            // 
+            this.characterListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.characterListBox.FormattingEnabled = true;
+            this.characterListBox.Location = new System.Drawing.Point(0, 26);
+            this.characterListBox.Name = "characterListBox";
+            this.characterListBox.Size = new System.Drawing.Size(150, 446);
+            this.characterListBox.TabIndex = 0;
+            this.characterListBox.SelectedIndexChanged += new System.EventHandler(this.characterListBox_SelectedIndexChanged);
+            // 
+            // characterPropertyGrid
+            // 
+            this.characterPropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.characterPropertyGrid.Location = new System.Drawing.Point(0, 0);
+            this.characterPropertyGrid.Name = "characterPropertyGrid";
+            this.characterPropertyGrid.Size = new System.Drawing.Size(459, 478);
+            this.characterPropertyGrid.TabIndex = 0;
             // 
             // characterFilesContextMenuStrip
             // 
@@ -1171,16 +1235,6 @@ namespace CK2Modder
             this.deleteSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.deleteSelectedFileToolStripMenuItem.Text = "Delete Selected File";
             this.deleteSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedFileToolStripMenuItem_Click);
-            // 
-            // characterGridView
-            // 
-            this.characterGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.characterGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.characterGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.characterGridView.Location = new System.Drawing.Point(0, 0);
-            this.characterGridView.Name = "characterGridView";
-            this.characterGridView.Size = new System.Drawing.Size(563, 478);
-            this.characterGridView.TabIndex = 0;
             // 
             // dynastyBackgroundWorker
             // 
@@ -1250,6 +1304,16 @@ namespace CK2Modder
             // 
             this.characterBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.characterBackgroundWorker_DoWork);
             // 
+            // characterFilter
+            // 
+            this.characterFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.characterFilter.Location = new System.Drawing.Point(-1, 3);
+            this.characterFilter.Name = "characterFilter";
+            this.characterFilter.Size = new System.Drawing.Size(151, 20);
+            this.characterFilter.TabIndex = 1;
+            this.characterFilter.TextChanged += new System.EventHandler(this.characterFilter_TextChanged);
+            // 
             // CK2Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1261,7 +1325,9 @@ namespace CK2Modder
             this.MainMenuStrip = this.mainMenuStrip;
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "CK2Form";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CK2 Modder";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -1296,12 +1362,17 @@ namespace CK2Modder
             this.tabDynasties.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dynastyGridView)).EndInit();
             this.tabCharacters.ResumeLayout(false);
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
+            this.splitContainer6.Panel1.ResumeLayout(false);
+            this.splitContainer6.Panel1.PerformLayout();
+            this.splitContainer6.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer6)).EndInit();
+            this.splitContainer6.ResumeLayout(false);
+            this.splitContainer7.Panel1.ResumeLayout(false);
+            this.splitContainer7.Panel1.PerformLayout();
+            this.splitContainer7.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer7)).EndInit();
+            this.splitContainer7.ResumeLayout(false);
             this.characterFilesContextMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.characterGridView)).EndInit();
             this.cultureSubContextMenuStrip.ResumeLayout(false);
             this.cultureRootContextMenuStrip.ResumeLayout(false);
             this.cultureContextMenuStrip.ResumeLayout(false);
@@ -1322,7 +1393,6 @@ namespace CK2Modder
         private System.Windows.Forms.ToolStripStatusLabel workingLocationStripStatusLabel;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabDynasties;
-        private System.Windows.Forms.TabPage tabCharacters;
         private System.Windows.Forms.DataGridView dynastyGridView;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.ComponentModel.BackgroundWorker dynastyBackgroundWorker;
@@ -1404,9 +1474,6 @@ namespace CK2Modder
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.CheckBox cultureSuffixCheckBox;
         private System.Windows.Forms.Button buttonImportCultures;
-        private System.Windows.Forms.SplitContainer splitContainer4;
-        private System.Windows.Forms.ListBox characterFilesListBox;
-        private System.Windows.Forms.DataGridView characterGridView;
         private System.ComponentModel.BackgroundWorker characterBackgroundWorker;
         private System.Windows.Forms.ContextMenuStrip characterFilesContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem characterFilesMenuAdd;
@@ -1420,6 +1487,14 @@ namespace CK2Modder
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox userDirectoryTextBox;
         private System.Windows.Forms.SaveFileDialog newModDialog;
+        private System.Windows.Forms.TabPage tabCharacters;
+        private System.Windows.Forms.SplitContainer splitContainer6;
+        private System.Windows.Forms.SplitContainer splitContainer7;
+        private System.Windows.Forms.ListBox characterFilesListBox;
+        private System.Windows.Forms.ListBox characterListBox;
+        private System.Windows.Forms.PropertyGrid characterPropertyGrid;
+        private System.Windows.Forms.TextBox characterFilesFilter;
+        private System.Windows.Forms.TextBox characterFilter;
     }
 }
 

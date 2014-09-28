@@ -83,12 +83,6 @@
     <Compile Include="GameData\history\characters\CharacterFileForm.Designer.cs">
       <DependentUpon>CharacterFileForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GameData\history\characters\CharacterEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GameData\history\characters\CharacterEditor.Designer.cs">
-      <DependentUpon>CharacterEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="GameData\history\characters\LifeEvent.cs" />
     <Compile Include="GameData\history\characters\LifeEventEditor.cs">
       <SubType>Form</SubType>
@@ -106,6 +100,7 @@
       <DependentUpon>UserPreferences.settings</DependentUpon>
     </Compile>
     <Compile Include="Util\CharacterLoader.cs" />
+    <Compile Include="Util\CueProvider.cs" />
     <Compile Include="Util\CultureLoader.cs" />
     <Compile Include="Util\DynastyLoader.cs" />
     <Compile Include="Util\Helpers.cs" />
@@ -117,9 +112,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GameData\history\characters\CharacterFileForm.resx">
       <DependentUpon>CharacterFileForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GameData\history\characters\CharacterEditor.resx">
-      <DependentUpon>CharacterEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GameData\history\characters\LifeEventEditor.resx">
       <DependentUpon>LifeEventEditor.cs</DependentUpon>

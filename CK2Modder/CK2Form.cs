@@ -11,6 +11,7 @@ using CK2Modder.GameData;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
 using CK2Modder.Util;
+using RavSoft;
 
 namespace CK2Modder
 {
@@ -68,6 +69,10 @@ namespace CK2Modder
 
             InitializeComponent();
 
+            // Setup the cue's on textboxes
+            CueProvider.SetCue(characterFilesFilter, "Filter Character Files");
+            CueProvider.SetCue(characterFilter, "Filter Characters");
+
             if(!Directory.Exists(WorkingLocation))
             {
                 if (!SelectWorkingLocation())
@@ -111,42 +116,7 @@ namespace CK2Modder
             dynastyGridView.Columns.Add(nameColumn);
             dynastyGridView.Columns.Add(cultureColumn);
 
-            // Setup characterGridView
-            characterGridView.AutoGenerateColumns = false;
-
-            idColumn = new DataGridViewTextBoxColumn();
-            idColumn.DataPropertyName = "ID";
-            idColumn.HeaderText = "ID";
-            idColumn.MinimumWidth = 50;
-
-            nameColumn = new DataGridViewTextBoxColumn();
-            nameColumn.DataPropertyName = "Name";
-            nameColumn.HeaderText = "Name";
-            nameColumn.MinimumWidth = 150;
-
-            cultureColumn = new DataGridViewTextBoxColumn();
-            cultureColumn.DataPropertyName = "Culture";
-            cultureColumn.HeaderText = "Culture";
-            cultureColumn.MinimumWidth = 75;
-
-            DataGridViewTextBoxColumn dynastyColumn = new DataGridViewTextBoxColumn();
-            dynastyColumn.DataPropertyName = "Dynasty";
-            dynastyColumn.HeaderText = "Dynasty";
-            dynastyColumn.MinimumWidth = 50;
-
-            DataGridViewTextBoxColumn religionColumn = new DataGridViewTextBoxColumn();
-            religionColumn.DataPropertyName = "Religion";
-            religionColumn.HeaderText = "Religion";
-            religionColumn.MinimumWidth = 50;
-
-            characterGridView.Columns.Add(idColumn);
-            characterGridView.Columns.Add(nameColumn);
-            characterGridView.Columns.Add(dynastyColumn);
-            characterGridView.Columns.Add(religionColumn);
-            characterGridView.Columns.Add(cultureColumn);
-
             dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
-            characterGridView.CellDoubleClick += new DataGridViewCellEventHandler(characterGridView_CellDoubleClick);
             cultureTreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(cultureTreeView_NodeMouseClick);
         }        
 
@@ -408,6 +378,11 @@ namespace CK2Modder
                 StreamReader reader = new StreamReader(CurrentMod.CharacterFilesToLoad.Peek(), Encoding.Default, true);
                 characterBackgroundWorker.RunWorkerAsync(reader);
             }
+            // if done update the character list box
+            else
+            {
+                UpdateCharacterListBox();
+            }
         }
 
         #endregion
@@ -427,8 +402,6 @@ namespace CK2Modder
             tabControl.Visible = true;
             dynastyGridView.DataSource = CurrentMod.Dynasties;
             dynastyGridView.Visible = true;
-
-            characterGridView.DataSource = CurrentMod.Characters;
             
             // Add data bindings
             textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
@@ -449,7 +422,6 @@ namespace CK2Modder
             // character tab            
             characterFilesListBox.Items.Add(DefaultCharacterListView); // Add the default list value
             characterFilesListBox.SelectedIndex = 0;
-            characterGridView.AllowUserToAddRows = false; // Default to not allowing user to add rows
 
             // Load the dynasties
             String dynastiesFolder = CurrentMod.ModRootDirectory + VanillaDynastiesPath;
@@ -582,10 +554,7 @@ namespace CK2Modder
 
             // reset the characters tab
             characterFilesListBox.Items.Clear();
-
-            characterGridView.RowsAdded -= characterGridView_RowsAdded;
-            IsCharacterGridListeningForRows = false;
-            characterGridView.DataSource = null;            
+            characterListBox.Items.Clear();            
 
             cultureInformationGroupBox.Visible = false;
             cultureNamesGroupBox.Visible = false;
@@ -666,100 +635,8 @@ namespace CK2Modder
                 {
                     DataGridViewRow row = editor.Characters.Rows[e.RowIndex];
 
-                    ShowCharacter(row.DataBoundItem as Character);
+                    //ShowCharacter(row.DataBoundItem as Character);
                 });                
-        }
-
-        private void ShowCharacter(Character c)
-        {
-            if (c == null)
-                return;
-
-            // 
-            // tabInfo
-            // 
-            TabPage tabInfo = new TabPage(c.Name);
-            tabInfo.Location = new System.Drawing.Point(4, 22);
-            tabInfo.Name = "tabCharacterInfo";
-            tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            tabInfo.Size = new System.Drawing.Size(773, 484);
-            tabInfo.TabIndex = this.tabControl.TabCount;
-            tabInfo.Text = c.Name + " (" + c.ID + ")";
-            tabInfo.BackColor = Color.Transparent;
-            //
-            // Character Editor
-            //
-            CharacterEditor editor = new CharacterEditor();
-            editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            editor.Location = new System.Drawing.Point(3, 3);
-            editor.Size = new System.Drawing.Size(767, 478);
-            editor.TabIndex = 0;
-
-            tabInfo.Controls.Add(editor);
-
-            // Add data bindings
-            editor.ID.DataBindings.Add("Text", c, "ID");
-            editor.CharacterName.DataBindings.Add("Text", c, "Name");
-            editor.Dynasty.DataBindings.Add("Text", c, "Dynasty");
-            editor.Religion.DataBindings.Add("Text", c, "Religion");
-            editor.Culture.DataBindings.Add("Text", c, "Culture");
-            editor.Female.DataBindings.Add("Checked", c, "Female");
-            editor.Nickname.DataBindings.Add("Text", c, "Nickname");
-
-            editor.Father.DataBindings.Add("Text", c, "Father");
-            editor.Mother.DataBindings.Add("Text", c, "Mother");
-
-            editor.Traits.DataSource = c.Traits;
-            editor.LifeEvents.DataBindings.Add("Text", c, "Events");
-
-            editor.Martial.DataBindings.Add("Text", c, "Martial");
-            editor.Diplomacy.DataBindings.Add("Text", c, "Diplomacy");
-            editor.Intrigue.DataBindings.Add("Text", c, "Intrigue");
-            editor.Stewardship.DataBindings.Add("Text", c, "Stewardship");
-            editor.Learning.DataBindings.Add("Text", c, "Learning");
-
-            editor.DNA.DataBindings.Add("Text", c, "DNA");
-            editor.Properties.DataBindings.Add("Text", c, "Properties");
-
-            // Add the tab and select it
-            this.tabControl.TabPages.Add(tabInfo);
-            this.tabControl.SelectedIndex = tabInfo.TabIndex;
-
-            // Events
-            EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabInfo);
-            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 3;
-            editor.CloseButton.Click += closeHandler;
-            editor.CloseButton.Click += closeHandler2;
-
-            editor.CharacterName.TextChanged += new EventHandler(delegate(object Sender, EventArgs e)
-                {
-                    tabInfo.Text = editor.CharacterName.Text + " (" + editor.ID.Text + ")";
-                });
-            editor.ID.TextChanged += new EventHandler(delegate(object Sender, EventArgs e)
-                {
-                    tabInfo.Text = editor.CharacterName.Text + " (" + editor.ID.Text + ")";
-                });
-
-            editor.Traits.KeyDown += new KeyEventHandler(delegate(object sender, KeyEventArgs e)
-                {
-                    if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
-                    {
-                        // Delete the entry
-                        if(editor.Traits.SelectedIndex >= 0 && editor.Traits.SelectedIndex < editor.Traits.Items.Count)
-                            c.Traits.RemoveAt(editor.Traits.SelectedIndex);
-                    }
-                });
-
-            // Add a new trait to the list
-            editor.AddTraitButton.Click += new EventHandler(delegate(object sender, EventArgs e)
-                {
-                    if (!editor.TraitComboBox.Text.Equals(""))
-                    {
-                        c.Traits.Add(editor.TraitComboBox.Text);
-                        editor.TraitComboBox.Text = "";
-                        editor.TraitComboBox.SelectedIndex = -1;
-                    }
-                });
         }
 
         public void SaveMod()
@@ -851,6 +728,54 @@ namespace CK2Modder
             }
         }
 
+        private void PopulateCharacterListBox(List<Character> characters)
+        {
+            foreach (Character c in characters)
+            {
+                characterListBox.Items.Add(c.InternalDisplay);
+            }
+        }
+
+        private void UpdateCharacterListBox()
+        {
+            List<Character> filteredCharacters = new List<Character>();
+            String filter = characterFilter.Text;
+            String file = characterFilesListBox.SelectedItem as String;
+
+            // apply the files filter
+            if (!characterFilesListBox.SelectedItem.Equals(DefaultCharacterListView))
+            {
+                // Filter the files first
+                filteredCharacters = CurrentMod.Characters.Where(c => c.BelongsTo.Equals(file)).ToList();
+            }
+            else
+            {
+                filteredCharacters.AddRange(CurrentMod.Characters);
+            }
+
+            // check if the filter is an ID
+            int ID = Helpers.ParseInt(filter);
+            if (ID != -1)
+            {
+                filteredCharacters = filteredCharacters.Where(c => c.ID.ToString().Contains(ID.ToString())).ToList();
+            }
+            // filter for names
+            else
+            {
+                // filter for the string passed in
+                if (!String.IsNullOrEmpty(filter) && !String.IsNullOrWhiteSpace(filter))
+                {
+                    filteredCharacters = filteredCharacters.Where(c => c.Name.ToLower().Contains(filter)).ToList();
+                }
+            }
+
+            // Clear the list
+            characterListBox.Items.Clear();
+
+            // Populate it
+            PopulateCharacterListBox(filteredCharacters);
+        }
+
         #endregion
 
         #region Events
@@ -860,36 +785,39 @@ namespace CK2Modder
             if (CurrentMod == null)
                 return;
 
-            String selected = characterFilesListBox.SelectedItem as String;
-            
+            UpdateCharacterListBox();
+        }
+
+        private void characterListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            String selected = characterListBox.SelectedItem as String;
+
             if (selected == null)
                 return;
 
-            // Remove the rows added event listener, we don't want this to fire in this scenario
-            if (IsCharacterGridListeningForRows)
-            {
-                characterGridView.RowsAdded -= characterGridView_RowsAdded;
-                IsCharacterGridListeningForRows = false;
-            }
-
-            if (selected.Equals(DefaultCharacterListView))
-            {
-                characterGridView.DataSource = CurrentMod.Characters;
-                characterGridView.AllowUserToAddRows = false;                
-                return;
-            }
-
-            BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.BelongsTo.Equals(selected) == true).ToList());
-            characterGridView.DataSource = filteredList;
-            characterGridView.AllowUserToAddRows = true;
-
-            // Add the rows added event listener
-            if (!IsCharacterGridListeningForRows)
-            {
-                characterGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(characterGridView_RowsAdded);
-                IsCharacterGridListeningForRows = true;
-            }
+            int ID = Helpers.ParseInt(selected);
             
+            if (ID == -1)
+                return;
+
+            // show the character
+            characterPropertyGrid.SelectedObject = CurrentMod.Characters.Find(c => c.ID == ID);
+        }
+
+        private void characterFilesFilter_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void characterFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            UpdateCharacterListBox();
         }
 
         void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -1032,17 +960,6 @@ namespace CK2Modder
             DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
 
             ShowDynasty(row.DataBoundItem as Dynasty);
-        }
-
-        void characterGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Check for a bad row index, -1 technically means clicking on the row header
-            if (e.RowIndex < 0 || e.RowIndex >= characterGridView.Rows.Count)
-                return;
-
-            DataGridViewRow row = characterGridView.Rows[e.RowIndex];
-
-            ShowCharacter(row.DataBoundItem as Character);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1453,24 +1370,6 @@ namespace CK2Modder
             }
         }
 
-        private void characterGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            for(int i = e.RowIndex - 1; i < e.RowIndex - 1 + e.RowCount; i++)
-            {
-                Character c = characterGridView.Rows[i].DataBoundItem as Character;
-
-                if (c != null)
-                {
-                    // Set the character file to the currently selected file
-                    c.BelongsTo = characterFilesListBox.SelectedItem as String;
-
-                    // Make sure the character is in the master list
-                    if (!CurrentMod.Characters.Contains(c))
-                        CurrentMod.Characters.Add(c);                    
-                }
-            }
-        }
-
         private void addPathButton_Click(object sender, EventArgs e)
         {
             if(!replacePathsComboBox.Text.Equals(""))
@@ -1560,7 +1459,6 @@ namespace CK2Modder
         }
 
         #endregion
-
-                            
+       
     }
 }

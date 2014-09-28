@@ -2,24 +2,18 @@
 using System.ComponentModel;
 using System.IO;
 using CK2Modder.GameData.Interfaces;
+using System.Collections.Generic;
 
 namespace CK2Modder.GameData.history.characters
 {
-    public interface ICharacterBinding
-    {
-        int ID { get; set; }
-        String Name { get; set; }
-        int Dynasty { get; set; }
-        String Religion { get; set; }
-        String Culture { get; set; }
-    }
-
-    public class Character : INotifyPropertyChanged, ICharacterBinding, IFileResource
+    [DefaultPropertyAttribute("ID")]
+    public class Character : INotifyPropertyChanged, IFileResource
     {
         /// <summary>
         /// The name of the file the character is stored in
         /// </summary>
         private String _belongsTo;
+        [BrowsableAttribute(false)]
         public String BelongsTo
         {
             get { return _belongsTo; }
@@ -34,6 +28,7 @@ namespace CK2Modder.GameData.history.characters
         /// The characters ID, must be unique
         /// </summary>
         private int _id = 0;
+        [CategoryAttribute("Character"), DescriptionAttribute("The characters ID, must be unique")]
         public int ID
         {
             get { return _id; }
@@ -48,24 +43,19 @@ namespace CK2Modder.GameData.history.characters
         /// The characters name
         /// </summary>
         private String _name = "";
+        [CategoryAttribute("Character"), DescriptionAttribute("The characters name")]
         public String Name
         {
             get { return _name; }
             set
             {
-                /*
-                if (value.Equals(""))
-                {
-                    MessageBox.Show("The character name cannot be blank. Character ID: " + ID.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                */
                 _name = value;
                 NotifyPropertyChanged("Name");
             }
         }
 
         private Boolean _female = false;
+        [CategoryAttribute("Details"), DescriptionAttribute("Is this character a female?")]
         public Boolean Female
         {
             get { return _female; }
@@ -79,7 +69,8 @@ namespace CK2Modder.GameData.history.characters
         /// <summary>
         /// The ID of the dynasty the character belongs to, not required
         /// </summary>
-        private int _dynasty = 0;
+        private int _dynasty = -1;
+        [CategoryAttribute("Details"), DescriptionAttribute("The ID of the dynasty this character belongs to, not required")]
         public int Dynasty
         {
             get { return _dynasty; }
@@ -94,6 +85,7 @@ namespace CK2Modder.GameData.history.characters
         /// The religion of the character
         /// </summary>
         private String _religion = "";
+        [CategoryAttribute("Details"), DescriptionAttribute("The religion of the character")]
         public String Religion
         {
             get { return _religion; }
@@ -108,6 +100,7 @@ namespace CK2Modder.GameData.history.characters
         /// The culture the character belongs to
         /// </summary>
         private String _culture = "";
+        [CategoryAttribute("Details"), DescriptionAttribute("The culture of the character")]
         public String Culture
         {
             get { return _culture; }
@@ -119,6 +112,7 @@ namespace CK2Modder.GameData.history.characters
         }
 
         private String _nickName = "";
+        [CategoryAttribute("Details"), DescriptionAttribute("The nickname of the character")]
         public String Nickname
         {
             get { return _nickName; }
@@ -129,7 +123,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _martial;
+        private int _martial = -1;
+        [CategoryAttribute("Stats"), DescriptionAttribute("The martial attribute for the character, set to -1 for it to not be included in the output")]
         public int Martial
         {
             get { return _martial; }
@@ -140,7 +135,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _diplomacy;
+        private int _diplomacy = -1;
+        [CategoryAttribute("Stats"), DescriptionAttribute("The diplomacy attribute for the character, set to -1 for it to not be included in the output")]
         public int Diplomacy
         {
             get { return _diplomacy; }
@@ -151,7 +147,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _stewardship;
+        private int _stewardship = -1;
+        [CategoryAttribute("Stats"), DescriptionAttribute("The stewardship attribute for the character, set to -1 for it to not be included in the output")]
         public int Stewardship
         {
             get { return _stewardship; }
@@ -162,7 +159,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _intrigue;
+        private int _intrigue = -1;
+        [CategoryAttribute("Stats"), DescriptionAttribute("The intrigue attribute for the character, set to -1 for it to not be included in the output")]
         public int Intrigue
         {
             get { return _intrigue; }
@@ -173,7 +171,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _learning;
+        private int _learning = -1;
+        [CategoryAttribute("Stats"), DescriptionAttribute("The learning attribute for the character, set to -1 for it to not be included in the output")]
         public int Learning
         {
             get { return _learning; }
@@ -188,6 +187,7 @@ namespace CK2Modder.GameData.history.characters
         /// A string array that holds the traits of this character
         /// </summary>
         private BindingList<String> _traits = new BindingList<String>();
+        [CategoryAttribute("Stats"), DescriptionAttribute("The traits this character has")]
         public BindingList<String> Traits
         {
             get { return _traits; }
@@ -198,7 +198,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _father;
+        private int _father = -1;
+        [CategoryAttribute("Family"), DescriptionAttribute("The ID this characters father")]
         public int Father
         {
             get { return _father; }
@@ -209,7 +210,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _mother;
+        private int _mother = -1;
+        [CategoryAttribute("Family"), DescriptionAttribute("The ID this characters mother")]
         public int Mother
         {
             get { return _mother; }
@@ -220,8 +222,8 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private String _events = "";
-        public String Events
+        private String[] _events;
+        public String[] Events
         {
             get { return _events; }
             set
@@ -232,6 +234,7 @@ namespace CK2Modder.GameData.history.characters
         }
 
         private String _dna = "";
+        [CategoryAttribute("Character Appearance"), DescriptionAttribute("The DNA sequence for this character")]
         public String DNA
         {
             get { return _dna; }
@@ -243,6 +246,7 @@ namespace CK2Modder.GameData.history.characters
         }
 
         private String _properties = "";
+        [CategoryAttribute("Character Appearance")]
         public String Properties
         {
             get { return _properties; }
@@ -253,6 +257,12 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        [BrowsableAttribute(false)]
+        public String InternalDisplay
+        {
+            get { return String.Format("{0} - {1}", ID, Name); }
+        }
+
         public override string ToString()
         {
             String result = "";
@@ -260,14 +270,14 @@ namespace CK2Modder.GameData.history.characters
             result += ID.ToString() + " = {\r\n";
             result += "\tname=\"" + Name + "\"\r\n";
             if (Female)                 result += "\tfemale=yes\r\n";
-            if (Dynasty != 0)           result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
+            if (Dynasty != -1)           result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
             if (!Religion.Equals(""))   result += "\treligion=\"" + Religion + "\"\r\n";
             if (!Culture.Equals(""))    result += "\tculture=\"" + Culture + "\"\r\n";
-            if (Martial > 0)            result += "\tmartial=" + Martial.ToString() + "\r\n";
-            if (Diplomacy > 0)          result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
-            if (Intrigue > 0)           result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
-            if (Stewardship > 0)        result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
-            if (Learning > 0)           result += "\tlearning=" + Learning.ToString() + "\r\n";
+            if (Martial >= 0)            result += "\tmartial=" + Martial.ToString() + "\r\n";
+            if (Diplomacy >= 0)          result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
+            if (Intrigue >= 0)           result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
+            if (Stewardship >= 0)        result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
+            if (Learning >= 0)           result += "\tlearning=" + Learning.ToString() + "\r\n";
             if (!DNA.Equals(""))        result += "\tdna=\"" + DNA + "\"\r\n";
             if (!Properties.Equals("")) result += "\tproperties=\"" + Properties + "\"\r\n";
             if (!Nickname.Equals(""))   result += "\tgive_nickname=" + Nickname + "\r\n";
@@ -277,16 +287,16 @@ namespace CK2Modder.GameData.history.characters
                 result += "\tadd_trait=\"" + trait + "\"\r\n";
             }
 
-            if (Father > 0) result += "\tfather=" + Father.ToString() + "\r\n";
-            if (Mother > 0) result += "\tmother=" + Mother.ToString() + "\r\n";
+            if (Father >= 0) result += "\tfather=" + Father.ToString() + "\r\n";
+            if (Mother >= 0) result += "\tmother=" + Mother.ToString() + "\r\n";
 
             // Life events
-            if (!Events.Equals(""))
-            {                
-                Events = Events.Replace("\r", "");
-                result += "\t" + Events.Replace("\n", System.Environment.NewLine + "\t") + "\r\n";
-            }            
-
+            if (Events != null && Events.Length > 0)
+            {
+                foreach (String s in Events)
+                    result += "\t" + s.Replace("\n", System.Environment.NewLine + "\t") + "\r\n";
+            }
+            
             result += "}\r\n";
 
             return result;
