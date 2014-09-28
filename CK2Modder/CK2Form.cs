@@ -450,7 +450,7 @@ namespace CK2Modder
             characterGridView.AllowUserToAddRows = false; // Default to not allowing user to add rows
 
             // Load the dynasties
-            String dynastiesFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaDynastiesPath;
+            String dynastiesFolder = CurrentMod.ModRootDirectory + VanillaDynastiesPath;
             if(Directory.Exists(dynastiesFolder))
             {
                 // Go through each file and add it to the queue
@@ -478,7 +478,7 @@ namespace CK2Modder
             }
 
             // Load the cultures
-            String culturesFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaCulturesPath;
+            String culturesFolder = CurrentMod.ModRootDirectory + VanillaCulturesPath;
             if (Directory.Exists(culturesFolder))
             {
                 // Go through each file and add it to the queue
@@ -504,7 +504,7 @@ namespace CK2Modder
             }
 
             // Load characters
-            String charactersFolder = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath;
+            String charactersFolder = CurrentMod.ModRootDirectory + VanillaCharactersPath;
             if (Directory.Exists(charactersFolder))
             {
                 // Go through each file and add it to the listview
@@ -532,7 +532,7 @@ namespace CK2Modder
             }
 
             CurrentMod.UpdateRawOutput();
-            UserPreferences.Default.LastMod = WorkingLocation + "/mod/" + CurrentMod.Name + ".mod";
+            UserPreferences.Default.LastMod = CurrentMod.StorageLocation + "/" + CurrentMod.Name + ".mod";
             UserPreferences.Default.Save();
 
             saveToolStripMenuItem.Enabled = true;

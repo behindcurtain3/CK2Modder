@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
+using CK2Modder.Util;
 
 namespace CK2Modder.GameData
 {
@@ -23,6 +24,9 @@ namespace CK2Modder.GameData
         public Queue<String> CharacterFilesToLoad;
         public Queue<String> DynastyFilesToLoad;
         public Queue<String> CultureFilesToLoad;
+
+        public String StorageLocation { get; set; }
+        public String ModRootDirectory { get; set; }
 
         private String _rawOutput;
         public String RawOutput 
@@ -61,6 +65,7 @@ namespace CK2Modder.GameData
         public String Path
         {
             get { return _path; }
+            private set { _path = value; }
         }
 
         private Boolean _useArchive;
@@ -198,46 +203,27 @@ namespace CK2Modder.GameData
 
             while ((line = stream.ReadLine()) != null)
             {
-                if (line.StartsWith("name = ") || line.StartsWith("name="))
+                if (line.Contains("=") && !line.StartsWith("#"))
                 {
-                    int start = line.IndexOf('"') + 1;
-                    int end = line.IndexOf('"', start);
+                    KeyValuePair<String, String> data = Helpers.ReadStringData(line);
 
-                    mod = new Mod(line.Substring(start, end - start));
-                }
-                else if (line.Contains("user_dir"))
-                {
-                    int start = line.IndexOf('"') + 1;
-                    int end = line.IndexOf('"', start);
+                    switch (data.Key)
+                    {
+                        case "name":
+                            mod = new Mod(data.Value);
+                            mod.StorageLocation = System.IO.Path.GetDirectoryName(file);
+                            mod.ModRootDirectory = mod.StorageLocation + "/" + mod.Name;
+                            break;
 
-                    mod.UserDirectory = line.Substring(start, end - start);
-                }
-                else if (line.Contains("replace_path"))
-                {
-                    int start = line.IndexOf('"') + 1;
-                    int end = line.IndexOf('"', start);
+                        case "user_dir":
+                            mod.UserDirectory = data.Value;
+                            break;
 
-                    mod.ReplacePaths.Add(line.Substring(start, end - start));
+                        case "replace_path":
+                            mod.ReplacePaths.Add(data.Value);
+                            break;
+                    }
                 }
-                else if (line.StartsWith("# areCulturesImported = "))
-                {
-                    int start = line.IndexOf("=") + 1;
-                    String answer = line.Substring(start, line.Length - start);
-                    mod.AreCulturesImported = Boolean.Parse(answer.Trim());
-                }
-                else if (line.StartsWith("# areDynastiesImported = "))
-                {
-                    int start = line.IndexOf("=") + 1;
-                    String answer = line.Substring(start, line.Length - start);
-                    mod.AreDynastiesImported = Boolean.Parse(answer.Trim());
-                }
-                else if (line.StartsWith("# areCharactersImported = "))
-                {
-                    int start = line.IndexOf("=") + 1;
-                    String answer = line.Substring(start, line.Length - start);
-                    mod.AreCharactersImported = Boolean.Parse(answer.Trim());
-                }
-                
             }
 
             return mod;
