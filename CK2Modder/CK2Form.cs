@@ -192,6 +192,7 @@ namespace CK2Modder
                     // if successful add the character to the character list
                     if (dynasty != null)
                     {
+                        dynasty.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.DynastyFilesToLoad.Peek());
                         loadingDynasties.Add(dynasty);
                     }
 
@@ -275,6 +276,7 @@ namespace CK2Modder
                     // if successful add the culture to the culture list
                     if (culture != null)
                     {
+                        culture.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.CultureFilesToLoad.Peek());
                         loadingCultures.Add(culture);
                     }
 
@@ -766,7 +768,7 @@ namespace CK2Modder
                 return;
 
             // Write out the mod file
-            StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
+            StreamWriter stream = File.CreateText(CurrentMod.StorageLocation + "/" + CurrentMod.Name + ".mod");
             stream.Write(CurrentMod.RawOutput);
             stream.Close();
 
@@ -779,43 +781,49 @@ namespace CK2Modder
             // Write out the dynasties
             if (CurrentMod.Dynasties.Count > 0)
             {
-                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common"))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + VanillaDynastiesPath))
                 {
-                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + VanillaDynastiesPath);
                 }
 
-                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common/dynasties"))
+                foreach (String name in CurrentMod.DynastyFiles)
                 {
-                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common/dynasties");
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaDynastiesPath + "/" + name + ".txt", false, Encoding.Default);
+
+                    foreach (Dynasty d in CurrentMod.Dynasties)
+                    {
+                        if (d.BelongsTo.Equals(name))
+                        {
+                            stream.Write(d.ToString());
+                        }
+                    }
+
+                    stream.Close();
                 }
-
-                stream = File.CreateText(CurrentMod.ModRootDirectory + VanillaDynastyFile);
-
-                foreach (Dynasty dynasty in CurrentMod.Dynasties)
-                    stream.Write(dynasty.ToString());
-
-                stream.Close();
             }
 
             // Write out the cultures
             if (CurrentMod.Cultures.Count > 0)
-            {
-                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common"))
+            {   
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + VanillaCulturesPath))
                 {
-                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + VanillaCulturesPath);
                 }
 
-                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common/cultures"))
+                foreach (String name in CurrentMod.CultureFiles)
                 {
-                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common/cultures");
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCulturesPath + "/" + name + ".txt", false, Encoding.Default);
+
+                    foreach (Culture c in CurrentMod.Cultures)
+                    {
+                        if (c.BelongsTo.Equals(name))
+                        {
+                            stream.Write(c.ToString());
+                        }
+                    }
+
+                    stream.Close();
                 }
-
-                stream = File.CreateText(CurrentMod.ModRootDirectory + VanillaCulturesFile);
-
-                foreach (Culture culture in CurrentMod.Cultures)
-                    stream.Write(culture.ToString());
-
-                stream.Close();
             }
 
             // Write out the characters

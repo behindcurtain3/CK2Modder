@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using CK2Modder.GameData.Interfaces;
 
 namespace CK2Modder.GameData.common
 {
-    public class Dynasty : INotifyPropertyChanged
+    public class Dynasty : INotifyPropertyChanged, IFileResource
     {
         private int _id;
         public int ID 
@@ -13,6 +14,17 @@ namespace CK2Modder.GameData.common
             {
                 _id = value;
                 NotifyPropertyChanged("ID");
+            }
+        }
+
+        private String _belongsTo;
+        public String BelongsTo
+        {
+            get { return _belongsTo; }
+            set
+            {
+                _belongsTo = value;
+                NotifyPropertyChanged("BelongsTo");
             }
         }
 

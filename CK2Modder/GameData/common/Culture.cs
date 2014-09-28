@@ -2,11 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using CK2Modder.GameData.Interfaces;
 
 namespace CK2Modder.GameData.common
 {
-    public class Culture : INotifyPropertyChanged
+    public class Culture : INotifyPropertyChanged, IFileResource
     {
+        private String _belongsTo;
+        public String BelongsTo
+        {
+            get { return _belongsTo; }
+            set
+            {
+                _belongsTo = value;
+                NotifyPropertyChanged("BelongsTo");
+            }
+        }
+
         private String _name = "";
         public String Name
         {
