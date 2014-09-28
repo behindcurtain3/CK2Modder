@@ -33,8 +33,8 @@ namespace CK2Modder
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Culture Groups");
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Culture Groups");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,7 +50,6 @@ namespace CK2Modder
             this.workingLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.workingLocationStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabModProperties = new System.Windows.Forms.TabPage();
@@ -298,19 +297,12 @@ namespace CK2Modder
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripProgressBar,
             this.workingLocationStripStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 540);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(784, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripProgressBar
-            // 
-            this.toolStripProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripProgressBar.Name = "toolStripProgressBar";
-            this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
             // 
             // workingLocationStripStatusLabel
             // 
@@ -594,10 +586,10 @@ namespace CK2Modder
             this.cultureTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureTreeView.Location = new System.Drawing.Point(0, 0);
             this.cultureTreeView.Name = "cultureTreeView";
-            treeNode5.Name = "Culture Groups";
-            treeNode5.Text = "Culture Groups";
+            treeNode6.Name = "Culture Groups";
+            treeNode6.Text = "Culture Groups";
             this.cultureTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5});
+            treeNode6});
             this.cultureTreeView.ShowRootLines = false;
             this.cultureTreeView.Size = new System.Drawing.Size(150, 472);
             this.cultureTreeView.TabIndex = 0;
@@ -1102,14 +1094,14 @@ namespace CK2Modder
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dynastyGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dynastyGridView.BackgroundColor = System.Drawing.SystemColors.ControlDark;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dynastyGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dynastyGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dynastyGridView.Location = new System.Drawing.Point(3, 38);
             this.dynastyGridView.Name = "dynastyGridView";
@@ -1394,7 +1386,6 @@ namespace CK2Modder
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabDynasties;
         private System.Windows.Forms.DataGridView dynastyGridView;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.ComponentModel.BackgroundWorker dynastyBackgroundWorker;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;

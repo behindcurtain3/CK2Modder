@@ -85,9 +85,7 @@ namespace CK2Modder
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
             tabControl.Visible = false;
-            toolStripProgressBar.Visible = false;
 
-            dynastyBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(dynastyBackgroundWorker_ProgressChanged);
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
             
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
@@ -180,8 +178,6 @@ namespace CK2Modder
 
         void dynastyBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            toolStripProgressBar.Visible = false;
-
             if (CurrentMod == null)
                 return;
 
@@ -200,11 +196,6 @@ namespace CK2Modder
                 StreamReader reader = new StreamReader(CurrentMod.DynastyFilesToLoad.Peek(), Encoding.Default, true);
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
             }
-        }
-
-        void dynastyBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            toolStripProgressBar.Value = e.ProgressPercentage;
         }
         
         private void cultureBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -809,7 +800,25 @@ namespace CK2Modder
 
         private void characterFilesFilter_TextChanged(object sender, EventArgs e)
         {
+            if (CurrentMod == null)
+                return;
 
+            String filter = characterFilesFilter.Text;
+            List<String> filteredFiles = new List<String>();
+
+            if (String.IsNullOrWhiteSpace(filter))
+            {
+                filteredFiles.AddRange(CurrentMod.CharacterFiles);
+            }
+            else
+            {
+                filteredFiles = CurrentMod.CharacterFiles.Where(f => f.Contains(filter)).ToList();
+            }
+
+            characterFilesListBox.Items.Clear();
+            characterFilesListBox.Items.Add(DefaultCharacterListView);
+            foreach (String s in filteredFiles)
+                characterFilesListBox.Items.Add(s);
         }
 
         private void characterFilter_TextChanged(object sender, EventArgs e)
@@ -1406,11 +1415,6 @@ namespace CK2Modder
             if (File.Exists(absolutePath))
             {
                 StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);
-
-                toolStripProgressBar.Visible = true;
-                toolStripProgressBar.Value = 0;
-                toolStripProgressBar.Maximum = 100;
-
                 cultureBackgroundWorker.RunWorkerAsync(reader);
             }
         }
@@ -1422,11 +1426,6 @@ namespace CK2Modder
             if (File.Exists(absolutePath))
             {
                 StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);
-
-                toolStripProgressBar.Visible = true;
-                toolStripProgressBar.Value = 0;
-                toolStripProgressBar.Maximum = 100;
-
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
             }
         }
