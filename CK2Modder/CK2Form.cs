@@ -197,7 +197,6 @@ namespace CK2Modder
                     // reset the list
                     lines.Clear();
                 }
-
             }
           
             // clsoe the stream
@@ -497,7 +496,6 @@ namespace CK2Modder
                     // reset the list
                     lines.Clear();
                 }
-
             }
 
             // close the file stream

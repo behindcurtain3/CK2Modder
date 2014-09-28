@@ -42,25 +42,19 @@ namespace CK2Modder.Util
 
         /// <summary>
         /// Attempts to parse and integer value from the given string.
-        /// 
-        /// The integer must be at the begginging of the string for this method to work
         /// </summary>
         /// <param name="line"></param>
         /// <returns>The integer value passed in and as int. If invalid string returns -1.</returns>
         public static int ParseInt(String line)
         {
-            int id;
-
             try
             {
-                id = Int32.Parse(Regex.Match(line, @"\d+").Value);
+                return Int32.Parse(Regex.Match(line, @"\d+").Value);
             }
             catch
             {
-                id = -1;
+                return -1;
             }
-
-            return id;
         }
 
         public static List<String> ReadStringSequence(List<String> lines, int startIndex)
@@ -84,7 +78,7 @@ namespace CK2Modder.Util
                 if(lines[i].Contains("}") && bracketCount == 0)
                 {
                     // exit the loop
-                    i = lines.Count;
+                    break;
                 }
             }
 
