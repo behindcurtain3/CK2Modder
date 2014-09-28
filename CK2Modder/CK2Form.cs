@@ -370,7 +370,7 @@ namespace CK2Modder
                     // if successful add the character to the character list
                     if (c != null)
                     {
-                        c.File = Path.GetFileNameWithoutExtension(CurrentMod.CharacterFilesToLoad.Peek());
+                        c.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.CharacterFilesToLoad.Peek());
                         loadingCharacters.Add(c);
                     }
 
@@ -765,33 +765,31 @@ namespace CK2Modder
             if (CurrentMod == null)
                 return;
 
-            String modPath = WorkingLocation + "/" + CurrentMod.Path;
-
             // Write out the mod file
             StreamWriter stream = File.CreateText(WorkingLocation + "/mod/" + CurrentMod.Name + ".mod");
             stream.Write(CurrentMod.RawOutput);
             stream.Close();
 
             // Make sure the mod directory exists
-            if (!Directory.Exists(modPath))
+            if (!Directory.Exists(CurrentMod.ModRootDirectory))
             {
-                Directory.CreateDirectory(modPath);
+                Directory.CreateDirectory(CurrentMod.ModRootDirectory);
             }
 
             // Write out the dynasties
             if (CurrentMod.Dynasties.Count > 0)
             {
-                if (!Directory.Exists(modPath + "/common"))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common"))
                 {
-                    Directory.CreateDirectory(modPath + "/common");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common");
                 }
 
-                if (!Directory.Exists(modPath + "/common/dynasties"))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common/dynasties"))
                 {
-                    Directory.CreateDirectory(modPath + "/common/dynasties");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common/dynasties");
                 }
 
-                stream = File.CreateText(modPath + VanillaDynastyFile);
+                stream = File.CreateText(CurrentMod.ModRootDirectory + VanillaDynastyFile);
 
                 foreach (Dynasty dynasty in CurrentMod.Dynasties)
                     stream.Write(dynasty.ToString());
@@ -802,17 +800,17 @@ namespace CK2Modder
             // Write out the cultures
             if (CurrentMod.Cultures.Count > 0)
             {
-                if (!Directory.Exists(modPath + "/common"))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common"))
                 {
-                    Directory.CreateDirectory(modPath + "/common");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common");
                 }
 
-                if (!Directory.Exists(modPath + "/common/cultures"))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + "/common/cultures"))
                 {
-                    Directory.CreateDirectory(modPath + "/common/cultures");
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + "/common/cultures");
                 }
 
-                stream = File.CreateText(modPath + VanillaCulturesFile);
+                stream = File.CreateText(CurrentMod.ModRootDirectory + VanillaCulturesFile);
 
                 foreach (Culture culture in CurrentMod.Cultures)
                     stream.Write(culture.ToString());
@@ -823,18 +821,18 @@ namespace CK2Modder
             // Write out the characters
             if (CurrentMod.CharacterFiles.Count > 0)
             {
-                if (!Directory.Exists(modPath + VanillaCharactersPath))
+                if (!Directory.Exists(CurrentMod.ModRootDirectory + VanillaCharactersPath))
                 {
-                    Directory.CreateDirectory(modPath + VanillaCharactersPath);
+                    Directory.CreateDirectory(CurrentMod.ModRootDirectory + VanillaCharactersPath);
                 }
 
                 foreach (String name in CurrentMod.CharacterFiles)
                 {
-                    stream = new StreamWriter(modPath + VanillaCharactersPath + "/" + name + ".txt", false, Encoding.Default);
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCharactersPath + "/" + name + ".txt", false, Encoding.Default);
 
                     foreach (Character c in CurrentMod.Characters)
                     {
-                        if (c.File.Equals(name))
+                        if (c.BelongsTo.Equals(name))
                         {
                             stream.Write(c.ToString());
                         }
@@ -873,7 +871,7 @@ namespace CK2Modder
                 return;
             }
 
-            BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.File.Equals(selected) == true).ToList());
+            BindingList<Character> filteredList = new BindingList<Character>(CurrentMod.Characters.Where(m => m.BelongsTo.Equals(selected) == true).ToList());
             characterGridView.DataSource = filteredList;
             characterGridView.AllowUserToAddRows = true;
 
@@ -1359,7 +1357,7 @@ namespace CK2Modder
                 CurrentMod.CharacterFiles.Remove(selectedFile);
 
                 foreach (Character c in CurrentMod.Characters.ToList())
-                    if (c.File.Equals(selectedFile))
+                    if (c.BelongsTo.Equals(selectedFile))
                         CurrentMod.Characters.Remove(c);
 
                 // Set the view to all characters
@@ -1414,8 +1412,8 @@ namespace CK2Modder
                         // Update the characters
                         foreach (Character c in CurrentMod.Characters)
                         {
-                            if (c.File.Equals(selected))
-                                c.File = fileForm.FileName;
+                            if (c.BelongsTo.Equals(selected))
+                                c.BelongsTo = fileForm.FileName;
                         }
                     }
                 }
@@ -1456,7 +1454,7 @@ namespace CK2Modder
                 if (c != null)
                 {
                     // Set the character file to the currently selected file
-                    c.File = characterFilesListBox.SelectedItem as String;
+                    c.BelongsTo = characterFilesListBox.SelectedItem as String;
 
                     // Make sure the character is in the master list
                     if (!CurrentMod.Characters.Contains(c))

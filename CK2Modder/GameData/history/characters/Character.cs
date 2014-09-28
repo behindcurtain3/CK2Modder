@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using CK2Modder.GameData.Interfaces;
 
 namespace CK2Modder.GameData.history.characters
 {
@@ -13,21 +14,21 @@ namespace CK2Modder.GameData.history.characters
         String Culture { get; set; }
     }
 
-    public class Character : INotifyPropertyChanged, ICharacterBinding
+    public class Character : INotifyPropertyChanged, ICharacterBinding, IFileResource
     {
         /// <summary>
         /// The name of the file the character is stored in
         /// </summary>
-        private String _file;
-        public String File
+        private String _belongsTo;
+        public String BelongsTo
         {
-            get { return _file; }
+            get { return _belongsTo; }
             set
             {
-                _file = value;
-                NotifyPropertyChanged("File");
+                _belongsTo = value;
+                NotifyPropertyChanged("BelongsTo");
             }
-        }
+        }   
 
         /// <summary>
         /// The characters ID, must be unique
