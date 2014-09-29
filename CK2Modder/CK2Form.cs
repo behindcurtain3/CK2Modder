@@ -1030,58 +1030,5 @@ namespace CK2Modder
 
         #endregion
 
-        #region Import functions
-
-        private void ImportAllVanillaCultures()
-        {
-            String absolutePath = WorkingLocation + VanillaCulturesFile;
-
-            if (File.Exists(absolutePath))
-            {
-                StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);
-                cultureBackgroundWorker.RunWorkerAsync(reader);
-            }
-        }
-
-        private void ImportAllVanillaDynasties()
-        {
-            String absolutePath = WorkingLocation + VanillaDynastyFile;
-
-            if (File.Exists(absolutePath))
-            {
-                StreamReader reader = new StreamReader(absolutePath, Encoding.Default, true);
-                dynastyBackgroundWorker.RunWorkerAsync(reader);
-            }
-        }
-
-        private void ImportAllVanillaCharacters()
-        {
-            String absolutePath = WorkingLocation + VanillaCharactersPath;
-
-            if (Directory.Exists(absolutePath))
-            {
-                foreach (String file in Directory.GetFiles(absolutePath))
-                {
-                    String fileName = Path.GetFileNameWithoutExtension(file);
-
-                    if (!CurrentMod.CharacterFiles.Contains(fileName))
-                    {
-                        CurrentMod.CharacterFiles.Add(fileName);
-                        CurrentMod.CharacterFilesToLoad.Enqueue(file);
-
-                        dataFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(fileName));
-                    } 
-                }
-
-                if (!characterBackgroundWorker.IsBusy)
-                {
-                    StreamReader reader = new StreamReader(CurrentMod.CharacterFilesToLoad.Peek(), Encoding.Default, true);
-                    characterBackgroundWorker.RunWorkerAsync(reader);
-                }
-            }
-        }
-
-        #endregion
-
     }
 }
