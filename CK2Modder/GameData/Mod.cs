@@ -9,37 +9,42 @@ using CK2Modder.Util;
 
 namespace CK2Modder.GameData
 {
-    public class Mod : INotifyPropertyChanged
+    public class Mod : ModResource
     {
-        public List<Dynasty> Dynasties;
-        public List<Culture> Cultures;
-        public List<Character> Characters;
+        #region Fields
+
+        private String _name;
+        private String _path;
+        private Boolean _useArchive;
+        private String _userDirectory = "";
+        private String _dependencies;
+        private BindingList<String> _replacePaths = new BindingList<String>();
+
+        #endregion
+
+        #region Properties
+
+        public List<Dynasty> Dynasties { get; private set; }
+        public List<Culture> Cultures { get; private set; }
+        public List<Character> Characters { get; private set; }
 
         // List of files that are in used
-        public List<String> CharacterFiles;
-        public List<String> DynastyFiles;
-        public List<String> CultureFiles;
+        public List<String> CharacterFiles { get; private set; }
+        public List<String> DynastyFiles { get; private set; }
+        public List<String> CultureFiles { get; private set; }
 
         // Queue's that hold files to load since only one file is loaded at a time
-        public Queue<String> CharacterFilesToLoad;
-        public Queue<String> DynastyFilesToLoad;
-        public Queue<String> CultureFilesToLoad;
+        public Queue<String> CharacterFilesToLoad { get; private set; }
+        public Queue<String> DynastyFilesToLoad { get; private set; }
+        public Queue<String> CultureFilesToLoad { get; private set; }
 
+        // File storage
         public String StorageLocation { get; set; }
         public String ModRootDirectory { get; set; }
 
-        private String _rawOutput;
-        public String RawOutput 
-        {
-            get { return _rawOutput; }
-            set
-            {
-                _rawOutput = value;
-                NotifyPropertyChanged("RawOutput");
-            }
-        }
-
-        private String _name;
+        /// <summary>
+        /// The name of the mod
+        /// </summary>
         public String Name
         {
             get { return _name; }
@@ -56,26 +61,31 @@ namespace CK2Modder.GameData
                 // Set the path to the name, all lower case with no spaces
                 _path = "mod/" + _name; // _name.ToLower().Replace(" ", "");
 
-                UpdateRawOutput();
                 NotifyPropertyChanged("Name");
             }
         }
 
-        private String _path;
+        /// <summary>
+        /// The relative path to the mod
+        /// </summary>
         public String Path
         {
             get { return _path; }
             private set { _path = value; }
         }
 
-        private Boolean _useArchive;
+        /// <summary>
+        /// Does this mod use an archive?
+        /// </summary>
         public Boolean UseArchive
         {
             get { return _useArchive; }
             set { _useArchive = value; }
         }
 
-        private String _userDirectory = "";
+        /// <summary>
+        /// The user directory specified for this mod
+        /// </summary>
         public String UserDirectory
         {
             get { return _userDirectory; }
@@ -86,19 +96,22 @@ namespace CK2Modder.GameData
             }
         }
 
-        private String _dependencies;
+        /// <summary>
+        /// This mod depends on these dependencies
+        /// </summary>
         public String Dependencies
         {
             get { return _dependencies; }
             set 
             { 
                 _dependencies = value;
-                UpdateRawOutput();
                 NotifyPropertyChanged("Dependencies");
             }
         }
 
-        private BindingList<String> _replacePaths = new BindingList<String>();
+        /// <summary>
+        /// The list of the paths the mod replaces
+        /// </summary>
         public BindingList<String> ReplacePaths
         {
             get { return _replacePaths; }
@@ -109,41 +122,16 @@ namespace CK2Modder.GameData
             }
         }
 
-        private Boolean _areCulturesImported = true;
-        public Boolean AreCulturesImported
+        /// <summary>
+        /// How the mod is displayed in the app
+        /// </summary>
+        public override string Display
         {
-            get { return _areCulturesImported; }
-            set
-            {
-                _areCulturesImported = value;
-                UpdateRawOutput();
-                NotifyPropertyChanged("AreCulturesImported");
-            }
+            get { return Name; }
         }
+        #endregion
 
-        private Boolean _areDynastiesImported = true;
-        public Boolean AreDynastiesImported
-        {
-            get { return _areDynastiesImported; }
-            set
-            {
-                _areDynastiesImported = value;
-                UpdateRawOutput();
-                NotifyPropertyChanged("AreDynastiesImported");
-            }
-        }
-
-        private Boolean _areCharactersImported = true;
-        public Boolean AreCharactersImported
-        {
-            get { return _areCharactersImported; }
-            set
-            {
-                _areCharactersImported = value;
-                UpdateRawOutput();
-                NotifyPropertyChanged("AreCharactersImported");
-            }
-        }
+        #region Methods
 
         public Mod(String name)
         {
@@ -166,31 +154,6 @@ namespace CK2Modder.GameData
             CultureFilesToLoad = new Queue<String>();
         }
 
-        public void UpdateRawOutput()
-        {
-            RawOutput = "name = \"" + Name + "\"\r\n";
-            RawOutput += "path = \"" + Path + "\"\r\n";
-            if (!UserDirectory.Equals("")) RawOutput += "user_dir = \"" + UserDirectory + "\"\r\n";
-            RawOutput += "\r\n";
-
-            foreach (String path in ReplacePaths)
-            {
-                RawOutput += "replace_path = \"" + path + "\"\r\n";
-            }            
-
-            if (Dependencies != null && !Dependencies.Equals(""))
-            {
-                RawOutput += "\r\n";
-                RawOutput += "dependencies = { " + Dependencies + " }\r\n";
-            }
-
-            RawOutput += "\r\n";
-            RawOutput += "### CK2 Modder settings ###\r\n";            
-            RawOutput += "# areCulturesImported = " + AreCulturesImported.ToString() + "\r\n";
-            RawOutput += "# areDynastiesImported = " + AreDynastiesImported.ToString() + "\r\n";
-            RawOutput += "# areCharactersImported = " + AreCharactersImported.ToString() + "\r\n";
-        }
-
         public static Mod LoadFromFile(String file)
         {
             if (!File.Exists(file))
@@ -199,10 +162,12 @@ namespace CK2Modder.GameData
             StreamReader stream = File.OpenText(file);
 
             String line;
-            Mod mod = null;
+            Mod mod = new Mod("Loaded Mod");
 
             while ((line = stream.ReadLine()) != null)
             {
+                mod.Raw += line + System.Environment.NewLine;
+
                 if (line.Contains("=") && !line.StartsWith("#"))
                 {
                     KeyValuePair<String, String> data = Helpers.ReadStringData(line);
@@ -210,7 +175,7 @@ namespace CK2Modder.GameData
                     switch (data.Key)
                     {
                         case "name":
-                            mod = new Mod(data.Value);
+                            mod.Name = data.Value;
                             mod.StorageLocation = System.IO.Path.GetDirectoryName(file);
                             mod.ModRootDirectory = mod.StorageLocation + "/" + mod.Name;
                             break;
@@ -232,11 +197,7 @@ namespace CK2Modder.GameData
             return mod;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-        }
+        #endregion
+
     }
 }

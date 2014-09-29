@@ -1,34 +1,34 @@
 ﻿using System;
-using System.ComponentModel;
-using System.IO;
-using CK2Modder.GameData.Interfaces;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CK2Modder.Util;
 
 namespace CK2Modder.GameData.history.characters
 {
-    [DefaultPropertyAttribute("ID")]
-    public class Character : INotifyPropertyChanged, IFileResource
+    public class Character : ModResource
     {
+        #region Fields
+
         /// <summary>
-        /// The name of the file the character is stored in
+        /// Only use the fields that we care about being able to search or use some way to help
+        /// the user navigate through the app
         /// </summary>
-        private String _belongsTo;
-        [BrowsableAttribute(false)]
-        public String BelongsTo
-        {
-            get { return _belongsTo; }
-            set
-            {
-                _belongsTo = value;
-                NotifyPropertyChanged("BelongsTo");
-            }
-        }   
+        private int _id = 0;        
+        private int _dynasty = -1;        
+        private int _father = -1;
+        private int _mother = -1;
+        private String _name = String.Empty;
+        private String _religion = "";
+        private String _culture = "";
+        private String _nickName = "";
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// The characters ID, must be unique
         /// </summary>
-        private int _id = 0;
-        [CategoryAttribute("Character"), DescriptionAttribute("The characters ID, must be unique")]
         public int ID
         {
             get { return _id; }
@@ -42,8 +42,6 @@ namespace CK2Modder.GameData.history.characters
         /// <summary>
         /// The characters name
         /// </summary>
-        private String _name = "";
-        [CategoryAttribute("Character"), DescriptionAttribute("The characters name")]
         public String Name
         {
             get { return _name; }
@@ -54,23 +52,9 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private Boolean _female = false;
-        [CategoryAttribute("Details"), DescriptionAttribute("Is this character a female?")]
-        public Boolean Female
-        {
-            get { return _female; }
-            set
-            {
-                _female = value;
-                NotifyPropertyChanged("Female");
-            }
-        }
-
         /// <summary>
         /// The ID of the dynasty the character belongs to, not required
         /// </summary>
-        private int _dynasty = -1;
-        [CategoryAttribute("Details"), DescriptionAttribute("The ID of the dynasty this character belongs to, not required")]
         public int Dynasty
         {
             get { return _dynasty; }
@@ -84,8 +68,6 @@ namespace CK2Modder.GameData.history.characters
         /// <summary>
         /// The religion of the character
         /// </summary>
-        private String _religion = "";
-        [CategoryAttribute("Details"), DescriptionAttribute("The religion of the character")]
         public String Religion
         {
             get { return _religion; }
@@ -99,8 +81,6 @@ namespace CK2Modder.GameData.history.characters
         /// <summary>
         /// The culture the character belongs to
         /// </summary>
-        private String _culture = "";
-        [CategoryAttribute("Details"), DescriptionAttribute("The culture of the character")]
         public String Culture
         {
             get { return _culture; }
@@ -111,8 +91,6 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private String _nickName = "";
-        [CategoryAttribute("Details"), DescriptionAttribute("The nickname of the character")]
         public String Nickname
         {
             get { return _nickName; }
@@ -123,83 +101,9 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _martial = -1;
-        [CategoryAttribute("Stats"), DescriptionAttribute("The martial attribute for the character, set to -1 for it to not be included in the output")]
-        public int Martial
-        {
-            get { return _martial; }
-            set
-            {
-                _martial = value;
-                NotifyPropertyChanged("Martial");
-            }
-        }
-
-        private int _diplomacy = -1;
-        [CategoryAttribute("Stats"), DescriptionAttribute("The diplomacy attribute for the character, set to -1 for it to not be included in the output")]
-        public int Diplomacy
-        {
-            get { return _diplomacy; }
-            set
-            {
-                _diplomacy = value;
-                NotifyPropertyChanged("Diplomacy");
-            }
-        }
-
-        private int _stewardship = -1;
-        [CategoryAttribute("Stats"), DescriptionAttribute("The stewardship attribute for the character, set to -1 for it to not be included in the output")]
-        public int Stewardship
-        {
-            get { return _stewardship; }
-            set
-            {
-                _stewardship = value;
-                NotifyPropertyChanged("Stewardship");
-            }
-        }
-
-        private int _intrigue = -1;
-        [CategoryAttribute("Stats"), DescriptionAttribute("The intrigue attribute for the character, set to -1 for it to not be included in the output")]
-        public int Intrigue
-        {
-            get { return _intrigue; }
-            set
-            {
-                _intrigue = value;
-                NotifyPropertyChanged("Intrigue");
-            }
-        }
-
-        private int _learning = -1;
-        [CategoryAttribute("Stats"), DescriptionAttribute("The learning attribute for the character, set to -1 for it to not be included in the output")]
-        public int Learning
-        {
-            get { return _learning; }
-            set
-            {
-                _learning = value;
-                NotifyPropertyChanged("Learning");
-            }
-        }
-
         /// <summary>
-        /// A string array that holds the traits of this character
+        /// The ID of this characters father
         /// </summary>
-        private BindingList<String> _traits = new BindingList<String>();
-        [CategoryAttribute("Stats"), DescriptionAttribute("The traits this character has")]
-        public BindingList<String> Traits
-        {
-            get { return _traits; }
-            set
-            {
-                _traits = value;
-                NotifyPropertyChanged("Traits");
-            }
-        }
-
-        private int _father = -1;
-        [CategoryAttribute("Family"), DescriptionAttribute("The ID this characters father")]
         public int Father
         {
             get { return _father; }
@@ -210,8 +114,9 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private int _mother = -1;
-        [CategoryAttribute("Family"), DescriptionAttribute("The ID this characters mother")]
+        /// <summary>
+        /// The ID of this characters mother
+        /// </summary>
         public int Mother
         {
             get { return _mother; }
@@ -222,50 +127,21 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private String _raw = String.Empty;
-        [BrowsableAttribute(false)]
-        public String Raw
-        {
-            get { return _raw; }
-            set
-            {
-                _raw = value;
-                NotifyPropertyChanged("Raw");
-            }
-        }
-
-        private String _dna = "";
-        [CategoryAttribute("Character Appearance"), DescriptionAttribute("The DNA sequence for this character")]
-        public String DNA
-        {
-            get { return _dna; }
-            set
-            {
-                _dna = value;
-                NotifyPropertyChanged("DNA");
-            }
-        }
-
-        private String _properties = "";
-        [CategoryAttribute("Character Appearance")]
-        public String Properties
-        {
-            get { return _properties; }
-            set
-            {
-                _properties = value;
-                NotifyPropertyChanged("Properties");
-            }
-        }
-
-        [BrowsableAttribute(false)]
-        public String InternalDisplay
+        /// <summary>
+        /// The internal display for this resource
+        /// </summary>
+        public override string  Display
         {
             get { return String.Format("{0} - {1}", ID, Name); }
         }
 
+        #endregion
+
         public override string ToString()
         {
+            return Raw;
+            /*
+
             String result = "";
 
             result += ID.ToString() + " = {\r\n";
@@ -304,14 +180,76 @@ namespace CK2Modder.GameData.history.characters
             
             result += "}\r\n";
 
-            return result;
+            return result; */
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string name)
+        /// <summary>
+        /// Loads a character from a list of strings
+        /// </summary>
+        /// <param name="lines">List of strings that contain the raw data for the character</param>
+        /// <returns>An instance of the Character class filled in with the given data, Null if invalid data is passed in</returns>
+        public static Character Load(List<String> lines)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
+            Character c = new Character();
+
+            // need a minimum of two lines to have a character
+            if (lines.Count < 2)
+                return null;
+
+            // Load the ID, it is always on the first line
+            c.ID = Helpers.ParseInt(lines[0]);
+
+            // if a bad ID is returned return null
+            if (c.ID == -1)
+                return null;
+
+            // loop through each line and handle them appropriately
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // add the text to the raw output and make sure there is a new line added to the end of each
+                c.Raw += lines[i] + System.Environment.NewLine;
+
+                // load in the values, but not events which will have the opening {
+                if (lines[i].Contains("=") && !lines[i].Contains("{"))
+                {
+                    // use the helper to load the value
+                    KeyValuePair<String, String> data = Helpers.ReadStringData(lines[i]);
+
+                    // figure out what to do with it
+                    switch (data.Key.ToLower())
+                    {
+                        case "name":
+                            c.Name = data.Value;
+                            break;
+
+                        case "culture":
+                            c.Culture = data.Value;
+                            break;
+
+                        case "religion":
+                            c.Religion = data.Value;
+                            break;
+
+                        case "give_nickname":
+                            c.Nickname = data.Value;
+                            break;
+
+                        case "dynasty":
+                            c.Dynasty = Helpers.ParseInt(data.Value);
+                            break;
+
+                        case "father":
+                            c.Father = Helpers.ParseInt(data.Value);
+                            break;
+
+                        case "mother":
+                            c.Mother = Helpers.ParseInt(data.Value);
+                            break;
+                    }
+                }
+            }
+
+            return c;
         }
     }
 }

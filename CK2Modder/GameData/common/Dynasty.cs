@@ -1,13 +1,25 @@
 ﻿using System;
-using System.ComponentModel;
-using CK2Modder.GameData.Interfaces;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CK2Modder.Util;
 
 namespace CK2Modder.GameData.common
 {
-    public class Dynasty : INotifyPropertyChanged, IFileResource
+    public class Dynasty : ModResource
     {
+        #region Fields
+
         private int _id;
-        [CategoryAttribute("Dynasty"), DescriptionAttribute("The dynasties ID, must be unique")]
+        private String _name;
+        private String _culture;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The dynasties ID
+        /// </summary>
         public int ID 
         {
             get { return _id; }
@@ -18,32 +30,9 @@ namespace CK2Modder.GameData.common
             }
         }
 
-        private String _belongsTo;
-        [BrowsableAttribute(false)]
-        public String BelongsTo
-        {
-            get { return _belongsTo; }
-            set
-            {
-                _belongsTo = value;
-                NotifyPropertyChanged("BelongsTo");
-            }
-        }
-
-        private String _raw = String.Empty;
-        [BrowsableAttribute(false)]
-        public String Raw
-        {
-            get { return _raw; }
-            set
-            {
-                _raw = value;
-                NotifyPropertyChanged("Raw");
-            }
-        }
-
-        private String _name;
-        [CategoryAttribute("Dynasty"), DescriptionAttribute("The dynasties name")]
+        /// <summary>
+        /// The dynasties name
+        /// </summary>
         public String Name 
         {
             get { return _name; }
@@ -54,8 +43,9 @@ namespace CK2Modder.GameData.common
             }
         }
 
-        private String _culture;
-        [CategoryAttribute("Information"), DescriptionAttribute("The dynasties culture")]
+        /// <summary>
+        /// The dynasties culture
+        /// </summary>
         public String Culture
         {
             get { return _culture; }
@@ -65,27 +55,22 @@ namespace CK2Modder.GameData.common
                 NotifyPropertyChanged("Culture");
             }
         }
-
-        private CoatOfArms _coa;
-        [CategoryAttribute("Information"), DescriptionAttribute("The dynasties Coat of Arms")]
-        public CoatOfArms COA
-        {
-            get { return _coa; }
-            set { _coa = value; }
-        }
-
-        [BrowsableAttribute(false)]
-        public String InternalDisplay
+        
+        /// <summary>
+        /// The internal display of the dynasty
+        /// </summary>
+        public override String Display
         {
             get { return String.Format("{0} - {1}", ID, Name); }
         }
+
+        #endregion
 
         public Dynasty()
         {
             ID = 0;
             Name = "";
             Culture = "";
-            COA = null;
         }
 
         public Dynasty(int id, String name, String culture)
@@ -93,27 +78,54 @@ namespace CK2Modder.GameData.common
             ID = id;
             Name = name;
             Culture = culture;
-            COA = null;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
         public override string ToString()
         {
-            String result = ID + " = {\r\n";
-            result += "\tname=\"" + Name + "\"\r\n";
-            result += "\tculture = " + Culture + "\r\n";
+            return Raw;            
+        }
 
-            if(COA != null)
-                result += COA.ToString();
+        public static Dynasty Load(List<String> lines)
+        {
+            Dynasty dynasty = new Dynasty();
 
-            result += "}\r\n";
-            return result;
+            // need a minimum of two lines
+            if (lines.Count < 2)
+                return null;
+
+            // Load the ID, it is always on the first line
+            dynasty.ID = Helpers.ParseInt(lines[0]);
+
+            // if a bad ID is returned return null
+            if (dynasty.ID == -1)
+                return null;
+
+            // loop through each line and handle them appropriately
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // add the text to the raw output and make sure there is a new line added to the end of each
+                dynasty.Raw += lines[i] + System.Environment.NewLine;
+
+                // load in the values, but not events which will have the opening {
+                if (lines[i].Contains("=") && !lines[i].Contains("{"))
+                {
+                    // use the helper to load the value
+                    KeyValuePair<String, String> data = Helpers.ReadStringData(lines[i]);
+
+                    switch (data.Key.ToLower())
+                    {
+                        case "name":
+                            dynasty.Name = data.Value;
+                            break;
+
+                        case "culture":
+                            dynasty.Culture = data.Value;
+                            break;
+                    }
+                }
+            }
+
+            return dynasty;
         }
     }
 }

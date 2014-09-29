@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CK2Modder.GameData;
 using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
 using CK2Modder.Util;
 using RavSoft;
-using CK2Modder.GameData.Interfaces;
 
 namespace CK2Modder
 {
@@ -85,6 +82,9 @@ namespace CK2Modder
             dataTextEditor.Margins[0].Width = 20;
             dataTextEditor.ConfigurationManager.Language = "python";
             dataTextEditor.ConfigurationManager.Configure();
+            dataTextEditor.Caret.HighlightCurrentLine = true;
+            dataTextEditor.Caret.CurrentLineBackgroundColor = System.Drawing.Color.DarkGray;
+            dataTextEditor.Caret.CurrentLineBackgroundAlpha = 64;
 
             if(!Directory.Exists(WorkingLocation))
             {
@@ -97,14 +97,9 @@ namespace CK2Modder
 
             workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
-            tabControl.Visible = false;
-
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
             characterBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(characterBackgroundWorker_RunWorkerCompleted);
-            
-            
-            cultureTreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(cultureTreeView_NodeMouseClick);
         }        
 
         #endregion
@@ -144,7 +139,7 @@ namespace CK2Modder
                 if (currentLine.Contains("}") && bracketCounter == 0)
                 {
                     // attempt to the load the dynasty
-                    Dynasty dynasty = DynastyLoader.Load(lines);
+                    Dynasty dynasty = Dynasty.Load(lines);
 
                     // if successful add the character to the character list
                     if (dynasty != null)
@@ -225,7 +220,7 @@ namespace CK2Modder
                 if (currentLine.Contains("}") && bracketCounter == 0)
                 {
                     // attempt to the load the culture
-                    Culture culture = CultureLoader.Load(lines);
+                    Culture culture = Culture.Load(lines);
 
                     // if successful add the culture to the culture list
                     if (culture != null)
@@ -252,7 +247,9 @@ namespace CK2Modder
                 return;
 
             List<Culture> rows = e.Result as List<Culture>;
-
+            
+            // TODO: update this implementation
+            /*
             TreeNode root = cultureTreeView.Nodes[0];
 
             foreach (Culture c in rows)
@@ -276,7 +273,7 @@ namespace CK2Modder
 
             // Make sure the new tree structure is shown
             root.Expand();
-
+            */
             // Dequeue the current item
             CurrentMod.CultureFilesToLoad.Dequeue();
 
@@ -305,8 +302,8 @@ namespace CK2Modder
                 // and reset the list for the next character
 
                 // skip processing any commented out lines or empty lines
-                if (currentLine.StartsWith("#") || String.IsNullOrEmpty(currentLine))
-                    continue;
+                //if (currentLine.StartsWith("#") || String.IsNullOrEmpty(currentLine))
+                //    continue;
 
                 // check for brackets, they keep track of whether the entire character has been added yet
                 if (currentLine.Contains("{"))
@@ -321,7 +318,7 @@ namespace CK2Modder
                 if (currentLine.Contains("}") && bracketCounter == 0)
                 {
                     // attempt to the load the character
-                    Character c = CharacterLoader.Load(lines);
+                    Character c = Character.Load(lines);
                     
                     // if successful add the character to the character list
                     if (c != null)
@@ -383,25 +380,6 @@ namespace CK2Modder
 
             // Set the mod
             CurrentMod = m;
-
-            // Make sure the tab control is visible
-            tabControl.Visible = true;
-            
-            // Add data bindings
-            textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
-            userDirectoryTextBox.DataBindings.Add("Text", CurrentMod, "UserDirectory");
-            textBoxDependencies.DataBindings.Add("Text", CurrentMod, "Dependencies");
-            textBoxModRawOutput.DataBindings.Add("Text", CurrentMod, "RawOutput");
-            buttonImportDynasties.DataBindings.Add("Enabled", CurrentMod, "AreDynastiesImported");
-            buttonImportCultures.DataBindings.Add("Enabled", CurrentMod, "AreCulturesImported");
-            buttonImportCharacters.DataBindings.Add("Enabled", CurrentMod, "AreCharactersImported");
-            replacePathsListBox.DataSource = CurrentMod.ReplacePaths;
-
-            // Setup the culture tree
-            cultureTreeView.Nodes.Clear();
-            TreeNode root = new TreeNode(DefaultCultureRoot);
-            root.ContextMenuStrip = cultureRootContextMenuStrip;
-            cultureTreeView.Nodes.Add(root);
 
             // data tab
             dataFilesListBox.Items.Clear();
@@ -486,7 +464,6 @@ namespace CK2Modder
                 }
             }
 
-            CurrentMod.UpdateRawOutput();
             UserPreferences.Default.LastMod = CurrentMod.StorageLocation + "/" + CurrentMod.Name + ".mod";
             UserPreferences.Default.Save();
 
@@ -504,37 +481,13 @@ namespace CK2Modder
 
             CurrentMod = null;
 
-            // Hide the tabs
-            this.tabControl.Visible = false;
-
-            // Remove extra tabs
-            while (tabControl.TabCount > 4)
-            {
-                tabControl.TabPages.RemoveAt(4);
-            }
-
-            // Remove data bindings
-            textBoxModName.DataBindings.Clear();
-            textBoxDependencies.DataBindings.Clear();
-            textBoxModRawOutput.DataBindings.Clear();
-            buttonImportDynasties.DataBindings.Clear();
-            buttonImportCultures.DataBindings.Clear();
-            buttonImportCharacters.DataBindings.Clear();
-            userDirectoryTextBox.DataBindings.Clear();
-
-            // Reset the culture tree view
-            cultureTreeView.Nodes.Clear();
-            TreeNode root = new TreeNode(DefaultCultureRoot);
-            root.ContextMenuStrip = cultureRootContextMenuStrip;
-            cultureTreeView.Nodes.Add(root);
-            root.Expand();
-
             // reset the data tab
             dataFilesListBox.Items.Clear();
             dataListBox.Items.Clear();
 
-            cultureInformationGroupBox.Visible = false;
-            cultureNamesGroupBox.Visible = false;
+            // reset the filters
+            dataFilesFilter.Text = "";
+            dataFilter.Text = "";
 
             UserPreferences.Default.LastMod = "";
             UserPreferences.Default.Save();
@@ -577,7 +530,7 @@ namespace CK2Modder
 
             // Write out the mod file
             StreamWriter stream = File.CreateText(CurrentMod.StorageLocation + "/" + CurrentMod.Name + ".mod");
-            stream.Write(CurrentMod.RawOutput);
+            stream.Write(CurrentMod.Raw);
             stream.Close();
 
             // Make sure the mod directory exists
@@ -687,18 +640,21 @@ namespace CK2Modder
 
             switch (mode)
             {
+                case "Mod Details":
+                    UpdateTextEditor(CurrentMod);
+                    break;
                 case "Characters":
                     files.AddRange(CurrentMod.CharacterFiles);
 
                     foreach (Character c in CurrentMod.Characters)
-                        data.Add(c.InternalDisplay);
+                        data.Add(c.Display);
 
                     break;
                 case "Dynasties":
                     files.AddRange(CurrentMod.DynastyFiles);
 
                     foreach (Dynasty d in CurrentMod.Dynasties)
-                        data.Add(d.InternalDisplay);
+                        data.Add(d.Display);
 
                     break;
                 case "Cultures":
@@ -708,10 +664,6 @@ namespace CK2Modder
             // populate the lists
             dataFilesListBox.Items.AddRange(files.ToArray());            
             PopulateDataListBox(data);
-
-            //dataFilesListBox.SelectedIndex = 0;
-            //if(dataListBox.Items.Count > 0)
-            //    dataListBox.SelectedIndex = 0;
         }
 
         private void UpdateDataListBox()
@@ -756,7 +708,7 @@ namespace CK2Modder
                     }
 
                     foreach (Character c in characters)
-                        list.Add(c.InternalDisplay);
+                        list.Add(c.Display);
                     break;
 
                 case "Dynasties":
@@ -787,7 +739,7 @@ namespace CK2Modder
                     }
 
                     foreach (Dynasty d in dynasties)
-                        list.Add(d.InternalDisplay);
+                        list.Add(d.Display);
                     break;
             }
 
@@ -796,6 +748,23 @@ namespace CK2Modder
 
             // Populate it
             PopulateDataListBox(list);
+        }
+
+        private void UpdateTextEditor(ModResource resource)
+        {
+            // always clear the bindings on the text editor
+            dataTextEditor.DataBindings.Clear();
+
+            // if an object was selected add the raw data binding
+            if (resource != null)
+            {
+                dataTextEditor.DataBindings.Add("Text", resource, "Raw");
+            }
+            // otherwise clear the text
+            else
+            {
+                dataTextEditor.Text = "";
+            }
         }
 
         #endregion
@@ -832,6 +801,7 @@ namespace CK2Modder
                 return;
 
             String selected = dataListBox.SelectedItem as String;
+            ModResource resource = null;
 
             if (selected == null)
                 return;
@@ -845,159 +815,15 @@ namespace CK2Modder
             switch (CurrentMode)
             {
                 case "Characters":
-                    dataPropertyGrid.SelectedObject = CurrentMod.Characters.Find(c => c.ID == ID);       
+                    resource = CurrentMod.Characters.Find(c => c.ID == ID);
                     break;
 
                 case "Dynasties":
-                    dataPropertyGrid.SelectedObject = CurrentMod.Dynasties.Find(d => d.ID == ID);
+                    resource = CurrentMod.Dynasties.Find(d => d.ID == ID);
                     break;
             }
 
-            // always clear the bindings on the text editor
-            dataTextEditor.DataBindings.Clear();
-
-            // if an object was selected add the raw data binding
-            if (dataPropertyGrid.SelectedObject != null)
-            {
-                dataTextEditor.DataBindings.Add("Text", dataPropertyGrid.SelectedObject, "Raw");
-            }
-            // otherwise clear the text
-            else
-            {
-                dataTextEditor.Text = "";
-            }
-        }
-
-        void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            SelectedCultureNode = e.Node;
-
-            // Don't do this on a right-click
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-                return;
-
-            String nodeName = e.Node.Text;
-
-            if (nodeName.Equals(DefaultCultureRoot))
-            {
-                cultureInformationGroupBox.Visible = false;
-                cultureNamesGroupBox.Visible = false;
-                return;
-            }
-
-            Culture selectedCulture = CurrentMod.Cultures.Find(delegate(Culture c) { return c.Name.Equals(nodeName); });
-            if (selectedCulture == null)
-            {
-                Culture searchForMe;
-                // search the subcultures
-                foreach (Culture culture in CurrentMod.Cultures)
-                {
-                    searchForMe = culture.SubCultures.Find(delegate(Culture c) { return c.Name.Equals(nodeName); });
-                    if (searchForMe != null)
-                    {
-                        selectedCulture = searchForMe;
-                        break;
-                    }
-                }
-            }
-
-            SelectedCulture = selectedCulture;
-
-            if (selectedCulture != null)
-            {
-                cultureInformationGroupBox.Visible = true;
-                cultureNamesGroupBox.Visible = true;
-
-                // isCulture will be true if this is a culture, false if a culture group
-                Boolean isCulture = (selectedCulture.SubCultures.Count == 0 && !SelectedCultureNode.Parent.Text.Equals(DefaultCultureRoot));
-
-                cultureNameTextBox.Text = selectedCulture.Name;
-                cultureGfxTextBox.Text = selectedCulture.Graphical_Culture;
-                cultureColorTextBox.Text = selectedCulture.Color;
-                cultureMaleNamesRichTextBox.Text = selectedCulture.MaleNames;
-                cultureFemaleNamesRichTextBox.Text = selectedCulture.FemaleNames;
-                cultureDynastyPrefixTextBox.Text = selectedCulture.DynastyPrefix;
-                cultureBastardTextBox.Text = selectedCulture.BastardPrefix;
-                cultureModifierTextBox.Text = selectedCulture.Modifier;
-                cultureMalePatronymTextBox.Text = selectedCulture.MalePatronym;
-                cultureFemalePatronymTextBox.Text = selectedCulture.FemalePatronym;
-                cultureSuffixCheckBox.Checked = selectedCulture.IsSuffix;
-
-                // Name chances
-                culturePatGFTextBox.Text = selectedCulture.PaternalGrandFather.ToString();
-                cultureMatGFTextBox.Text = selectedCulture.MaternalGrandFather.ToString();
-                cultureFatherTextBox.Text = selectedCulture.Father.ToString();
-
-                culturePatGMTextBox.Text = selectedCulture.PaternalGrandMother.ToString();
-                cultureMatGMTextBox.Text = selectedCulture.MaternalGrandMother.ToString();
-                cultureMotherTextBox.Text = selectedCulture.Mother.ToString();
-
-                // enable or disable the appropriate fields
-                cultureColorTextBox.Enabled = isCulture;
-                cultureMaleNamesRichTextBox.Enabled = isCulture;
-                cultureFemaleNamesRichTextBox.Enabled = isCulture;
-                cultureDynastyPrefixTextBox.Enabled = isCulture;
-                cultureBastardTextBox.Enabled = isCulture;
-                cultureModifierTextBox.Enabled = isCulture;
-                cultureMalePatronymTextBox.Enabled = isCulture;
-                cultureFemalePatronymTextBox.Enabled = isCulture;
-                cultureSuffixCheckBox.Enabled = isCulture;
-                culturePatGFTextBox.Enabled = isCulture;
-                culturePatGMTextBox.Enabled = isCulture;
-                cultureMatGFTextBox.Enabled = isCulture;
-                cultureMatGMTextBox.Enabled = isCulture;
-                cultureFatherTextBox.Enabled = isCulture;
-                cultureMotherTextBox.Enabled = isCulture;
-
-                // data bindings
-                cultureNameTextBox.DataBindings.Clear();
-                cultureNameTextBox.DataBindings.Add("Text", selectedCulture, "Name");
-
-                cultureGfxTextBox.DataBindings.Clear();
-                cultureGfxTextBox.DataBindings.Add("Text", selectedCulture, "Graphical_Culture");
-
-                cultureColorTextBox.DataBindings.Clear();
-                cultureColorTextBox.DataBindings.Add("Text", selectedCulture, "Color");
-
-                cultureMaleNamesRichTextBox.DataBindings.Clear();
-                cultureMaleNamesRichTextBox.DataBindings.Add("Text", selectedCulture, "MaleNames");
-
-                cultureFemaleNamesRichTextBox.DataBindings.Clear();
-                cultureFemaleNamesRichTextBox.DataBindings.Add("Text", selectedCulture, "FemaleNames");
-
-                cultureDynastyPrefixTextBox.DataBindings.Clear();
-                cultureDynastyPrefixTextBox.DataBindings.Add("Text", selectedCulture, "DynastyPrefix");
-
-                cultureBastardTextBox.DataBindings.Clear();
-                cultureBastardTextBox.DataBindings.Add("Text", selectedCulture, "BastardPrefix");
-
-                cultureMalePatronymTextBox.DataBindings.Clear();
-                cultureMalePatronymTextBox.DataBindings.Add("Text", selectedCulture, "MalePatronym");
-
-                cultureFemalePatronymTextBox.DataBindings.Clear();
-                cultureFemalePatronymTextBox.DataBindings.Add("Text", selectedCulture, "FemalePatronym");
-
-                cultureSuffixCheckBox.DataBindings.Clear();
-                cultureSuffixCheckBox.DataBindings.Add("Checked", selectedCulture, "IsSuffix");
-
-                culturePatGFTextBox.DataBindings.Clear();
-                culturePatGFTextBox.DataBindings.Add("Text", selectedCulture, "PaternalGrandFather");
-
-                cultureMatGFTextBox.DataBindings.Clear();
-                cultureMatGFTextBox.DataBindings.Add("Text", selectedCulture, "MaternalGrandFather");
-
-                cultureFatherTextBox.DataBindings.Clear();
-                cultureFatherTextBox.DataBindings.Add("Text", selectedCulture, "Father");
-
-                culturePatGMTextBox.DataBindings.Clear();
-                culturePatGMTextBox.DataBindings.Add("Text", selectedCulture, "PaternalGrandMother");
-
-                cultureMatGMTextBox.DataBindings.Clear();
-                cultureMatGMTextBox.DataBindings.Add("Text", selectedCulture, "MaternalGrandMother");
-
-                cultureMotherTextBox.DataBindings.Clear();
-                cultureMotherTextBox.DataBindings.Add("Text", selectedCulture, "Mother");
-            }
+            UpdateTextEditor(resource);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1027,7 +853,7 @@ namespace CK2Modder
             SaveMod();
         }
 
-        private void modToolStripMenuItem_Click(object sender, EventArgs e)
+        private void newModToolStripMenuItem_Click(object sender, EventArgs e)
         {
             newModDialog = new SaveFileDialog();
             newModDialog.InitialDirectory = WorkingLocation + "\\mod";
@@ -1059,146 +885,10 @@ namespace CK2Modder
             CloseMod();
         }
 
-        private void buttonImportDynasties_Click(object sender, EventArgs e)
-        {
-            ImportAllVanillaDynasties();
-            CurrentMod.AreDynastiesImported = false;
-        }
-
         private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectWorkingLocation();
         }
-
-        /// <summary>
-        /// Removes a culture from the tree view
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cultureToolStripMenuRemove_Click(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            if (SelectedCultureNode != null)
-            {
-                foreach (Culture group in CurrentMod.Cultures)
-                {
-                    int count = group.SubCultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
-
-                    if (count > 0)
-                    {
-                        SelectedCultureNode.Remove();
-                        
-                        // Hide the editing panes
-                        cultureInformationGroupBox.Visible = false;
-                        cultureNamesGroupBox.Visible = false;                        
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Removes a culture group from the tree view
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cultureStripRemove_Click(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            if (SelectedCultureNode != null)
-            {
-                if (MessageBox.Show("This will also remove all the cultures attached to this culture group. Are you sure you wish to continue?",
-                    "Warning",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
-                {
-                    int count = CurrentMod.Cultures.RemoveAll(delegate(Culture culture) { return culture.Name.Equals(SelectedCultureNode.Text); });
-
-                    if (count > 0)
-                    {
-                        SelectedCultureNode.Remove();
-
-                        // Hide the editing panes
-                        cultureInformationGroupBox.Visible = false;
-                        cultureNamesGroupBox.Visible = false;
-                    }
-                }                
-            }
-        }
-
-        /// <summary>
-        /// Add a new culture to a culture group
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cultureStripAdd_Click(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            if (SelectedCultureNode != null)
-            {
-                Culture group = CurrentMod.Cultures.Find(delegate(Culture c) { return c.Name.Equals(SelectedCultureNode.Text); });
-
-                if (group != null)
-                {
-
-                    Random rand = new Random(DateTime.Now.Millisecond);
-
-                    Culture newCulture = new Culture();
-                    newCulture.Name = "culture_" + rand.Next(10000, 99999);
-
-                    TreeNode node = new TreeNode(newCulture.Name);
-                    node.Tag = newCulture;
-                    node.ContextMenuStrip = cultureContextMenuStrip;
-
-                    group.SubCultures.Add(newCulture);
-                    SelectedCultureNode.Nodes.Add(node);
-                    SelectedCultureNode.Expand();
-                }
-
-            }
-        }
-
-        /// <summary>
-        /// Add a new culture group
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cultureGroupStripMenuAdd_Click(object sender, EventArgs e)
-        {
-            if (CurrentMod == null || SelectedCultureNode == null)
-                return;            
-
-            Random rand = new Random(DateTime.Now.Millisecond);
-
-            Culture newCulture = new Culture();
-            newCulture.Name = "culture_group_" + rand.Next(10000, 99999);
-
-            TreeNode node = new TreeNode(newCulture.Name);
-            node.Tag = newCulture;
-            node.ContextMenuStrip = cultureSubContextMenuStrip;
-
-            CurrentMod.Cultures.Add(newCulture);
-            SelectedCultureNode.Nodes.Add(node);
-            SelectedCultureNode.Expand();
-
-        }
-
-        private void buttonImportCultures_Click(object sender, EventArgs e)
-        {
-            ImportAllVanillaCultures();
-            CurrentMod.AreCulturesImported = false;
-        }
-
-        private void buttonImportCharacters_Click(object sender, EventArgs e)
-        {
-            ImportAllVanillaCharacters();
-            CurrentMod.AreCharactersImported = false;
-        }        
 
         private void cultureNameTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -1319,31 +1009,6 @@ namespace CK2Modder
                     dataFilesListBox.Items.Add(fileForm.FileName);
                 }
             }
-        }
-
-        private void addPathButton_Click(object sender, EventArgs e)
-        {
-            if(!replacePathsComboBox.Text.Equals(""))
-            {
-                CurrentMod.ReplacePaths.Add(replacePathsComboBox.Text);
-                replacePathsComboBox.Text = "";
-                CurrentMod.UpdateRawOutput();
-            }
-        }
-
-        private void replacePathsListBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back)
-            {
-                CurrentMod.ReplacePaths.RemoveAt(replacePathsListBox.SelectedIndex);
-                CurrentMod.UpdateRawOutput();
-            }
-        }
-
-        private void replacePathsComboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                addPathButton.PerformClick();
         }
 
         #endregion

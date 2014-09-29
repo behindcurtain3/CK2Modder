@@ -88,8 +88,8 @@
     <Compile Include="GameData\history\characters\LifeEventEditor.Designer.cs">
       <DependentUpon>LifeEventEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="GameData\Interfaces\IFileResource.cs" />
     <Compile Include="GameData\Mod.cs" />
+    <Compile Include="GameData\ModResource.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserPreferences.Designer.cs">
@@ -97,10 +97,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UserPreferences.settings</DependentUpon>
     </Compile>
-    <Compile Include="Util\CharacterLoader.cs" />
     <Compile Include="Util\CueProvider.cs" />
-    <Compile Include="Util\CultureLoader.cs" />
-    <Compile Include="Util\DynastyLoader.cs" />
     <Compile Include="Util\Helpers.cs" />
     <Compile Include="Util\StringExtensions.cs" />
     <EmbeddedResource Include="CK2Form.resx">

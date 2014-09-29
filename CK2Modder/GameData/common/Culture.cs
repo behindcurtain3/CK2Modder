@@ -1,41 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
-using CK2Modder.GameData.Interfaces;
+using CK2Modder.Util;
 
 namespace CK2Modder.GameData.common
 {
-    public class Culture : INotifyPropertyChanged, IFileResource
+    public class Culture : ModResource
     {
-        private String _belongsTo;
-        public String BelongsTo
-        {
-            get { return _belongsTo; }
-            set
-            {
-                _belongsTo = value;
-                NotifyPropertyChanged("BelongsTo");
-            }
-        }
-
-        private String _raw = String.Empty;
-        [BrowsableAttribute(false)]
-        public String Raw
-        {
-            get { return _raw; }
-            set
-            {
-                _raw = value;
-                NotifyPropertyChanged("Raw");
-            }
-        }
+        #region Fields
 
         private String _name = "";
+        private List<Culture> _subCultures;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The name of the culture
+        /// </summary>
         public String Name
         {
             get { return _name; }
-            set 
+            set
             {
                 if (value.Equals(""))
                 {
@@ -47,209 +34,38 @@ namespace CK2Modder.GameData.common
             }
         }
 
-        private String _graphical_culture = "";
-        public String Graphical_Culture
-        {
-            get { return _graphical_culture; }
-            set 
-            { 
-                _graphical_culture = value;
-                NotifyPropertyChanged("Graphical_Culture");
-            }
-        }
-
-        private String _color = "";
-        public String Color
-        {
-            get { return _color; }
-            set 
-            { 
-                _color = value;
-                NotifyPropertyChanged("Color");
-            }
-        }
-
-        private String _maleNames = "";
-        public String MaleNames
-        {
-            get { return _maleNames; }
-            set 
-            { 
-                _maleNames = value;
-                NotifyPropertyChanged("MaleNames");
-            }
-        }
-
-        private String _femaleNames = "";
-        public String FemaleNames
-        {
-            get { return _femaleNames; }
-            set 
-            { 
-                _femaleNames = value;
-                NotifyPropertyChanged("FemaleNames");
-            }
-        }
-
-        private String _malePatronym = "";
-        public String MalePatronym
-        {
-            get { return _malePatronym; }
-            set
-            {
-                _malePatronym = value;
-                NotifyPropertyChanged("MalePatronym");
-            }
-        }
-
-        private String _femalePatronym = "";
-        public String FemalePatronym
-        {
-            get { return _femalePatronym; }
-            set
-            {
-                _femalePatronym = value;
-                NotifyPropertyChanged("FemalePatronym");
-            }
-        }
-
-        private Boolean _isSuffix = false;
-        public Boolean IsSuffix
-        {
-            get { return _isSuffix; }
-            set
-            {
-                _isSuffix = value;
-                NotifyPropertyChanged("IsSuffix");
-            }
-        }
-
-        private String _dynastyPrefix = "";
-        public String DynastyPrefix
-        {
-            get { return _dynastyPrefix; }
-            set 
-            { 
-                _dynastyPrefix = value;
-                NotifyPropertyChanged("DynastyPrefix");
-            }
-        }
-
-        private String _bastardPrefix = "";
-        public String BastardPrefix
-        {
-            get { return _bastardPrefix; }
-            set 
-            { 
-                _bastardPrefix = value;
-                NotifyPropertyChanged("BastardPrefix");
-            }
-        }
-
-        private int _patGFChance = 0;
-        public int PaternalGrandFather
-        {
-            get { return _patGFChance; }
-            set 
-            { 
-                _patGFChance = value;
-                NotifyPropertyChanged("PaternalGrandFather");
-            }
-        }
-
-        private int _matGFChance = 0;
-        public int MaternalGrandFather
-        {
-            get { return _matGFChance; }
-            set 
-            { 
-                _matGFChance = value;
-                NotifyPropertyChanged("MaternalGrandFather");
-            }
-        }
-
-        private int _father = 0;
-        public int Father
-        {
-            get { return _father; }
-            set 
-            { 
-                _father = value;
-                NotifyPropertyChanged("Father");
-            }
-        }
-
-        private int _patGMChance = 0;
-        public int PaternalGrandMother
-        {
-            get { return _patGMChance; }
-            set 
-            { 
-                _patGMChance = value;
-                NotifyPropertyChanged("PaternalGrandMother");
-            }
-        }
-
-        private int _matGMChance = 0;
-        public int MaternalGrandMother
-        {
-            get { return _matGMChance; }
-            set 
-            { 
-                _matGMChance = value;
-                NotifyPropertyChanged("MaternalGrandMother");
-            }
-        }
-
-        private int _mother = 0;
-        public int Mother
-        {
-            get { return _mother; }
-            set 
-            { 
-                _mother = value;
-                NotifyPropertyChanged("Mother");
-            }
-        }
-
-        private String _modifier = "default_culture_modifier";
-        public String Modifier
-        {
-            get { return _modifier; }
-            set 
-            { 
-                _modifier = value;
-                NotifyPropertyChanged("Modifier");
-            }
-        }
-
-        private List<Culture> _subCultures;
+        /// <summary>
+        /// If this is a culture group there will be any number of cultures that belong to it
+        /// </summary>
         public List<Culture> SubCultures
         {
             get { return _subCultures; }
             set { _subCultures = value; }
         }
 
-        [BrowsableAttribute(false)]
-        public String InternalDisplay
+        /// <summary>
+        /// How the culture is displayed internally in this app
+        /// </summary>
+        public override string Display
         {
             get { return Name; }
         }
+
+        #endregion
+
+        
+        
 
         public Culture()
         {
             _subCultures = new List<Culture>();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-        }
-
         public override string ToString()
         {
+            return Raw;
+            /*
+
             String tabPrefix = (SubCultures.Count == 0 ? "\t" : "");
 
             String result = tabPrefix + Name + " = {\r\n";
@@ -322,6 +138,90 @@ namespace CK2Modder.GameData.common
 
             result += tabPrefix + "}\r\n";
             return result;
+             */
+        }
+
+        public static Culture Load(List<String> lines)
+        {
+            Culture culture = new Culture();
+
+            // need a minimum of two lines
+            if (lines.Count < 2)
+                return null;
+
+            // Load the culture name, it is always on the first line
+            KeyValuePair<String, String> name = Helpers.ReadStringData(lines[0]);
+            culture.Name = name.Key;
+
+            // if a bad ID is returned return null
+            if (String.IsNullOrWhiteSpace(culture.Name))
+                return null;
+
+            // loop through each line and handle them appropriately
+            for (int i = 1; i < lines.Count; i++)
+            {
+                // Load subcultures
+                if (lines[i].Contains("= {") && !lines[i].StartsWith("#") && !lines[i].Contains("male_names") && !lines[i].Contains("female_names"))
+                {
+                    // Load the subculture lines into a new list
+                    List<String> subCultureLines = Helpers.ReadStringSequence(lines, i);
+
+                    // Load the subculture using a recursive call to this function
+                    Culture subCulture = Culture.Load(subCultureLines);
+
+                    // Add the subculture to the current culture if it is valid
+                    if (subCulture != null)
+                        culture.SubCultures.Add(subCulture);
+
+                    // make sure the current loop advances to skip over the subCulture lines
+                    i += subCultureLines.Count - 1;
+                }
+                // load in the values, but not events which will have the opening {
+                else if (lines[i].Contains("=") && !lines[i].Contains("{"))
+                {
+                    // use the helper to load the value
+                    KeyValuePair<String, String> data = Helpers.ReadStringData(lines[i]);
+
+                    switch (data.Key.ToLower())
+                    {
+                        // nothing of value to load here, at the moment this is just a placeholder
+                        default:
+                            break;
+                    }
+                }
+                // an event sequence
+                else if (lines[i].Contains("{"))
+                {
+                    List<String> nameLines = Helpers.ReadStringSequence(lines, i);
+                    String holder = "";
+
+                    foreach (String s in nameLines)
+                    {
+                        if (!holder.Equals(""))
+                        {
+                            holder += "\r\n";
+
+                            if (!s.Contains("{"))
+                            {
+                                if (!s.Contains("}"))
+                                    holder += "\t";
+                            }
+                        }
+                        holder += s.Trim();
+                    }
+
+                    // Add the names to the correct gender
+                    //if (nameLines[0].Contains("female_names"))
+                    //    culture.FemaleNames = holder;
+                    //else
+                    //    culture.MaleNames = holder;
+
+                    // advance the current line position
+                    i += nameLines.Count - 1;
+                }
+            }
+
+            return culture;
         }
     }
 }
