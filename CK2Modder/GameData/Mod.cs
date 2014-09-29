@@ -11,7 +11,7 @@ namespace CK2Modder.GameData
 {
     public class Mod : INotifyPropertyChanged
     {
-        public BindingList<Dynasty> Dynasties;
+        public List<Dynasty> Dynasties;
         public List<Culture> Cultures;
         public List<Character> Characters;
 
@@ -153,7 +153,7 @@ namespace CK2Modder.GameData
             UseArchive = false;
 
             // Setup dynasty list
-            Dynasties = new BindingList<Dynasty>();
+            Dynasties = new List<Dynasty>();
             Cultures = new List<Culture>();
             Characters = new List<Character>();
 

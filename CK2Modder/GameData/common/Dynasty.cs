@@ -7,6 +7,7 @@ namespace CK2Modder.GameData.common
     public class Dynasty : INotifyPropertyChanged, IFileResource
     {
         private int _id;
+        [CategoryAttribute("Dynasty"), DescriptionAttribute("The dynasties ID, must be unique")]
         public int ID 
         {
             get { return _id; }
@@ -18,6 +19,7 @@ namespace CK2Modder.GameData.common
         }
 
         private String _belongsTo;
+        [BrowsableAttribute(false)]
         public String BelongsTo
         {
             get { return _belongsTo; }
@@ -29,6 +31,7 @@ namespace CK2Modder.GameData.common
         }
 
         private String _name;
+        [CategoryAttribute("Dynasty"), DescriptionAttribute("The dynasties name")]
         public String Name 
         {
             get { return _name; }
@@ -40,6 +43,7 @@ namespace CK2Modder.GameData.common
         }
 
         private String _culture;
+        [CategoryAttribute("Information"), DescriptionAttribute("The dynasties culture")]
         public String Culture
         {
             get { return _culture; }
@@ -51,10 +55,17 @@ namespace CK2Modder.GameData.common
         }
 
         private CoatOfArms _coa;
+        [CategoryAttribute("Information"), DescriptionAttribute("The dynasties Coat of Arms")]
         public CoatOfArms COA
         {
             get { return _coa; }
             set { _coa = value; }
+        }
+
+        [BrowsableAttribute(false)]
+        public String InternalDisplay
+        {
+            get { return String.Format("{0} - {1}", ID, Name); }
         }
 
         public Dynasty()

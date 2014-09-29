@@ -12,6 +12,7 @@ using CK2Modder.GameData.common;
 using CK2Modder.GameData.history.characters;
 using CK2Modder.Util;
 using RavSoft;
+using CK2Modder.GameData.Interfaces;
 
 namespace CK2Modder
 {
@@ -28,14 +29,18 @@ namespace CK2Modder
         public static readonly String VanillaCulturesPath = "/common/cultures/";
 
         // Display string
+        public static readonly String DefaultFileListView = "View All Files";
         public static readonly String DefaultCultureRoot = "Culture Groups";
         public static readonly String DefaultCharacterListView = "View All Characters";
+        public static readonly String DefaultDynastyListView = "View All Dynasties";
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
+        public String CurrentMode { get; set; }
+
         public Culture SelectedCulture { get; set; }
         public TreeNode SelectedCultureNode { get; set; }
-        public Boolean IsCharacterGridListeningForRows { get; set; }
+        
 
         #region Initialization
 
@@ -70,8 +75,11 @@ namespace CK2Modder
             InitializeComponent();
 
             // Setup the cue's on textboxes
-            CueProvider.SetCue(characterFilesFilter, "Filter Character Files");
-            CueProvider.SetCue(characterFilter, "Filter Characters");
+            CueProvider.SetCue(dataFilesFilter, "Filter Files");
+            CueProvider.SetCue(dataFilter, "Filter Data");
+
+            // Setup the data type selection
+            selectDataType.SelectedIndex = 0;
 
             if(!Directory.Exists(WorkingLocation))
             {
@@ -87,34 +95,10 @@ namespace CK2Modder
             tabControl.Visible = false;
 
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
-            
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
             characterBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(characterBackgroundWorker_RunWorkerCompleted);
             
-            // Setup dynastyGridView
-            dynastyGridView.Visible = false;
-            dynastyGridView.AutoGenerateColumns = false;
-
-            DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
-            idColumn.DataPropertyName = "ID";
-            idColumn.HeaderText = "ID";
-            idColumn.MinimumWidth = 100;
-
-            DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
-            nameColumn.DataPropertyName = "Name";
-            nameColumn.HeaderText = "Name";
-            nameColumn.MinimumWidth = 150;
-
-            DataGridViewTextBoxColumn cultureColumn = new DataGridViewTextBoxColumn();
-            cultureColumn.DataPropertyName = "Culture";
-            cultureColumn.HeaderText = "Culture";
-            cultureColumn.MinimumWidth = 150;
-
-            dynastyGridView.Columns.Add(idColumn);
-            dynastyGridView.Columns.Add(nameColumn);
-            dynastyGridView.Columns.Add(cultureColumn);
-
-            dynastyGridView.CellDoubleClick += new DataGridViewCellEventHandler(dynastyGridView_CellDoubleClick);
+            
             cultureTreeView.NodeMouseClick += new TreeNodeMouseClickEventHandler(cultureTreeView_NodeMouseClick);
         }        
 
@@ -195,6 +179,10 @@ namespace CK2Modder
             {
                 StreamReader reader = new StreamReader(CurrentMod.DynastyFilesToLoad.Peek(), Encoding.Default, true);
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
+            }
+            else
+            {
+                UpdateDataView(selectDataType.Text);
             }
         }
         
@@ -317,9 +305,9 @@ namespace CK2Modder
 
                 // check for brackets, they keep track of whether the entire character has been added yet
                 if (currentLine.Contains("{"))
-                    bracketCounter++;
+                    bracketCounter += StringExtensions.CountOccurences(currentLine, "{");
                 if (currentLine.Contains("}"))
-                    bracketCounter--;
+                    bracketCounter -= StringExtensions.CountOccurences(currentLine, "}");
 
                 // add the current line
                 lines.Add(currentLine);
@@ -372,7 +360,7 @@ namespace CK2Modder
             // if done update the character list box
             else
             {
-                UpdateCharacterListBox();
+                UpdateDataView(selectDataType.Text);
             }
         }
 
@@ -391,8 +379,6 @@ namespace CK2Modder
             CurrentMod = m;
 
             tabControl.Visible = true;
-            dynastyGridView.DataSource = CurrentMod.Dynasties;
-            dynastyGridView.Visible = true;
             
             // Add data bindings
             textBoxModName.DataBindings.Add("Text", CurrentMod, "Name");
@@ -410,9 +396,10 @@ namespace CK2Modder
             root.ContextMenuStrip = cultureRootContextMenuStrip;
             cultureTreeView.Nodes.Add(root);
 
-            // character tab            
-            characterFilesListBox.Items.Add(DefaultCharacterListView); // Add the default list value
-            characterFilesListBox.SelectedIndex = 0;
+            // data tab
+            dataFilesListBox.Items.Clear();
+            dataFilesListBox.Items.Add(DefaultFileListView);
+            dataFilesListBox.SelectedIndex = 0;
 
             // Load the dynasties
             String dynastiesFolder = CurrentMod.ModRootDirectory + VanillaDynastiesPath;
@@ -429,8 +416,6 @@ namespace CK2Modder
                     {
                         CurrentMod.DynastyFiles.Add(file);
                         CurrentMod.DynastyFilesToLoad.Enqueue(filePath);
-
-                        // TODO: add file to list view
                     }
                 }
 
@@ -483,8 +468,6 @@ namespace CK2Modder
                     {
                         CurrentMod.CharacterFiles.Add(file);
                         CurrentMod.CharacterFilesToLoad.Enqueue(filePath);
-
-                        characterFilesListBox.Items.Add(file);
                     }
                 }
 
@@ -503,7 +486,6 @@ namespace CK2Modder
             saveToolStripMenuItem.Enabled = true;
             closeModToolStripMenuItem.Enabled = true;
             closeWithoutSavingToolStripMenuItem.Enabled = true;
-            IsCharacterGridListeningForRows = false;
         }
 
         public void CloseMod()
@@ -524,9 +506,6 @@ namespace CK2Modder
                 tabControl.TabPages.RemoveAt(4);
             }
 
-            dynastyGridView.DataSource = null;
-            dynastyGridView.Visible = false;
-
             // Remove data bindings
             textBoxModName.DataBindings.Clear();
             textBoxDependencies.DataBindings.Clear();
@@ -543,9 +522,9 @@ namespace CK2Modder
             cultureTreeView.Nodes.Add(root);
             root.Expand();
 
-            // reset the characters tab
-            characterFilesListBox.Items.Clear();
-            characterListBox.Items.Clear();            
+            // reset the data tab
+            dataFilesListBox.Items.Clear();
+            dataListBox.Items.Clear();
 
             cultureInformationGroupBox.Visible = false;
             cultureNamesGroupBox.Visible = false;
@@ -582,52 +561,6 @@ namespace CK2Modder
             {
                 return false;
             }
-        }
-
-        private void ShowDynasty(Dynasty dynasty)
-        {
-            if (dynasty == null)
-                return;
-            
-            // 
-            // tabDynastyInfo
-            // 
-            TabPage tabDynastyInfo = new TabPage(dynasty.Name);
-            tabDynastyInfo.Location = new System.Drawing.Point(4, 22);
-            tabDynastyInfo.Name = "tabDynastyInfo";
-            tabDynastyInfo.Padding = new System.Windows.Forms.Padding(3);
-            tabDynastyInfo.Size = new System.Drawing.Size(773, 484);
-            tabDynastyInfo.TabIndex = this.tabControl.TabCount;
-            tabDynastyInfo.Text = dynasty.Name + " Dynasty";
-            tabDynastyInfo.BackColor = Color.Transparent;
-
-            DynastyEditor editor = new DynastyEditor();
-            editor.Dock = System.Windows.Forms.DockStyle.Fill;
-            editor.Location = new System.Drawing.Point(3, 3);
-            editor.Size = new System.Drawing.Size(767, 478);
-            editor.TabIndex = 0;
-
-            tabDynastyInfo.Controls.Add(editor);
-
-            editor.ID.DataBindings.Add("Text", dynasty, "ID");
-            editor.DynastyName.DataBindings.Add("Text", dynasty, "Name");
-            editor.Culture.DataBindings.Add("Text", dynasty, "Culture");
-            editor.Characters.DataSource = CurrentMod.Characters.Where(c => c.Dynasty == dynasty.ID).ToList();
-
-            this.tabControl.TabPages.Add(tabDynastyInfo);
-            this.tabControl.SelectedIndex = tabDynastyInfo.TabIndex;
-
-            EventHandler closeHandler = (s, e) => this.tabControl.TabPages.Remove(tabDynastyInfo);
-            EventHandler closeHandler2 = (s, e) => this.tabControl.SelectedIndex = 1; // go to dynasties tab
-            editor.CloseButton.Click += closeHandler;
-            editor.CloseButton.Click += closeHandler2;
-
-            editor.Characters.CellDoubleClick += new DataGridViewCellEventHandler(delegate(object sender, DataGridViewCellEventArgs e)
-                {
-                    DataGridViewRow row = editor.Characters.Rows[e.RowIndex];
-
-                    //ShowCharacter(row.DataBoundItem as Character);
-                });                
         }
 
         public void SaveMod()
@@ -719,114 +652,197 @@ namespace CK2Modder
             }
         }
 
-        private void PopulateCharacterListBox(List<Character> characters)
+        private void PopulateDataListBox(List<String> list)
         {
-            foreach (Character c in characters)
-            {
-                characterListBox.Items.Add(c.InternalDisplay);
-            }
+            dataListBox.Items.AddRange(list.ToArray());
         }
 
-        private void UpdateCharacterListBox()
+        private void UpdateDataView(String mode)
         {
-            List<Character> filteredCharacters = new List<Character>();
-            String filter = characterFilter.Text;
-            String file = characterFilesListBox.SelectedItem as String;
+            // reset the lists
+            dataFilesListBox.Items.Clear();
+            dataListBox.Items.Clear();
 
-            // apply the files filter
-            if (!characterFilesListBox.SelectedItem.Equals(DefaultCharacterListView))
+            // reset the filters
+            dataFilesFilter.Text = String.Empty;
+            dataFilter.Text = String.Empty;
+
+            // load the default views depending on the mode selected
+            dataFilesListBox.Items.Add(DefaultFileListView);
+
+            // store the data for the lists here
+            List<String> files = new List<String>();
+            List<String> data = new List<String>();
+
+            switch (mode)
             {
-                // Filter the files first
-                filteredCharacters = CurrentMod.Characters.Where(c => c.BelongsTo.Equals(file)).ToList();
-            }
-            else
-            {
-                filteredCharacters.AddRange(CurrentMod.Characters);
+                case "Characters":
+                    files.AddRange(CurrentMod.CharacterFiles);
+
+                    foreach (Character c in CurrentMod.Characters)
+                        data.Add(c.InternalDisplay);
+
+                    break;
+                case "Dynasties":
+                    files.AddRange(CurrentMod.DynastyFiles);
+
+                    foreach (Dynasty d in CurrentMod.Dynasties)
+                        data.Add(d.InternalDisplay);
+
+                    break;
+                case "Cultures":
+                    break;
             }
 
-            // check if the filter is an ID
-            int ID = Helpers.ParseInt(filter);
-            if (ID != -1)
+            // populate the lists
+            dataFilesListBox.Items.AddRange(files.ToArray());
+            dataFilesListBox.SelectedIndex = 0;
+            dataListBox.Items.AddRange(data.ToArray());
+            if(dataListBox.Items.Count > 0)
+                dataListBox.SelectedIndex = 0;
+        }
+
+        private void UpdateDataListBox()
+        {
+            String filter = dataFilter.Text;
+            String file = dataFilesListBox.SelectedItem as String;
+            List<String> list = new List<String>();
+
+            if (String.IsNullOrWhiteSpace(file))
+                return;
+
+            switch (CurrentMode)
             {
-                filteredCharacters = filteredCharacters.Where(c => c.ID.ToString().Contains(ID.ToString())).ToList();
-            }
-            // filter for names
-            else
-            {
-                // filter for the string passed in
-                if (!String.IsNullOrEmpty(filter) && !String.IsNullOrWhiteSpace(filter))
-                {
-                    filteredCharacters = filteredCharacters.Where(c => c.Name.ToLower().Contains(filter)).ToList();
-                }
+                case "Characters":
+                    List<Character> characters = new List<Character>();
+                    
+                    // apply the files filter
+                    if (!file.Equals(DefaultFileListView))
+                    {
+                        // Filter the files first
+                        characters = CurrentMod.Characters.FindAll(delegate(Character c) { return c.BelongsTo.Equals(file); });
+                    }
+                    else
+                    {
+                        characters.AddRange(CurrentMod.Characters);
+                    }
+
+                    // check if the filter is an ID
+                    int ID = Helpers.ParseInt(filter);
+                    if (ID != -1)
+                    {
+                        characters = characters.FindAll(delegate(Character c) { return c.ID.ToString().Contains(ID.ToString()); });
+                    }
+                    // filter for names
+                    else
+                    {
+                        // filter for the string passed in
+                        if (!String.IsNullOrWhiteSpace(filter))
+                        {
+                            characters = characters.FindAll(delegate(Character c) { return c.Name.ToLower().Contains(filter); });
+                        }
+                    }
+
+                    foreach (Character c in characters)
+                        list.Add(c.InternalDisplay);
+                    break;
+
+                case "Dynasties":
+                    List<Dynasty> dynasties = new List<Dynasty>();
+                    dynasties.AddRange(CurrentMod.Dynasties);
+
+                    // apply the files filter
+                    if (!file.Equals(DefaultFileListView))
+                    {
+                        // Filter the files first
+                        dynasties = CurrentMod.Dynasties.FindAll(delegate(Dynasty d) { return d.BelongsTo.Equals(file); });
+                    }
+
+                    // check if the filter is an ID
+                    ID = Helpers.ParseInt(filter);
+                    if (ID != -1)
+                    {
+                        dynasties = dynasties.FindAll(delegate(Dynasty d) { return d.ID.ToString().Contains(ID.ToString()); });
+                    }
+                    // filter for names
+                    else
+                    {
+                        // filter for the string passed in
+                        if (!String.IsNullOrWhiteSpace(filter))
+                        {
+                            dynasties = dynasties.FindAll(delegate(Dynasty d) { return d.Name.ToLower().Contains(filter); });
+                        }
+                    }
+
+                    foreach (Dynasty d in dynasties)
+                        list.Add(d.InternalDisplay);
+                    break;
             }
 
-            // Clear the list
-            characterListBox.Items.Clear();
+            // clear out the list box
+            dataListBox.Items.Clear();
 
             // Populate it
-            PopulateCharacterListBox(filteredCharacters);
+            PopulateDataListBox(list);
         }
 
         #endregion
 
         #region Events
 
-        private void characterFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void selectDataType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (CurrentMod == null)
                 return;
 
-            UpdateCharacterListBox();
+            // set the current mod
+            CurrentMode = selectDataType.Text;
+
+            UpdateDataView(CurrentMode);
         }
 
-        private void characterListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void dataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (CurrentMod == null)
                 return;
 
-            String selected = characterListBox.SelectedItem as String;
+            UpdateDataListBox();
+        }
+
+        private void dataFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            UpdateDataListBox();
+        }
+
+        private void dataListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            String selected = dataListBox.SelectedItem as String;
 
             if (selected == null)
                 return;
 
             int ID = Helpers.ParseInt(selected);
-            
+
             if (ID == -1)
                 return;
 
-            // show the character
-            characterPropertyGrid.SelectedObject = CurrentMod.Characters.Find(c => c.ID == ID);
-        }
-
-        private void characterFilesFilter_TextChanged(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            String filter = characterFilesFilter.Text;
-            List<String> filteredFiles = new List<String>();
-
-            if (String.IsNullOrWhiteSpace(filter))
+            // show the data
+            switch (CurrentMode)
             {
-                filteredFiles.AddRange(CurrentMod.CharacterFiles);
-            }
-            else
-            {
-                filteredFiles = CurrentMod.CharacterFiles.Where(f => f.Contains(filter)).ToList();
-            }
+                case "Characters":
+                    dataPropertyGrid.SelectedObject = CurrentMod.Characters.Find(c => c.ID == ID);       
+                    break;
 
-            characterFilesListBox.Items.Clear();
-            characterFilesListBox.Items.Add(DefaultCharacterListView);
-            foreach (String s in filteredFiles)
-                characterFilesListBox.Items.Add(s);
-        }
-
-        private void characterFilter_TextChanged(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            UpdateCharacterListBox();
+                case "Dynasties":
+                    dataPropertyGrid.SelectedObject = CurrentMod.Dynasties.Find(d => d.ID == ID);
+                    break;
+            }            
         }
 
         void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -961,16 +977,6 @@ namespace CK2Modder
             }
         }
 
-        void dynastyGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.RowIndex >= dynastyGridView.Rows.Count)
-                return;
-
-            DataGridViewRow row = dynastyGridView.Rows[e.RowIndex];
-
-            ShowDynasty(row.DataBoundItem as Dynasty);
-        }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog = new OpenFileDialog();
@@ -1039,93 +1045,6 @@ namespace CK2Modder
         private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectWorkingLocation();
-        }
-
-        private void buttonDynastyFilterByID_Click(object sender, EventArgs e)
-        {
-            BindingList<Dynasty> filteredList = new BindingList<Dynasty>();
-            BindingList<Dynasty> idList = null;
-            BindingList<Dynasty> nameList = null;
-            BindingList<Dynasty> cultureList = null;
-            if (!textBoxDynastyFilterByID.Text.Equals(""))
-            {
-                try
-                {
-                    int id = Int32.Parse(textBoxDynastyFilterByID.Text);
-                    idList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.ID == id).ToList());
-                }
-                catch (FormatException ex)
-                {
-                    MessageBox.Show("The ID entered must be a number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-            if (!textBoxDynastyFilterByName.Text.Equals(""))
-            {
-                nameList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.Name.ToLower().Contains(textBoxDynastyFilterByName.Text.ToLower()) == true).ToList());
-            }
-            if (!textBoxDynastyFilterByCulture.Text.Equals(""))
-            {
-                cultureList = new BindingList<Dynasty>(CurrentMod.Dynasties.Where(m => m.Culture.ToLower().Contains(textBoxDynastyFilterByCulture.Text.ToLower()) == true).ToList());
-            }
-
-            if (idList != null)
-            {
-                foreach (Dynasty d in idList)
-                    filteredList.Add(d);
-            }
-
-            if (nameList != null)
-            {
-                foreach (Dynasty d in nameList)
-                {
-                    if (!filteredList.Contains(d))
-                        filteredList.Add(d);
-                }
-            }
-
-            if (cultureList != null)
-            {
-                foreach (Dynasty d in cultureList)
-                {
-                    if (!filteredList.Contains(d))
-                        filteredList.Add(d);
-                }
-            }
-
-            dynastyGridView.AllowUserToAddRows = false;
-            dynastyGridView.AllowUserToDeleteRows = false;
-            dynastyGridView.DataSource = filteredList;
-        }
-
-        private void buttonDynastyClearFilter_Click(object sender, EventArgs e)
-        {
-            textBoxDynastyFilterByID.Text = "";
-            textBoxDynastyFilterByName.Text = "";
-            textBoxDynastyFilterByCulture.Text = "";
-
-            dynastyGridView.DataSource = CurrentMod.Dynasties;
-
-            dynastyGridView.AllowUserToAddRows = true;
-            dynastyGridView.AllowUserToDeleteRows = true;
-        }
-
-        private void textBoxDynastyFilterByID_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Return)
-                buttonDynastyFilter.PerformClick();
-        }
-
-        private void textBoxDynastyFilterByName_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Return)
-                buttonDynastyFilter.PerformClick();
-        }
-
-        private void textBoxDynastyFilterByCulture_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Return)
-                buttonDynastyFilter.PerformClick();
         }
 
         /// <summary>
@@ -1273,7 +1192,7 @@ namespace CK2Modder
             if (CurrentMod == null)
                 return;
 
-            String selectedFile = characterFilesListBox.SelectedItem as String;
+            String selectedFile = dataFilesListBox.SelectedItem as String;
 
             if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
                 return;
@@ -1287,7 +1206,7 @@ namespace CK2Modder
                     File.Delete(originalFile);
                 }
 
-                characterFilesListBox.Items.Remove(selectedFile);
+                dataFilesListBox.Items.Remove(selectedFile);
                 CurrentMod.CharacterFiles.Remove(selectedFile);
 
                 foreach (Character c in CurrentMod.Characters.ToList())
@@ -1295,13 +1214,13 @@ namespace CK2Modder
                         CurrentMod.Characters.Remove(c);
 
                 // Set the view to all characters
-                characterFilesListBox.SelectedIndex = 0;
+                dataFilesListBox.SelectedIndex = 0;
             }
         }
 
         private void editSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            String selected = characterFilesListBox.SelectedItem as String;
+            String selected = dataFilesListBox.SelectedItem as String;
 
             if (selected == null || selected.Equals(DefaultCharacterListView))
                 return;
@@ -1340,8 +1259,8 @@ namespace CK2Modder
                         // Update the UI
                         CurrentMod.CharacterFiles.Remove(selected);
                         CurrentMod.CharacterFiles.Add(fileForm.FileName);
-                        characterFilesListBox.Items.Remove(selected);
-                        characterFilesListBox.Items.Add(fileForm.FileName);
+                        dataFilesListBox.Items.Remove(selected);
+                        dataFilesListBox.Items.Add(fileForm.FileName);
 
                         // Update the characters
                         foreach (Character c in CurrentMod.Characters)
@@ -1374,7 +1293,7 @@ namespace CK2Modder
                 else
                 {
                     CurrentMod.CharacterFiles.Add(fileForm.FileName);
-                    characterFilesListBox.Items.Add(fileForm.FileName);
+                    dataFilesListBox.Items.Add(fileForm.FileName);
                 }
             }
         }
@@ -1445,7 +1364,7 @@ namespace CK2Modder
                         CurrentMod.CharacterFiles.Add(fileName);
                         CurrentMod.CharacterFilesToLoad.Enqueue(file);
 
-                        characterFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(fileName));
+                        dataFilesListBox.Items.Add(Path.GetFileNameWithoutExtension(fileName));
                     } 
                 }
 
@@ -1458,6 +1377,6 @@ namespace CK2Modder
         }
 
         #endregion
-       
+
     }
 }

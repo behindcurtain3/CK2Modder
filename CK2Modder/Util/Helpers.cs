@@ -68,10 +68,10 @@ namespace CK2Modder.Util
                 if(lines[i].StartsWith("#"))
                     continue;
 
-                if(lines[i].Contains("{"))
-                    bracketCount++;
-                if(lines[i].Contains("}"))
-                    bracketCount--;
+                if (lines[i].Contains("{"))
+                    bracketCount += StringExtensions.CountOccurences(lines[i], "{");
+                if (lines[i].Contains("}"))
+                    bracketCount -= StringExtensions.CountOccurences(lines[i], "}");
 
                 data.Add(lines[i]);
 

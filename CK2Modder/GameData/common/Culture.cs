@@ -218,6 +218,12 @@ namespace CK2Modder.GameData.common
             set { _subCultures = value; }
         }
 
+        [BrowsableAttribute(false)]
+        public String InternalDisplay
+        {
+            get { return Name; }
+        }
+
         public Culture()
         {
             _subCultures = new List<Culture>();
