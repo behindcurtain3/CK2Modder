@@ -706,11 +706,12 @@ namespace CK2Modder
             }
 
             // populate the lists
-            dataFilesListBox.Items.AddRange(files.ToArray());
-            dataFilesListBox.SelectedIndex = 0;
-            dataListBox.Items.AddRange(data.ToArray());
-            if(dataListBox.Items.Count > 0)
-                dataListBox.SelectedIndex = 0;
+            dataFilesListBox.Items.AddRange(files.ToArray());            
+            PopulateDataListBox(data);
+
+            //dataFilesListBox.SelectedIndex = 0;
+            //if(dataListBox.Items.Count > 0)
+            //    dataListBox.SelectedIndex = 0;
         }
 
         private void UpdateDataListBox()
@@ -852,8 +853,19 @@ namespace CK2Modder
                     break;
             }
 
+            // always clear the bindings on the text editor
             dataTextEditor.DataBindings.Clear();
-            dataTextEditor.DataBindings.Add("Text", dataPropertyGrid.SelectedObject, "Raw");
+
+            // if an object was selected add the raw data binding
+            if (dataPropertyGrid.SelectedObject != null)
+            {
+                dataTextEditor.DataBindings.Add("Text", dataPropertyGrid.SelectedObject, "Raw");
+            }
+            // otherwise clear the text
+            else
+            {
+                dataTextEditor.Text = "";
+            }
         }
 
         void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)

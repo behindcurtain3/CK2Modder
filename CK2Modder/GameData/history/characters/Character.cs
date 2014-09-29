@@ -222,7 +222,7 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private String _raw;
+        private String _raw = String.Empty;
         [BrowsableAttribute(false)]
         public String Raw
         {
