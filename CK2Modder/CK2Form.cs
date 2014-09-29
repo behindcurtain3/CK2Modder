@@ -485,6 +485,10 @@ namespace CK2Modder
             dataFilesListBox.Items.Clear();
             dataListBox.Items.Clear();
 
+            // reset editor
+            dataTextEditor.DataBindings.Clear();
+            dataTextEditor.Text = "";
+
             // reset the filters
             dataFilesFilter.Text = "";
             dataFilter.Text = "";
@@ -824,6 +828,19 @@ namespace CK2Modder
             }
 
             UpdateTextEditor(resource);
+        }
+
+        private void CK2Form_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Process shortcuts
+            if (e.KeyCode == Keys.F1)
+                selectDataType.SelectedIndex = 0;
+            else if (e.KeyCode == Keys.F2)
+                selectDataType.SelectedIndex = 1;
+            else if (e.KeyCode == Keys.F3)
+                selectDataType.SelectedIndex = 2;
+            else if (e.KeyCode == Keys.F4)
+                selectDataType.SelectedIndex = 3;
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
