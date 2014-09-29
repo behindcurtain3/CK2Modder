@@ -74,6 +74,10 @@ namespace CK2Modder
             this.dataListBox = new System.Windows.Forms.ListBox();
             this.dataTextEditor = new ScintillaNET.Scintilla();
             this.label1 = new System.Windows.Forms.Label();
+            this.modClosedPanel = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.newModButton = new System.Windows.Forms.Button();
+            this.loadModButton = new System.Windows.Forms.Button();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.characterFilesContextMenuStrip.SuspendLayout();
@@ -89,6 +93,7 @@ namespace CK2Modder
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).BeginInit();
+            this.modClosedPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -364,6 +369,7 @@ namespace CK2Modder
             this.dataFilesFilter.Name = "dataFilesFilter";
             this.dataFilesFilter.Size = new System.Drawing.Size(94, 20);
             this.dataFilesFilter.TabIndex = 0;
+            this.dataFilesFilter.TextChanged += new System.EventHandler(this.dataFilesFilter_TextChanged);
             // 
             // dataFilesListBox
             // 
@@ -429,11 +435,56 @@ namespace CK2Modder
             this.label1.TabIndex = 6;
             this.label1.Text = "Select a Data Type:";
             // 
+            // modClosedPanel
+            // 
+            this.modClosedPanel.Controls.Add(this.loadModButton);
+            this.modClosedPanel.Controls.Add(this.newModButton);
+            this.modClosedPanel.Controls.Add(this.label2);
+            this.modClosedPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.modClosedPanel.Location = new System.Drawing.Point(0, 24);
+            this.modClosedPanel.Name = "modClosedPanel";
+            this.modClosedPanel.Size = new System.Drawing.Size(784, 516);
+            this.modClosedPanel.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(12, 175);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(760, 23);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Create a New Mod or Load an Existing one";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // newModButton
+            // 
+            this.newModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.newModButton.Location = new System.Drawing.Point(287, 212);
+            this.newModButton.Name = "newModButton";
+            this.newModButton.Size = new System.Drawing.Size(108, 23);
+            this.newModButton.TabIndex = 1;
+            this.newModButton.Text = "Create New...";
+            this.newModButton.UseVisualStyleBackColor = true;
+            this.newModButton.Click += new System.EventHandler(this.newModButton_Click);
+            // 
+            // loadModButton
+            // 
+            this.loadModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.loadModButton.Location = new System.Drawing.Point(401, 212);
+            this.loadModButton.Name = "loadModButton";
+            this.loadModButton.Size = new System.Drawing.Size(103, 23);
+            this.loadModButton.TabIndex = 2;
+            this.loadModButton.Text = "Load Mod...";
+            this.loadModButton.UseVisualStyleBackColor = true;
+            this.loadModButton.Click += new System.EventHandler(this.loadModButton_Click);
+            // 
             // CK2Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
+            this.Controls.Add(this.modClosedPanel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.selectDataType);
@@ -467,6 +518,7 @@ namespace CK2Modder
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).EndInit();
+            this.modClosedPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -514,6 +566,10 @@ namespace CK2Modder
         private System.Windows.Forms.ListBox dataListBox;
         private ScintillaNET.Scintilla dataTextEditor;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel modClosedPanel;
+        private System.Windows.Forms.Button loadModButton;
+        private System.Windows.Forms.Button newModButton;
+        private System.Windows.Forms.Label label2;
     }
 }
 

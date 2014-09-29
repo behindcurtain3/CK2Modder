@@ -26,10 +26,8 @@ namespace CK2Modder
         public static readonly String VanillaCulturesPath = "/common/cultures/";
 
         // Display string
+        public static readonly String DefaultWindowTitle = "CK2 Modder";
         public static readonly String DefaultFileListView = "View All Files";
-        public static readonly String DefaultCultureRoot = "Culture Groups";
-        public static readonly String DefaultCharacterListView = "View All Characters";
-        public static readonly String DefaultDynastyListView = "View All Dynasties";
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
@@ -375,6 +373,8 @@ namespace CK2Modder
             if (m == null)
             {
                 MessageBox.Show("Unable to load the specified mod.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                modClosedPanel.Visible = true;
                 return;
             }
 
@@ -470,6 +470,12 @@ namespace CK2Modder
             saveToolStripMenuItem.Enabled = true;
             closeModToolStripMenuItem.Enabled = true;
             closeWithoutSavingToolStripMenuItem.Enabled = true;
+
+            // Hide the panel
+            modClosedPanel.Visible = false;
+
+            // Update title
+            this.Text = DefaultWindowTitle + " - " + CurrentMod.Name;
         }
 
         public void CloseMod()
@@ -495,6 +501,11 @@ namespace CK2Modder
 
             UserPreferences.Default.LastMod = "";
             UserPreferences.Default.Save();
+
+            // Show the panel
+            modClosedPanel.Visible = true;
+
+            this.Text = DefaultWindowTitle;
         }
                
         private bool SelectWorkingLocation()
@@ -754,6 +765,35 @@ namespace CK2Modder
             PopulateDataListBox(list);
         }
 
+        private void UpdateFileListBox()
+        {
+            String filter = dataFilesFilter.Text;
+            List<String> list = new List<String>();
+
+            switch (selectDataType.Text)
+            {
+                case "Characters":
+                    list.AddRange(CurrentMod.CharacterFiles);
+                    break;
+                case "Dynasties":
+                    list.AddRange(CurrentMod.DynastyFiles);
+                    break;
+                case "Cultures":
+                    list.AddRange(CurrentMod.CultureFiles);
+                    break;
+            }
+
+            // if there is a filter, apply it
+            if (!String.IsNullOrWhiteSpace(filter))
+            {
+                list = list.FindAll(delegate(String s) { return s.Contains(filter); });
+            }
+
+            dataFilesListBox.Items.Clear();
+            dataFilesListBox.Items.Add(DefaultFileListView);
+            dataFilesListBox.Items.AddRange(list.ToArray());
+        }
+
         private void UpdateTextEditor(ModResource resource)
         {
             // always clear the bindings on the text editor
@@ -768,6 +808,44 @@ namespace CK2Modder
             else
             {
                 dataTextEditor.Text = "";
+            }
+        }
+
+        private void CreateNewMod()
+        {
+            newModDialog = new SaveFileDialog();
+            newModDialog.InitialDirectory = WorkingLocation + "\\mod";
+            newModDialog.AddExtension = true;
+            newModDialog.DefaultExt = ".mod";
+            newModDialog.FileName = "Mod Name";
+            newModDialog.Filter = "Mod File (*.mod)|*.mod";
+            newModDialog.Title = "Select a save location and name for the mod";
+
+            if (newModDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                if (CurrentMod != null)
+                    CloseMod();
+
+                // TODO: delete and remake the mod directory if it already exits to give the new mod a fresh start
+                Mod mod = new Mod(Path.GetFileNameWithoutExtension(newModDialog.FileName));
+                SetCurrentMod(mod);
+            }
+        }
+
+        private void LoadMod()
+        {
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Mod File (*.mod)|*.mod";
+            openFileDialog.InitialDirectory = WorkingLocation + "\\mod";
+            openFileDialog.Multiselect = false;
+            openFileDialog.Title = "Select a mod to open";
+
+            if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                if (CurrentMod != null)
+                    CloseMod();
+
+                SetCurrentMod(Mod.LoadFromFile(openFileDialog.FileName));
             }
         }
 
@@ -797,6 +875,15 @@ namespace CK2Modder
                 return;
 
             UpdateDataListBox();
+        }
+
+
+        private void dataFilesFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (CurrentMod == null)
+                return;
+
+            UpdateFileListBox();
         }
 
         private void dataListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -843,21 +930,19 @@ namespace CK2Modder
                 selectDataType.SelectedIndex = 3;
         }
 
+        private void newModButton_Click(object sender, EventArgs e)
+        {
+            CreateNewMod();
+        }
+
+        private void loadModButton_Click(object sender, EventArgs e)
+        {
+            LoadMod();
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Mod File (*.mod)|*.mod";
-            openFileDialog.InitialDirectory = WorkingLocation + "\\mod";
-            openFileDialog.Multiselect = false;
-            openFileDialog.Title = "Select a mod to open";
-
-            if (openFileDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-            {
-                if (CurrentMod != null)
-                    CloseMod();
-
-                SetCurrentMod(Mod.LoadFromFile(openFileDialog.FileName));
-            }
+            LoadMod();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -872,23 +957,7 @@ namespace CK2Modder
 
         private void newModToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            newModDialog = new SaveFileDialog();
-            newModDialog.InitialDirectory = WorkingLocation + "\\mod";
-            newModDialog.AddExtension = true;
-            newModDialog.DefaultExt = ".mod";
-            newModDialog.FileName = "Mod Name";
-            newModDialog.Filter = "Mod File (*.mod)|*.mod";
-            newModDialog.Title = "Select a save location and name for the mod";
-
-            if (newModDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-            {
-                if (CurrentMod != null)
-                    CloseMod();
-
-                // TODO: delete and remake the mod directory if it already exits to give the new mod a fresh start
-                Mod mod = new Mod(Path.GetFileNameWithoutExtension(newModDialog.FileName));
-                SetCurrentMod(mod);
-            }
+            CreateNewMod();
         }
 
         private void closeModToolStripMenuItem_Click(object sender, EventArgs e)
@@ -907,16 +976,6 @@ namespace CK2Modder
             SelectWorkingLocation();
         }
 
-        private void cultureNameTextBox_TextChanged(object sender, EventArgs e)
-        {
-            TextBox name = sender as TextBox;
-
-            if (SelectedCultureNode.Text.Equals(DefaultCultureRoot))
-                return;
-
-            SelectedCultureNode.Text = name.Text;
-        }
-
         private void deleteSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (CurrentMod == null)
@@ -924,8 +983,8 @@ namespace CK2Modder
 
             String selectedFile = dataFilesListBox.SelectedItem as String;
 
-            if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
-                return;
+            //if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
+            //    return;
 
             if(MessageBox.Show("Deleting the file will delete all the characters in the file. Do you wish to continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
             {
@@ -952,8 +1011,8 @@ namespace CK2Modder
         {
             String selected = dataFilesListBox.SelectedItem as String;
 
-            if (selected == null || selected.Equals(DefaultCharacterListView))
-                return;
+            //if (selected == null || selected.Equals(DefaultCharacterListView))
+            //    return;
 
             CharacterFileForm fileForm = new CharacterFileForm(selected);
 
