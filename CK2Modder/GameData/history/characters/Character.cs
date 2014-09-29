@@ -222,14 +222,15 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
-        private String[] _events;
-        public String[] Events
+        private String _raw;
+        [BrowsableAttribute(false)]
+        public String Raw
         {
-            get { return _events; }
+            get { return _raw; }
             set
             {
-                _events = value;
-                NotifyPropertyChanged("Events");
+                _raw = value;
+                NotifyPropertyChanged("Raw");
             }
         }
 
@@ -291,10 +292,14 @@ namespace CK2Modder.GameData.history.characters
             if (Mother >= 0) result += "\tmother=" + Mother.ToString() + "\r\n";
 
             // Life events
-            if (Events != null && Events.Length > 0)
+            if (!String.IsNullOrWhiteSpace(Raw))
             {
-                foreach (String s in Events)
-                    result += "\t" + s.Replace("\n", System.Environment.NewLine + "\t") + "\r\n";
+                // Format the output correctly
+                String output = Raw.EndsWith("\r\n") ? Raw.Substring(0, Raw.Length - 2) : Raw;
+                    
+                output = output.Replace("\r\n", System.Environment.NewLine + "\t");
+
+                result += "\t" + output + "\r\n";
             }
             
             result += "}\r\n";

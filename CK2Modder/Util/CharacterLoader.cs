@@ -112,15 +112,13 @@ namespace CK2Modder.Util
                 {
                     List<String> eventLines = Helpers.ReadStringSequence(lines, i);
 
-                    for(int j = 0; j < eventLines.Count; j++)
+                    // trim the first tab off, this will be added back on when exported
+                    for (int j = 0; j < eventLines.Count; j++)
+                    {
                         eventLines[j] = new Regex("\t").Replace(eventLines[j], "", 1);
-
-                    // setup the events
-                    if (c.Events == null)
-                        c.Events = eventLines.ToArray();
-                    else
-                        c.Events = c.Events.Concat(eventLines).ToArray();
-
+                        c.Raw += eventLines[j] + System.Environment.NewLine;
+                    }
+                    
                     // advance the current line position
                     i += eventLines.Count - 1;
                 }

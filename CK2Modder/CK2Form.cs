@@ -81,12 +81,17 @@ namespace CK2Modder
             // Setup the data type selection
             selectDataType.SelectedIndex = 0;
 
+            // show lines numbers
+            dataTextEditor.Margins[0].Width = 20;
+            dataTextEditor.ConfigurationManager.Language = "python";
+            dataTextEditor.ConfigurationManager.Configure();
+
             if(!Directory.Exists(WorkingLocation))
             {
                 if (!SelectWorkingLocation())
                 {
                     MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Environment.Exit(1);
+                    Environment.Exit(0);
                 }
             }
 
@@ -376,8 +381,10 @@ namespace CK2Modder
                 return;
             }
 
+            // Set the mod
             CurrentMod = m;
 
+            // Make sure the tab control is visible
             tabControl.Visible = true;
             
             // Add data bindings
@@ -659,6 +666,10 @@ namespace CK2Modder
 
         private void UpdateDataView(String mode)
         {
+
+            // set the current mode
+            CurrentMode = mode;
+
             // reset the lists
             dataFilesListBox.Items.Clear();
             dataListBox.Items.Clear();
@@ -795,10 +806,7 @@ namespace CK2Modder
             if (CurrentMod == null)
                 return;
 
-            // set the current mod
-            CurrentMode = selectDataType.Text;
-
-            UpdateDataView(CurrentMode);
+            UpdateDataView(selectDataType.Text);
         }
 
         private void dataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -842,7 +850,10 @@ namespace CK2Modder
                 case "Dynasties":
                     dataPropertyGrid.SelectedObject = CurrentMod.Dynasties.Find(d => d.ID == ID);
                     break;
-            }            
+            }
+
+            dataTextEditor.DataBindings.Clear();
+            dataTextEditor.DataBindings.Add("Text", dataPropertyGrid.SelectedObject, "Raw");
         }
 
         void cultureTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)

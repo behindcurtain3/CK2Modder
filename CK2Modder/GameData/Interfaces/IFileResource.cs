@@ -13,6 +13,9 @@ namespace CK2Modder.GameData.Interfaces
         // The file this resource belongs to
         String BelongsTo { get; set; }
 
+        // Any complex text sequence that needs to be easily editable
+        String Raw { get; set; }
+
         // The display that can be used for this resource without modifying it
         String InternalDisplay { get; }
     }

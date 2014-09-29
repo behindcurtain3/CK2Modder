@@ -19,6 +19,18 @@ namespace CK2Modder.GameData.common
             }
         }
 
+        private String _raw = String.Empty;
+        [BrowsableAttribute(false)]
+        public String Raw
+        {
+            get { return _raw; }
+            set
+            {
+                _raw = value;
+                NotifyPropertyChanged("Raw");
+            }
+        }
+
         private String _name = "";
         public String Name
         {

@@ -30,6 +30,18 @@ namespace CK2Modder.GameData.common
             }
         }
 
+        private String _raw = String.Empty;
+        [BrowsableAttribute(false)]
+        public String Raw
+        {
+            get { return _raw; }
+            set
+            {
+                _raw = value;
+                NotifyPropertyChanged("Raw");
+            }
+        }
+
         private String _name;
         [CategoryAttribute("Dynasty"), DescriptionAttribute("The dynasties name")]
         public String Name 

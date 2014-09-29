@@ -226,6 +226,9 @@ namespace CK2Modder.GameData
                 }
             }
 
+            // close the file stream
+            stream.Close();
+
             return mod;
         }
 

@@ -33,7 +33,7 @@ namespace CK2Modder
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Culture Groups");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Culture Groups");
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,6 +111,17 @@ namespace CK2Modder
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.cultureMaleNamesRichTextBox = new System.Windows.Forms.RichTextBox();
             this.cultureFemaleNamesRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.tabData = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.dataSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.dataFilesFilter = new System.Windows.Forms.TextBox();
+            this.dataFilesListBox = new System.Windows.Forms.ListBox();
+            this.dataSplitInside = new System.Windows.Forms.SplitContainer();
+            this.dataFilter = new System.Windows.Forms.TextBox();
+            this.dataListBox = new System.Windows.Forms.ListBox();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.dataPropertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.selectDataType = new System.Windows.Forms.ComboBox();
             this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.characterFilesMenuAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.editSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,16 +138,7 @@ namespace CK2Modder
             this.cultureToolStripMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.newModDialog = new System.Windows.Forms.SaveFileDialog();
-            this.tabData = new System.Windows.Forms.TabPage();
-            this.selectDataType = new System.Windows.Forms.ComboBox();
-            this.dataSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.dataSplitInside = new System.Windows.Forms.SplitContainer();
-            this.dataFilesFilter = new System.Windows.Forms.TextBox();
-            this.dataFilesListBox = new System.Windows.Forms.ListBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.dataFilter = new System.Windows.Forms.TextBox();
-            this.dataListBox = new System.Windows.Forms.ListBox();
-            this.dataPropertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.dataTextEditor = new ScintillaNET.Scintilla();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -160,10 +162,6 @@ namespace CK2Modder
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
-            this.characterFilesContextMenuStrip.SuspendLayout();
-            this.cultureSubContextMenuStrip.SuspendLayout();
-            this.cultureRootContextMenuStrip.SuspendLayout();
-            this.cultureContextMenuStrip.SuspendLayout();
             this.tabData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataSplitContainer)).BeginInit();
             this.dataSplitContainer.Panel1.SuspendLayout();
@@ -173,6 +171,15 @@ namespace CK2Modder
             this.dataSplitInside.Panel1.SuspendLayout();
             this.dataSplitInside.Panel2.SuspendLayout();
             this.dataSplitInside.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            this.characterFilesContextMenuStrip.SuspendLayout();
+            this.cultureSubContextMenuStrip.SuspendLayout();
+            this.cultureRootContextMenuStrip.SuspendLayout();
+            this.cultureContextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).BeginInit();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -574,10 +581,10 @@ namespace CK2Modder
             this.cultureTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cultureTreeView.Location = new System.Drawing.Point(0, 0);
             this.cultureTreeView.Name = "cultureTreeView";
-            treeNode12.Name = "Culture Groups";
-            treeNode12.Text = "Culture Groups";
+            treeNode1.Name = "Culture Groups";
+            treeNode1.Text = "Culture Groups";
             this.cultureTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode12});
+            treeNode1});
             this.cultureTreeView.ShowRootLines = false;
             this.cultureTreeView.Size = new System.Drawing.Size(150, 472);
             this.cultureTreeView.TabIndex = 0;
@@ -985,6 +992,155 @@ namespace CK2Modder
             this.cultureFemaleNamesRichTextBox.Text = "";
             this.cultureFemaleNamesRichTextBox.WordWrap = false;
             // 
+            // tabData
+            // 
+            this.tabData.BackColor = System.Drawing.SystemColors.Control;
+            this.tabData.Controls.Add(this.label6);
+            this.tabData.Controls.Add(this.dataSplitContainer);
+            this.tabData.Controls.Add(this.selectDataType);
+            this.tabData.Location = new System.Drawing.Point(4, 22);
+            this.tabData.Name = "tabData";
+            this.tabData.Padding = new System.Windows.Forms.Padding(3);
+            this.tabData.Size = new System.Drawing.Size(773, 484);
+            this.tabData.TabIndex = 6;
+            this.tabData.Text = "Mod Data";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(3, 9);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(121, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Select a Data Type:";
+            // 
+            // dataSplitContainer
+            // 
+            this.dataSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataSplitContainer.Location = new System.Drawing.Point(0, 33);
+            this.dataSplitContainer.Name = "dataSplitContainer";
+            // 
+            // dataSplitContainer.Panel1
+            // 
+            this.dataSplitContainer.Panel1.Controls.Add(this.dataFilesFilter);
+            this.dataSplitContainer.Panel1.Controls.Add(this.dataFilesListBox);
+            // 
+            // dataSplitContainer.Panel2
+            // 
+            this.dataSplitContainer.Panel2.Controls.Add(this.dataSplitInside);
+            this.dataSplitContainer.Size = new System.Drawing.Size(773, 451);
+            this.dataSplitContainer.SplitterDistance = 150;
+            this.dataSplitContainer.TabIndex = 1;
+            // 
+            // dataFilesFilter
+            // 
+            this.dataFilesFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataFilesFilter.Location = new System.Drawing.Point(3, 3);
+            this.dataFilesFilter.Name = "dataFilesFilter";
+            this.dataFilesFilter.Size = new System.Drawing.Size(144, 20);
+            this.dataFilesFilter.TabIndex = 2;
+            // 
+            // dataFilesListBox
+            // 
+            this.dataFilesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataFilesListBox.FormattingEnabled = true;
+            this.dataFilesListBox.Location = new System.Drawing.Point(3, 27);
+            this.dataFilesListBox.Name = "dataFilesListBox";
+            this.dataFilesListBox.Size = new System.Drawing.Size(144, 420);
+            this.dataFilesListBox.TabIndex = 1;
+            this.dataFilesListBox.SelectedIndexChanged += new System.EventHandler(this.dataFilesListBox_SelectedIndexChanged);
+            // 
+            // dataSplitInside
+            // 
+            this.dataSplitInside.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataSplitInside.Location = new System.Drawing.Point(3, 0);
+            this.dataSplitInside.Name = "dataSplitInside";
+            // 
+            // dataSplitInside.Panel1
+            // 
+            this.dataSplitInside.Panel1.Controls.Add(this.dataFilter);
+            this.dataSplitInside.Panel1.Controls.Add(this.dataListBox);
+            // 
+            // dataSplitInside.Panel2
+            // 
+            this.dataSplitInside.Panel2.Controls.Add(this.splitContainer4);
+            this.dataSplitInside.Size = new System.Drawing.Size(616, 451);
+            this.dataSplitInside.SplitterDistance = 149;
+            this.dataSplitInside.TabIndex = 0;
+            // 
+            // dataFilter
+            // 
+            this.dataFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataFilter.Location = new System.Drawing.Point(-1, 3);
+            this.dataFilter.Name = "dataFilter";
+            this.dataFilter.Size = new System.Drawing.Size(147, 20);
+            this.dataFilter.TabIndex = 3;
+            this.dataFilter.TextChanged += new System.EventHandler(this.dataFilter_TextChanged);
+            // 
+            // dataListBox
+            // 
+            this.dataListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataListBox.FormattingEnabled = true;
+            this.dataListBox.Location = new System.Drawing.Point(0, 27);
+            this.dataListBox.Name = "dataListBox";
+            this.dataListBox.Size = new System.Drawing.Size(146, 420);
+            this.dataListBox.TabIndex = 2;
+            this.dataListBox.SelectedIndexChanged += new System.EventHandler(this.dataListBox_SelectedIndexChanged);
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer4.Location = new System.Drawing.Point(-1, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.dataPropertyGrid);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.dataTextEditor);
+            this.splitContainer4.Size = new System.Drawing.Size(464, 451);
+            this.splitContainer4.SplitterDistance = 150;
+            this.splitContainer4.TabIndex = 2;
+            // 
+            // dataPropertyGrid
+            // 
+            this.dataPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataPropertyGrid.Location = new System.Drawing.Point(4, 3);
+            this.dataPropertyGrid.Name = "dataPropertyGrid";
+            this.dataPropertyGrid.Size = new System.Drawing.Size(143, 442);
+            this.dataPropertyGrid.TabIndex = 1;
+            // 
+            // selectDataType
+            // 
+            this.selectDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.selectDataType.FormattingEnabled = true;
+            this.selectDataType.Items.AddRange(new object[] {
+            "Characters",
+            "Dynasties",
+            "Cultures"});
+            this.selectDataType.Location = new System.Drawing.Point(126, 6);
+            this.selectDataType.Name = "selectDataType";
+            this.selectDataType.Size = new System.Drawing.Size(248, 21);
+            this.selectDataType.TabIndex = 0;
+            this.selectDataType.SelectedIndexChanged += new System.EventHandler(this.selectDataType_SelectedIndexChanged);
+            // 
             // characterFilesContextMenuStrip
             // 
             this.characterFilesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1083,135 +1239,25 @@ namespace CK2Modder
             // 
             this.characterBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.characterBackgroundWorker_DoWork);
             // 
-            // tabData
+            // dataTextEditor
             // 
-            this.tabData.BackColor = System.Drawing.SystemColors.Control;
-            this.tabData.Controls.Add(this.label6);
-            this.tabData.Controls.Add(this.dataSplitContainer);
-            this.tabData.Controls.Add(this.selectDataType);
-            this.tabData.Location = new System.Drawing.Point(4, 22);
-            this.tabData.Name = "tabData";
-            this.tabData.Padding = new System.Windows.Forms.Padding(3);
-            this.tabData.Size = new System.Drawing.Size(773, 484);
-            this.tabData.TabIndex = 6;
-            this.tabData.Text = "Mod Data";
-            // 
-            // selectDataType
-            // 
-            this.selectDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.selectDataType.FormattingEnabled = true;
-            this.selectDataType.Items.AddRange(new object[] {
-            "Characters",
-            "Dynasties",
-            "Cultures"});
-            this.selectDataType.Location = new System.Drawing.Point(126, 6);
-            this.selectDataType.Name = "selectDataType";
-            this.selectDataType.Size = new System.Drawing.Size(248, 21);
-            this.selectDataType.TabIndex = 0;
-            this.selectDataType.SelectedIndexChanged += new System.EventHandler(this.selectDataType_SelectedIndexChanged);
-            // 
-            // dataSplitContainer
-            // 
-            this.dataSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataTextEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataSplitContainer.Location = new System.Drawing.Point(0, 33);
-            this.dataSplitContainer.Name = "dataSplitContainer";
-            // 
-            // dataSplitContainer.Panel1
-            // 
-            this.dataSplitContainer.Panel1.Controls.Add(this.dataFilesFilter);
-            this.dataSplitContainer.Panel1.Controls.Add(this.dataFilesListBox);
-            // 
-            // dataSplitContainer.Panel2
-            // 
-            this.dataSplitContainer.Panel2.Controls.Add(this.dataSplitInside);
-            this.dataSplitContainer.Size = new System.Drawing.Size(773, 451);
-            this.dataSplitContainer.SplitterDistance = 150;
-            this.dataSplitContainer.TabIndex = 1;
-            // 
-            // dataSplitInside
-            // 
-            this.dataSplitInside.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataSplitInside.Location = new System.Drawing.Point(3, 0);
-            this.dataSplitInside.Name = "dataSplitInside";
-            // 
-            // dataSplitInside.Panel1
-            // 
-            this.dataSplitInside.Panel1.Controls.Add(this.dataFilter);
-            this.dataSplitInside.Panel1.Controls.Add(this.dataListBox);
-            // 
-            // dataSplitInside.Panel2
-            // 
-            this.dataSplitInside.Panel2.Controls.Add(this.dataPropertyGrid);
-            this.dataSplitInside.Size = new System.Drawing.Size(616, 451);
-            this.dataSplitInside.SplitterDistance = 149;
-            this.dataSplitInside.TabIndex = 0;
-            // 
-            // dataFilesFilter
-            // 
-            this.dataFilesFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataFilesFilter.Location = new System.Drawing.Point(3, 3);
-            this.dataFilesFilter.Name = "dataFilesFilter";
-            this.dataFilesFilter.Size = new System.Drawing.Size(144, 20);
-            this.dataFilesFilter.TabIndex = 2;
-            // 
-            // dataFilesListBox
-            // 
-            this.dataFilesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataFilesListBox.FormattingEnabled = true;
-            this.dataFilesListBox.Location = new System.Drawing.Point(3, 27);
-            this.dataFilesListBox.Name = "dataFilesListBox";
-            this.dataFilesListBox.Size = new System.Drawing.Size(144, 420);
-            this.dataFilesListBox.TabIndex = 1;
-            this.dataFilesListBox.SelectedIndexChanged += new System.EventHandler(this.dataFilesListBox_SelectedIndexChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(3, 9);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(121, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Select a Data Type:";
-            // 
-            // dataFilter
-            // 
-            this.dataFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataFilter.Location = new System.Drawing.Point(-1, 3);
-            this.dataFilter.Name = "dataFilter";
-            this.dataFilter.Size = new System.Drawing.Size(147, 20);
-            this.dataFilter.TabIndex = 3;
-            this.dataFilter.TextChanged += new System.EventHandler(this.dataFilter_TextChanged);
-            // 
-            // dataListBox
-            // 
-            this.dataListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataListBox.FormattingEnabled = true;
-            this.dataListBox.Location = new System.Drawing.Point(0, 27);
-            this.dataListBox.Name = "dataListBox";
-            this.dataListBox.Size = new System.Drawing.Size(146, 420);
-            this.dataListBox.TabIndex = 2;
-            this.dataListBox.SelectedIndexChanged += new System.EventHandler(this.dataListBox_SelectedIndexChanged);
-            // 
-            // dataPropertyGrid
-            // 
-            this.dataPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPropertyGrid.Location = new System.Drawing.Point(3, 3);
-            this.dataPropertyGrid.Name = "dataPropertyGrid";
-            this.dataPropertyGrid.Size = new System.Drawing.Size(457, 442);
-            this.dataPropertyGrid.TabIndex = 1;
+            this.dataTextEditor.Location = new System.Drawing.Point(3, 3);
+            this.dataTextEditor.Name = "dataTextEditor";
+            this.dataTextEditor.Size = new System.Drawing.Size(304, 442);
+            this.dataTextEditor.Styles.BraceBad.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.BraceLight.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.CallTip.FontName = "Segoe UI\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.ControlChar.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.Default.BackColor = System.Drawing.SystemColors.Window;
+            this.dataTextEditor.Styles.Default.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.IndentGuide.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.LastPredefined.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.LineNumber.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.Styles.Max.FontName = "Verdana\0\0\0\0\0\0\0\0\0\0\0\0\0";
+            this.dataTextEditor.TabIndex = 0;
             // 
             // CK2Form
             // 
@@ -1258,10 +1304,6 @@ namespace CK2Modder
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
-            this.characterFilesContextMenuStrip.ResumeLayout(false);
-            this.cultureSubContextMenuStrip.ResumeLayout(false);
-            this.cultureRootContextMenuStrip.ResumeLayout(false);
-            this.cultureContextMenuStrip.ResumeLayout(false);
             this.tabData.ResumeLayout(false);
             this.tabData.PerformLayout();
             this.dataSplitContainer.Panel1.ResumeLayout(false);
@@ -1274,6 +1316,15 @@ namespace CK2Modder
             this.dataSplitInside.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataSplitInside)).EndInit();
             this.dataSplitInside.ResumeLayout(false);
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            this.characterFilesContextMenuStrip.ResumeLayout(false);
+            this.cultureSubContextMenuStrip.ResumeLayout(false);
+            this.cultureRootContextMenuStrip.ResumeLayout(false);
+            this.cultureContextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1384,6 +1435,8 @@ namespace CK2Modder
         private System.Windows.Forms.TextBox dataFilter;
         private System.Windows.Forms.ListBox dataListBox;
         private System.Windows.Forms.PropertyGrid dataPropertyGrid;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private ScintillaNET.Scintilla dataTextEditor;
     }
 }
 
