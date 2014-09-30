@@ -310,11 +310,6 @@ namespace CK2Modder
             // 
             this.selectDataType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.selectDataType.FormattingEnabled = true;
-            this.selectDataType.Items.AddRange(new object[] {
-            "Mod Details",
-            "Characters",
-            "Dynasties",
-            "Cultures"});
             this.selectDataType.Location = new System.Drawing.Point(139, 27);
             this.selectDataType.Name = "selectDataType";
             this.selectDataType.Size = new System.Drawing.Size(199, 21);
@@ -441,15 +436,15 @@ namespace CK2Modder
             this.modClosedPanel.Controls.Add(this.newModButton);
             this.modClosedPanel.Controls.Add(this.label2);
             this.modClosedPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.modClosedPanel.Location = new System.Drawing.Point(0, 0);
+            this.modClosedPanel.Location = new System.Drawing.Point(0, 24);
             this.modClosedPanel.Name = "modClosedPanel";
-            this.modClosedPanel.Size = new System.Drawing.Size(784, 562);
+            this.modClosedPanel.Size = new System.Drawing.Size(784, 516);
             this.modClosedPanel.TabIndex = 7;
             // 
             // loadModButton
             // 
             this.loadModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.loadModButton.Location = new System.Drawing.Point(401, 235);
+            this.loadModButton.Location = new System.Drawing.Point(401, 212);
             this.loadModButton.Name = "loadModButton";
             this.loadModButton.Size = new System.Drawing.Size(103, 23);
             this.loadModButton.TabIndex = 2;
@@ -460,7 +455,7 @@ namespace CK2Modder
             // newModButton
             // 
             this.newModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.newModButton.Location = new System.Drawing.Point(287, 235);
+            this.newModButton.Location = new System.Drawing.Point(287, 212);
             this.newModButton.Name = "newModButton";
             this.newModButton.Size = new System.Drawing.Size(108, 23);
             this.newModButton.TabIndex = 1;
@@ -472,7 +467,7 @@ namespace CK2Modder
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 198);
+            this.label2.Location = new System.Drawing.Point(12, 175);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(760, 23);
             this.label2.TabIndex = 0;
@@ -484,12 +479,12 @@ namespace CK2Modder
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
+            this.Controls.Add(this.modClosedPanel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.mainSplitPanel);
             this.Controls.Add(this.selectDataType);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainMenuStrip);
-            this.Controls.Add(this.modClosedPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.mainMenuStrip;

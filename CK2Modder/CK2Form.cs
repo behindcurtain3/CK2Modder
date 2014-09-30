@@ -17,10 +17,7 @@ namespace CK2Modder
     {
         public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
         public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
-
-        public static readonly String VanillaDynastyFile = "/common/dynasties/00_dynasties.txt";
-        public static readonly String VanillaCulturesFile = "/common/cultures/00_cultures.txt";
-
+        
         public static readonly String VanillaDynastiesPath = "/common/dynasties/";
         public static readonly String VanillaCharactersPath = "/history/characters/";
         public static readonly String VanillaCulturesPath = "/common/cultures/";
@@ -28,6 +25,7 @@ namespace CK2Modder
         // Display string
         public static readonly String DefaultWindowTitle = "CK2 Modder";
         public static readonly String DefaultFileListView = "View All Files";
+        public static readonly String[] DefaultDataViews = { "Mod Details", "Characters", "Dynasties", "Cultures" };
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
@@ -69,12 +67,15 @@ namespace CK2Modder
 
             InitializeComponent();
 
-            // Setup the cue's on textboxes
-            CueProvider.SetCue(dataFilesFilter, "Filter Files");
-            CueProvider.SetCue(dataFilter, "Filter Data");
+            // Setup the data view combobox
+            selectDataType.Items.AddRange(DefaultDataViews);
 
             // Setup the data type selection
             selectDataType.SelectedIndex = 0;
+
+            // Setup the cue's on textboxes
+            CueProvider.SetCue(dataFilesFilter, "Filter Files");
+            CueProvider.SetCue(dataFilter, "Filter Data");
 
             // show lines numbers
             dataTextEditor.Margins[0].Width = 20;
@@ -449,6 +450,12 @@ namespace CK2Modder
             saveToolStripMenuItem.Enabled = true;
             closeModToolStripMenuItem.Enabled = true;
             closeWithoutSavingToolStripMenuItem.Enabled = true;
+            
+            // Show the default view
+            if (selectDataType.SelectedIndex != 0)
+                selectDataType.SelectedIndex = 0;
+            else
+                UpdateDataView(DefaultDataViews[0]);
 
             // Hide the panel
             modClosedPanel.Visible = false;
@@ -627,6 +634,9 @@ namespace CK2Modder
 
             // load the default views depending on the mode selected
             dataFilesListBox.Items.Add(DefaultFileListView);
+
+            // reset the text editor
+            UpdateTextEditor(null);
 
             // store the data for the lists here
             List<String> files = new List<String>();
@@ -819,8 +829,16 @@ namespace CK2Modder
                 if (CurrentMod != null)
                     CloseMod();
 
-                // TODO: delete and remake the mod directory if it already exits to give the new mod a fresh start
+                // TODO: delete and remake the mod directory if it already exits to give the new mod a fresh start?
                 Mod mod = new Mod(Path.GetFileNameWithoutExtension(newModDialog.FileName));
+                
+                // setup the initial mod data
+                mod.StorageLocation = Path.GetDirectoryName(newModDialog.FileName);
+                mod.ModRootDirectory = mod.StorageLocation + "/" + mod.Name;
+                mod.Raw = "name = \"" + mod.Name + "\"" + System.Environment.NewLine;
+                mod.Raw += "path = \"mod/" + mod.Name + "\"" + System.Environment.NewLine;
+
+                // Set the new mod as current
                 SetCurrentMod(mod);
             }
         }
@@ -851,7 +869,9 @@ namespace CK2Modder
             mainSplitPanel.Panel1.Show();
 
             dataFilesListBox.SelectedIndex = 0;
-            dataListBox.SelectedIndex = 0;
+
+            if(dataListBox.Items.Count > 0)
+                dataListBox.SelectedIndex = 0;
         }
 
         private void HideSplitPanels()
