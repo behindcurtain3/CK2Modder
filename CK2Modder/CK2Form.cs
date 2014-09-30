@@ -246,32 +246,11 @@ namespace CK2Modder
 
             List<Culture> rows = e.Result as List<Culture>;
             
-            // TODO: update this implementation
-            /*
-            TreeNode root = cultureTreeView.Nodes[0];
-
             foreach (Culture c in rows)
             {
-                TreeNode node = new TreeNode(c.Name);
-                node.Tag = c;
-                node.ContextMenuStrip = cultureSubContextMenuStrip;
-
-                foreach (Culture sub in c.SubCultures)
-                {
-                    TreeNode subNode = new TreeNode(sub.Name);
-                    subNode.Tag = sub;
-                    subNode.ContextMenuStrip = cultureContextMenuStrip;
-                    node.Nodes.Add(subNode);
-                }
-
-                root.Nodes.Add(node);
-
                 CurrentMod.Cultures.Add(c);
             }
 
-            // Make sure the new tree structure is shown
-            root.Expand();
-            */
             // Dequeue the current item
             CurrentMod.CultureFilesToLoad.Dequeue();
 
@@ -673,6 +652,10 @@ namespace CK2Modder
 
                     break;
                 case "Cultures":
+                    files.AddRange(CurrentMod.CultureFiles);
+
+                    foreach (Culture c in CurrentMod.Cultures)
+                        data.Add(c.Display);
                     break;
             }
 
@@ -755,6 +738,11 @@ namespace CK2Modder
 
                     foreach (Dynasty d in dynasties)
                         list.Add(d.Display);
+                    break;
+
+                case "Cultures":
+                    foreach (Culture c in CurrentMod.Cultures)
+                        list.Add(c.Display);
                     break;
             }
 
@@ -898,9 +886,12 @@ namespace CK2Modder
                 return;
 
             int ID = Helpers.ParseInt(selected);
+            string name = null;
 
             if (ID == -1)
-                return;
+            {
+                name = selected;
+            }
 
             // show the data
             switch (CurrentMode)
@@ -911,6 +902,10 @@ namespace CK2Modder
 
                 case "Dynasties":
                     resource = CurrentMod.Dynasties.Find(d => d.ID == ID);
+                    break;
+
+                case "Cultures":
+                    resource = CurrentMod.Cultures.Find(c => c.Name.Equals(name));
                     break;
             }
 
