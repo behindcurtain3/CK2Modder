@@ -38,6 +38,16 @@ namespace CK2Modder.GameData
 
         #region Methods
 
+        /// <summary>
+        /// Override the ToString method and return the raw string instead
+        /// Used for easily writing resources to files
+        /// </summary>
+        /// <returns>Raw text output</returns>
+        public override string ToString()
+        {
+            return Raw;
+        }
+
         // Used for data bindings
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(string name)

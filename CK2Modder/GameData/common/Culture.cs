@@ -60,11 +60,6 @@ namespace CK2Modder.GameData.common
             _subCultures = new List<Culture>();
         }
 
-        public override string ToString()
-        {
-            return Raw;
-        }
-
         public static Culture Load(List<String> lines)
         {
             Culture culture = new Culture();

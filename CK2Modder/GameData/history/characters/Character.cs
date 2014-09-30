@@ -91,6 +91,9 @@ namespace CK2Modder.GameData.history.characters
             }
         }
 
+        /// <summary>
+        /// The nickname of the character
+        /// </summary>
         public String Nickname
         {
             get { return _nickName; }
@@ -137,51 +140,7 @@ namespace CK2Modder.GameData.history.characters
 
         #endregion
 
-        public override string ToString()
-        {
-            return Raw;
-            /*
-
-            String result = "";
-
-            result += ID.ToString() + " = {\r\n";
-            result += "\tname=\"" + Name + "\"\r\n";
-            if (Female)                 result += "\tfemale=yes\r\n";
-            if (Dynasty != -1)           result += "\tdynasty=" + Dynasty.ToString() + "\r\n";
-            if (!Religion.Equals(""))   result += "\treligion=\"" + Religion + "\"\r\n";
-            if (!Culture.Equals(""))    result += "\tculture=\"" + Culture + "\"\r\n";
-            if (Martial >= 0)            result += "\tmartial=" + Martial.ToString() + "\r\n";
-            if (Diplomacy >= 0)          result += "\tdiplomacy=" + Diplomacy.ToString() + "\r\n";
-            if (Intrigue >= 0)           result += "\tintrigue=" + Intrigue.ToString() + "\r\n";
-            if (Stewardship >= 0)        result += "\tstewardship=" + Stewardship.ToString() + "\r\n";
-            if (Learning >= 0)           result += "\tlearning=" + Learning.ToString() + "\r\n";
-            if (!DNA.Equals(""))        result += "\tdna=\"" + DNA + "\"\r\n";
-            if (!Properties.Equals("")) result += "\tproperties=\"" + Properties + "\"\r\n";
-            if (!Nickname.Equals(""))   result += "\tgive_nickname=" + Nickname + "\r\n";
-
-            foreach (String trait in Traits)
-            {
-                result += "\tadd_trait=\"" + trait + "\"\r\n";
-            }
-
-            if (Father >= 0) result += "\tfather=" + Father.ToString() + "\r\n";
-            if (Mother >= 0) result += "\tmother=" + Mother.ToString() + "\r\n";
-
-            // Life events
-            if (!String.IsNullOrWhiteSpace(Raw))
-            {
-                // Format the output correctly
-                String output = Raw.EndsWith("\r\n") ? Raw.Substring(0, Raw.Length - 2) : Raw;
-                    
-                output = output.Replace("\r\n", System.Environment.NewLine + "\t");
-
-                result += "\t" + output + "\r\n";
-            }
-            
-            result += "}\r\n";
-
-            return result; */
-        }
+        #region Methods
 
         /// <summary>
         /// Loads a character from a list of strings
@@ -251,5 +210,7 @@ namespace CK2Modder.GameData.history.characters
 
             return c;
         }
+
+        #endregion
     }
 }

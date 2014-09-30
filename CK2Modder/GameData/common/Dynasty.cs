@@ -79,12 +79,7 @@ namespace CK2Modder.GameData.common
             Name = name;
             Culture = culture;
         }
-
-        public override string ToString()
-        {
-            return Raw;            
-        }
-
+        
         public static Dynasty Load(List<String> lines)
         {
             Dynasty dynasty = new Dynasty();
