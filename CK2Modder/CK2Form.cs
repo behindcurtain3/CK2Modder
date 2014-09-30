@@ -636,6 +636,7 @@ namespace CK2Modder
             {
                 case "Mod Details":
                     UpdateTextEditor(CurrentMod);
+                    HideSplitPanels();
                     break;
                 case "Characters":
                     files.AddRange(CurrentMod.CharacterFiles);
@@ -643,6 +644,7 @@ namespace CK2Modder
                     foreach (Character c in CurrentMod.Characters)
                         data.Add(c.Display);
 
+                    ShowSplitPanels();
                     break;
                 case "Dynasties":
                     files.AddRange(CurrentMod.DynastyFiles);
@@ -650,12 +652,15 @@ namespace CK2Modder
                     foreach (Dynasty d in CurrentMod.Dynasties)
                         data.Add(d.Display);
 
+                    ShowSplitPanels();
                     break;
                 case "Cultures":
                     files.AddRange(CurrentMod.CultureFiles);
 
                     foreach (Culture c in CurrentMod.Cultures)
                         data.Add(c.Display);
+
+                    ShowSplitPanels();
                     break;
             }
 
@@ -835,6 +840,27 @@ namespace CK2Modder
 
                 SetCurrentMod(Mod.LoadFromFile(openFileDialog.FileName));
             }
+        }
+
+        private void ShowSplitPanels()
+        {
+            secondarySplitPanel.Panel1Collapsed = false;
+            secondarySplitPanel.Panel1.Show();
+
+            mainSplitPanel.Panel1Collapsed = false;
+            mainSplitPanel.Panel1.Show();
+
+            dataFilesListBox.SelectedIndex = 0;
+            dataListBox.SelectedIndex = 0;
+        }
+
+        private void HideSplitPanels()
+        {
+            mainSplitPanel.Panel1Collapsed = true;
+            mainSplitPanel.Panel1.Hide();
+
+            secondarySplitPanel.Panel1Collapsed = true;
+            secondarySplitPanel.Panel1.Hide();
         }
 
         #endregion

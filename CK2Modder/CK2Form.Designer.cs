@@ -66,32 +66,32 @@ namespace CK2Modder
             this.characterBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.newModDialog = new System.Windows.Forms.SaveFileDialog();
             this.selectDataType = new System.Windows.Forms.ComboBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.dataFilesFilter = new System.Windows.Forms.TextBox();
+            this.mainSplitPanel = new System.Windows.Forms.SplitContainer();
             this.dataFilesListBox = new System.Windows.Forms.ListBox();
-            this.dataFilter = new System.Windows.Forms.TextBox();
+            this.dataFilesFilter = new System.Windows.Forms.TextBox();
+            this.secondarySplitPanel = new System.Windows.Forms.SplitContainer();
             this.dataListBox = new System.Windows.Forms.ListBox();
+            this.dataFilter = new System.Windows.Forms.TextBox();
             this.dataTextEditor = new ScintillaNET.Scintilla();
             this.label1 = new System.Windows.Forms.Label();
             this.modClosedPanel = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.newModButton = new System.Windows.Forms.Button();
             this.loadModButton = new System.Windows.Forms.Button();
+            this.newModButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.mainMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.characterFilesContextMenuStrip.SuspendLayout();
             this.cultureSubContextMenuStrip.SuspendLayout();
             this.cultureRootContextMenuStrip.SuspendLayout();
             this.cultureContextMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mainSplitPanel)).BeginInit();
+            this.mainSplitPanel.Panel1.SuspendLayout();
+            this.mainSplitPanel.Panel2.SuspendLayout();
+            this.mainSplitPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.secondarySplitPanel)).BeginInit();
+            this.secondarySplitPanel.Panel1.SuspendLayout();
+            this.secondarySplitPanel.Panel2.SuspendLayout();
+            this.secondarySplitPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).BeginInit();
             this.modClosedPanel.SuspendLayout();
             this.SuspendLayout();
@@ -321,55 +321,25 @@ namespace CK2Modder
             this.selectDataType.TabIndex = 4;
             this.selectDataType.SelectedIndexChanged += new System.EventHandler(this.selectDataType_SelectedIndexChanged);
             // 
-            // splitContainer1
+            // mainSplitPanel
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.mainSplitPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 54);
-            this.splitContainer1.Name = "splitContainer1";
+            this.mainSplitPanel.Location = new System.Drawing.Point(0, 54);
+            this.mainSplitPanel.Name = "mainSplitPanel";
             // 
-            // splitContainer1.Panel1
+            // mainSplitPanel.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.dataFilesListBox);
-            this.splitContainer1.Panel1.Controls.Add(this.dataFilesFilter);
+            this.mainSplitPanel.Panel1.Controls.Add(this.dataFilesListBox);
+            this.mainSplitPanel.Panel1.Controls.Add(this.dataFilesFilter);
             // 
-            // splitContainer1.Panel2
+            // mainSplitPanel.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(784, 483);
-            this.splitContainer1.SplitterDistance = 100;
-            this.splitContainer1.TabIndex = 5;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(-1, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.dataListBox);
-            this.splitContainer2.Panel1.Controls.Add(this.dataFilter);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.dataTextEditor);
-            this.splitContainer2.Size = new System.Drawing.Size(678, 483);
-            this.splitContainer2.SplitterDistance = 100;
-            this.splitContainer2.TabIndex = 0;
-            // 
-            // dataFilesFilter
-            // 
-            this.dataFilesFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataFilesFilter.Location = new System.Drawing.Point(3, 3);
-            this.dataFilesFilter.Name = "dataFilesFilter";
-            this.dataFilesFilter.Size = new System.Drawing.Size(94, 20);
-            this.dataFilesFilter.TabIndex = 0;
-            this.dataFilesFilter.TextChanged += new System.EventHandler(this.dataFilesFilter_TextChanged);
+            this.mainSplitPanel.Panel2.Controls.Add(this.secondarySplitPanel);
+            this.mainSplitPanel.Size = new System.Drawing.Size(784, 483);
+            this.mainSplitPanel.SplitterDistance = 100;
+            this.mainSplitPanel.TabIndex = 5;
             // 
             // dataFilesListBox
             // 
@@ -383,15 +353,35 @@ namespace CK2Modder
             this.dataFilesListBox.TabIndex = 1;
             this.dataFilesListBox.SelectedIndexChanged += new System.EventHandler(this.dataFilesListBox_SelectedIndexChanged);
             // 
-            // dataFilter
+            // dataFilesFilter
             // 
-            this.dataFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataFilesFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataFilter.Location = new System.Drawing.Point(3, 3);
-            this.dataFilter.Name = "dataFilter";
-            this.dataFilter.Size = new System.Drawing.Size(94, 20);
-            this.dataFilter.TabIndex = 0;
-            this.dataFilter.TextChanged += new System.EventHandler(this.dataFilter_TextChanged);
+            this.dataFilesFilter.Location = new System.Drawing.Point(3, 3);
+            this.dataFilesFilter.Name = "dataFilesFilter";
+            this.dataFilesFilter.Size = new System.Drawing.Size(94, 20);
+            this.dataFilesFilter.TabIndex = 0;
+            this.dataFilesFilter.TextChanged += new System.EventHandler(this.dataFilesFilter_TextChanged);
+            // 
+            // secondarySplitPanel
+            // 
+            this.secondarySplitPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.secondarySplitPanel.Location = new System.Drawing.Point(-1, 0);
+            this.secondarySplitPanel.Name = "secondarySplitPanel";
+            // 
+            // secondarySplitPanel.Panel1
+            // 
+            this.secondarySplitPanel.Panel1.Controls.Add(this.dataListBox);
+            this.secondarySplitPanel.Panel1.Controls.Add(this.dataFilter);
+            // 
+            // secondarySplitPanel.Panel2
+            // 
+            this.secondarySplitPanel.Panel2.Controls.Add(this.dataTextEditor);
+            this.secondarySplitPanel.Size = new System.Drawing.Size(678, 483);
+            this.secondarySplitPanel.SplitterDistance = 100;
+            this.secondarySplitPanel.TabIndex = 0;
             // 
             // dataListBox
             // 
@@ -404,6 +394,16 @@ namespace CK2Modder
             this.dataListBox.Size = new System.Drawing.Size(94, 446);
             this.dataListBox.TabIndex = 1;
             this.dataListBox.SelectedIndexChanged += new System.EventHandler(this.dataListBox_SelectedIndexChanged);
+            // 
+            // dataFilter
+            // 
+            this.dataFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataFilter.Location = new System.Drawing.Point(3, 3);
+            this.dataFilter.Name = "dataFilter";
+            this.dataFilter.Size = new System.Drawing.Size(94, 20);
+            this.dataFilter.TabIndex = 0;
+            this.dataFilter.TextChanged += new System.EventHandler(this.dataFilter_TextChanged);
             // 
             // dataTextEditor
             // 
@@ -441,37 +441,15 @@ namespace CK2Modder
             this.modClosedPanel.Controls.Add(this.newModButton);
             this.modClosedPanel.Controls.Add(this.label2);
             this.modClosedPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.modClosedPanel.Location = new System.Drawing.Point(0, 24);
+            this.modClosedPanel.Location = new System.Drawing.Point(0, 0);
             this.modClosedPanel.Name = "modClosedPanel";
-            this.modClosedPanel.Size = new System.Drawing.Size(784, 516);
+            this.modClosedPanel.Size = new System.Drawing.Size(784, 562);
             this.modClosedPanel.TabIndex = 7;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 175);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(760, 23);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Create a New Mod or Load an Existing one";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // newModButton
-            // 
-            this.newModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.newModButton.Location = new System.Drawing.Point(287, 212);
-            this.newModButton.Name = "newModButton";
-            this.newModButton.Size = new System.Drawing.Size(108, 23);
-            this.newModButton.TabIndex = 1;
-            this.newModButton.Text = "Create New...";
-            this.newModButton.UseVisualStyleBackColor = true;
-            this.newModButton.Click += new System.EventHandler(this.newModButton_Click);
             // 
             // loadModButton
             // 
             this.loadModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.loadModButton.Location = new System.Drawing.Point(401, 212);
+            this.loadModButton.Location = new System.Drawing.Point(401, 235);
             this.loadModButton.Name = "loadModButton";
             this.loadModButton.Size = new System.Drawing.Size(103, 23);
             this.loadModButton.TabIndex = 2;
@@ -479,17 +457,39 @@ namespace CK2Modder
             this.loadModButton.UseVisualStyleBackColor = true;
             this.loadModButton.Click += new System.EventHandler(this.loadModButton_Click);
             // 
+            // newModButton
+            // 
+            this.newModButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.newModButton.Location = new System.Drawing.Point(287, 235);
+            this.newModButton.Name = "newModButton";
+            this.newModButton.Size = new System.Drawing.Size(108, 23);
+            this.newModButton.TabIndex = 1;
+            this.newModButton.Text = "Create New...";
+            this.newModButton.UseVisualStyleBackColor = true;
+            this.newModButton.Click += new System.EventHandler(this.newModButton_Click);
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(12, 198);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(760, 23);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Create a New Mod or Load an Existing one";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // CK2Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 562);
-            this.Controls.Add(this.modClosedPanel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.mainSplitPanel);
             this.Controls.Add(this.selectDataType);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mainMenuStrip);
+            this.Controls.Add(this.modClosedPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.mainMenuStrip;
@@ -507,16 +507,16 @@ namespace CK2Modder
             this.cultureSubContextMenuStrip.ResumeLayout(false);
             this.cultureRootContextMenuStrip.ResumeLayout(false);
             this.cultureContextMenuStrip.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
+            this.mainSplitPanel.Panel1.ResumeLayout(false);
+            this.mainSplitPanel.Panel1.PerformLayout();
+            this.mainSplitPanel.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.mainSplitPanel)).EndInit();
+            this.mainSplitPanel.ResumeLayout(false);
+            this.secondarySplitPanel.Panel1.ResumeLayout(false);
+            this.secondarySplitPanel.Panel1.PerformLayout();
+            this.secondarySplitPanel.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.secondarySplitPanel)).EndInit();
+            this.secondarySplitPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).EndInit();
             this.modClosedPanel.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -558,10 +558,10 @@ namespace CK2Modder
         private System.Windows.Forms.SaveFileDialog newModDialog;
         private System.Windows.Forms.ToolStripMenuItem newModToolStripMenuItem;
         private System.Windows.Forms.ComboBox selectDataType;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer mainSplitPanel;
         private System.Windows.Forms.ListBox dataFilesListBox;
         private System.Windows.Forms.TextBox dataFilesFilter;
-        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer secondarySplitPanel;
         private System.Windows.Forms.TextBox dataFilter;
         private System.Windows.Forms.ListBox dataListBox;
         private ScintillaNET.Scintilla dataTextEditor;
