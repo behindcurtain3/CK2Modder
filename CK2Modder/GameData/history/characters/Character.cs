@@ -178,15 +178,21 @@ namespace CK2Modder.GameData.history.characters
                     switch (data.Key.ToLower())
                     {
                         case "name":
-                            c.Name = data.Value;
+                            // if the name already has a value don't override it
+                            if(String.IsNullOrWhiteSpace(c.Name))
+                                c.Name = data.Value;
                             break;
 
                         case "culture":
-                            c.Culture = data.Value;
+                            // if the cultuer already has a value don't override it
+                            if (String.IsNullOrWhiteSpace(c.Culture))
+                                c.Culture = data.Value;
                             break;
 
                         case "religion":
-                            c.Religion = data.Value;
+                            // if the religion already has a value don't override it
+                            if (String.IsNullOrWhiteSpace(c.Religion))
+                                c.Religion = data.Value;
                             break;
 
                         case "give_nickname":

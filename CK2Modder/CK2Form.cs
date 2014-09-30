@@ -29,12 +29,8 @@ namespace CK2Modder
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
-        public String CurrentMode { get; set; }
-
-        public Culture SelectedCulture { get; set; }
-        public TreeNode SelectedCultureNode { get; set; }
+        public String DataMode { get; set; }
         
-
         #region Initialization
 
         public CK2Form(string filename)
@@ -67,14 +63,10 @@ namespace CK2Modder
 
             InitializeComponent();
 
-            // Setup the data view combobox
-            selectDataType.Items.AddRange(DefaultDataViews);
-
-            // Setup the data type selection
-            selectDataType.SelectedIndex = 0;
+            // do this here so in the design view it can stay at the back
+            modClosedPanel.BringToFront();
 
             // Setup the cue's on textboxes
-            CueProvider.SetCue(dataFilesFilter, "Filter Files");
             CueProvider.SetCue(dataFilter, "Filter Data");
 
             // show lines numbers
@@ -82,7 +74,7 @@ namespace CK2Modder
             dataTextEditor.ConfigurationManager.Language = "python";
             dataTextEditor.ConfigurationManager.Configure();
             dataTextEditor.Caret.HighlightCurrentLine = true;
-            dataTextEditor.Caret.CurrentLineBackgroundColor = System.Drawing.Color.DarkGray;
+            dataTextEditor.Caret.CurrentLineBackgroundColor = System.Drawing.Color.DarkBlue;
             dataTextEditor.Caret.CurrentLineBackgroundAlpha = 64;
 
             if(!Directory.Exists(WorkingLocation))
@@ -93,8 +85,6 @@ namespace CK2Modder
                     Environment.Exit(0);
                 }
             }
-
-            workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
 
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
@@ -143,7 +133,7 @@ namespace CK2Modder
                     // if successful add the character to the character list
                     if (dynasty != null)
                     {
-                        dynasty.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.DynastyFilesToLoad.Peek());
+                        dynasty.BelongsTo = Path.GetFileName(CurrentMod.DynastyFilesToLoad.Peek());
                         loadingDynasties.Add(dynasty);
                     }
 
@@ -178,10 +168,6 @@ namespace CK2Modder
             {
                 StreamReader reader = new StreamReader(CurrentMod.DynastyFilesToLoad.Peek(), Encoding.Default, true);
                 dynastyBackgroundWorker.RunWorkerAsync(reader);
-            }
-            else
-            {
-                UpdateDataView(selectDataType.Text);
             }
         }
         
@@ -224,7 +210,7 @@ namespace CK2Modder
                     // if successful add the culture to the culture list
                     if (culture != null)
                     {
-                        culture.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.CultureFilesToLoad.Peek());
+                        culture.BelongsTo = Path.GetFileName(CurrentMod.CultureFilesToLoad.Peek());
                         loadingCultures.Add(culture);
                     }
 
@@ -301,7 +287,7 @@ namespace CK2Modder
                     // if successful add the character to the character list
                     if (c != null)
                     {
-                        c.BelongsTo = Path.GetFileNameWithoutExtension(CurrentMod.CharacterFilesToLoad.Peek());
+                        c.BelongsTo = Path.GetFileName(CurrentMod.CharacterFilesToLoad.Peek());
                         loadingCharacters.Add(c);
                     }
 
@@ -337,11 +323,6 @@ namespace CK2Modder
                 StreamReader reader = new StreamReader(CurrentMod.CharacterFilesToLoad.Peek(), Encoding.Default, true);
                 characterBackgroundWorker.RunWorkerAsync(reader);
             }
-            // if done update the character list box
-            else
-            {
-                UpdateDataView(selectDataType.Text);
-            }
         }
 
         #endregion
@@ -361,11 +342,6 @@ namespace CK2Modder
             // Set the mod
             CurrentMod = m;
 
-            // data tab
-            dataFilesListBox.Items.Clear();
-            dataFilesListBox.Items.Add(DefaultFileListView);
-            dataFilesListBox.SelectedIndex = 0;
-
             // Load the dynasties
             String dynastiesFolder = CurrentMod.ModRootDirectory + VanillaDynastiesPath;
             if(Directory.Exists(dynastiesFolder))
@@ -375,7 +351,7 @@ namespace CK2Modder
 
                 foreach (String filePath in files)
                 {
-                    String file = Path.GetFileNameWithoutExtension(filePath);
+                    String file = Path.GetFileName(filePath);
 
                     if (!CurrentMod.DynastyFiles.Contains(file))
                     {
@@ -401,7 +377,7 @@ namespace CK2Modder
 
                 foreach (String filePath in files)
                 {
-                    String file = Path.GetFileNameWithoutExtension(filePath);
+                    String file = Path.GetFileName(filePath);
 
                     if (!CurrentMod.CultureFiles.Contains(file))
                     {
@@ -427,7 +403,7 @@ namespace CK2Modder
 
                 foreach (String filePath in files)
                 {
-                    String file = Path.GetFileNameWithoutExtension(filePath);
+                    String file = Path.GetFileName(filePath);
 
                     if (!CurrentMod.CharacterFiles.Contains(file))
                     {
@@ -451,11 +427,8 @@ namespace CK2Modder
             closeModToolStripMenuItem.Enabled = true;
             closeWithoutSavingToolStripMenuItem.Enabled = true;
             
-            // Show the default view
-            if (selectDataType.SelectedIndex != 0)
-                selectDataType.SelectedIndex = 0;
-            else
-                UpdateDataView(DefaultDataViews[0]);
+            // populate file tree
+            PopulateTreeView();
 
             // Hide the panel
             modClosedPanel.Visible = false;
@@ -473,17 +446,18 @@ namespace CK2Modder
 
             CurrentMod = null;
 
-            // reset the data tab
-            dataFilesListBox.Items.Clear();
-            dataListBox.Items.Clear();
-
+            // reset file tree
+            modFilesTree.Nodes.Clear();
+            
             // reset editor
             dataTextEditor.DataBindings.Clear();
             dataTextEditor.Text = "";
 
-            // reset the filters
-            dataFilesFilter.Text = "";
+            // reset the filter
             dataFilter.Text = "";
+
+            // reset the data list
+            dataListBox.Items.Clear();
 
             UserPreferences.Default.LastMod = "";
             UserPreferences.Default.Save();
@@ -507,7 +481,6 @@ namespace CK2Modder
                 if (File.Exists(folderBrowserDialog.SelectedPath + "/CK2game.exe"))
                 {
                     WorkingLocation = folderBrowserDialog.SelectedPath;
-                    workingLocationStripStatusLabel.Text = String.Format("Working Location: {0}", WorkingLocation);
                     UserPreferences.Default.WorkingLocation = WorkingLocation;
                     UserPreferences.Default.Save();
                     return true;
@@ -550,7 +523,7 @@ namespace CK2Modder
 
                 foreach (String name in CurrentMod.DynastyFiles)
                 {
-                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaDynastiesPath + "/" + name + ".txt", false, Encoding.Default);
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaDynastiesPath + "/" + name, false, Encoding.Default);
 
                     foreach (Dynasty d in CurrentMod.Dynasties)
                     {
@@ -574,7 +547,7 @@ namespace CK2Modder
 
                 foreach (String name in CurrentMod.CultureFiles)
                 {
-                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCulturesPath + "/" + name + ".txt", false, Encoding.Default);
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCulturesPath + "/" + name, false, Encoding.Default);
 
                     foreach (Culture c in CurrentMod.Cultures)
                     {
@@ -598,7 +571,7 @@ namespace CK2Modder
 
                 foreach (String name in CurrentMod.CharacterFiles)
                 {
-                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCharactersPath + "/" + name + ".txt", false, Encoding.Default);
+                    stream = new StreamWriter(CurrentMod.ModRootDirectory + VanillaCharactersPath + "/" + name, false, Encoding.Default);
 
                     foreach (Character c in CurrentMod.Characters)
                     {
@@ -618,86 +591,21 @@ namespace CK2Modder
             dataListBox.Items.AddRange(list.ToArray());
         }
 
-        private void UpdateDataView(String mode)
+        private void UpdateDataListBox(String mode, String fileFilter = null)
         {
-
-            // set the current mode
-            CurrentMode = mode;
-
-            // reset the lists
-            dataFilesListBox.Items.Clear();
-            dataListBox.Items.Clear();
-
-            // reset the filters
-            dataFilesFilter.Text = String.Empty;
-            dataFilter.Text = String.Empty;
-
-            // load the default views depending on the mode selected
-            dataFilesListBox.Items.Add(DefaultFileListView);
-
-            // reset the text editor
-            UpdateTextEditor(null);
-
-            // store the data for the lists here
-            List<String> files = new List<String>();
-            List<String> data = new List<String>();
+            String filter = dataFilter.Text;
+            List<String> list = new List<String>();
 
             switch (mode)
             {
-                case "Mod Details":
-                    UpdateTextEditor(CurrentMod);
-                    HideSplitPanels();
-                    break;
-                case "Characters":
-                    files.AddRange(CurrentMod.CharacterFiles);
-
-                    foreach (Character c in CurrentMod.Characters)
-                        data.Add(c.Display);
-
-                    ShowSplitPanels();
-                    break;
-                case "Dynasties":
-                    files.AddRange(CurrentMod.DynastyFiles);
-
-                    foreach (Dynasty d in CurrentMod.Dynasties)
-                        data.Add(d.Display);
-
-                    ShowSplitPanels();
-                    break;
-                case "Cultures":
-                    files.AddRange(CurrentMod.CultureFiles);
-
-                    foreach (Culture c in CurrentMod.Cultures)
-                        data.Add(c.Display);
-
-                    ShowSplitPanels();
-                    break;
-            }
-
-            // populate the lists
-            dataFilesListBox.Items.AddRange(files.ToArray());            
-            PopulateDataListBox(data);
-        }
-
-        private void UpdateDataListBox()
-        {
-            String filter = dataFilter.Text;
-            String file = dataFilesListBox.SelectedItem as String;
-            List<String> list = new List<String>();
-
-            if (String.IsNullOrWhiteSpace(file))
-                return;
-
-            switch (CurrentMode)
-            {
-                case "Characters":
+                case "characters":
                     List<Character> characters = new List<Character>();
                     
                     // apply the files filter
-                    if (!file.Equals(DefaultFileListView))
+                    if (!String.IsNullOrWhiteSpace(fileFilter))
                     {
                         // Filter the files first
-                        characters = CurrentMod.Characters.FindAll(delegate(Character c) { return c.BelongsTo.Equals(file); });
+                        characters = CurrentMod.Characters.FindAll(delegate(Character c) { return c.BelongsTo.Equals(fileFilter); });
                     }
                     else
                     {
@@ -724,15 +632,15 @@ namespace CK2Modder
                         list.Add(c.Display);
                     break;
 
-                case "Dynasties":
+                case "dynasties":
                     List<Dynasty> dynasties = new List<Dynasty>();
                     dynasties.AddRange(CurrentMod.Dynasties);
 
                     // apply the files filter
-                    if (!file.Equals(DefaultFileListView))
+                    if (!String.IsNullOrWhiteSpace(fileFilter))
                     {
                         // Filter the files first
-                        dynasties = CurrentMod.Dynasties.FindAll(delegate(Dynasty d) { return d.BelongsTo.Equals(file); });
+                        dynasties = CurrentMod.Dynasties.FindAll(delegate(Dynasty d) { return d.BelongsTo.Equals(fileFilter); });
                     }
 
                     // check if the filter is an ID
@@ -755,8 +663,24 @@ namespace CK2Modder
                         list.Add(d.Display);
                     break;
 
-                case "Cultures":
-                    foreach (Culture c in CurrentMod.Cultures)
+                case "cultures":
+                    List<Culture> cultures = new List<Culture>();
+                    cultures.AddRange(CurrentMod.Cultures);
+
+                    // apply the files filter
+                    if (!String.IsNullOrWhiteSpace(fileFilter))
+                    {
+                        // Filter the files first
+                        cultures = cultures.FindAll(delegate(Culture c) { return c.BelongsTo.Equals(fileFilter); });
+                    }
+
+                    // filter for the string passed in
+                    if (!String.IsNullOrWhiteSpace(filter))
+                    {
+                        cultures = cultures.FindAll(delegate(Culture c) { return c.Name.ToLower().Contains(filter); });
+                    }
+
+                    foreach (Culture c in cultures)
                         list.Add(c.Display);
                     break;
             }
@@ -766,35 +690,6 @@ namespace CK2Modder
 
             // Populate it
             PopulateDataListBox(list);
-        }
-
-        private void UpdateFileListBox()
-        {
-            String filter = dataFilesFilter.Text;
-            List<String> list = new List<String>();
-
-            switch (selectDataType.Text)
-            {
-                case "Characters":
-                    list.AddRange(CurrentMod.CharacterFiles);
-                    break;
-                case "Dynasties":
-                    list.AddRange(CurrentMod.DynastyFiles);
-                    break;
-                case "Cultures":
-                    list.AddRange(CurrentMod.CultureFiles);
-                    break;
-            }
-
-            // if there is a filter, apply it
-            if (!String.IsNullOrWhiteSpace(filter))
-            {
-                list = list.FindAll(delegate(String s) { return s.Contains(filter); });
-            }
-
-            dataFilesListBox.Items.Clear();
-            dataFilesListBox.Items.Add(DefaultFileListView);
-            dataFilesListBox.Items.AddRange(list.ToArray());
         }
 
         private void UpdateTextEditor(ModResource resource)
@@ -865,59 +760,83 @@ namespace CK2Modder
             secondarySplitPanel.Panel1Collapsed = false;
             secondarySplitPanel.Panel1.Show();
 
-            mainSplitPanel.Panel1Collapsed = false;
-            mainSplitPanel.Panel1.Show();
-
-            dataFilesListBox.SelectedIndex = 0;
-
             if(dataListBox.Items.Count > 0)
                 dataListBox.SelectedIndex = 0;
         }
 
         private void HideSplitPanels()
-        {
-            mainSplitPanel.Panel1Collapsed = true;
-            mainSplitPanel.Panel1.Hide();
-
+        {   
             secondarySplitPanel.Panel1Collapsed = true;
             secondarySplitPanel.Panel1.Hide();
+        }
+
+        private void PopulateTreeView()
+        {
+            if (CurrentMod == null)
+                return;
+
+            // clear the tree
+            modFilesTree.Nodes.Clear();
+
+            // Add the mod file as the top entry
+            TreeNode modFile = new TreeNode(CurrentMod.Name + ".mod");
+            modFile.Tag = CurrentMod;
+            modFile.ImageIndex = 1;
+            modFile.SelectedImageIndex = 1;
+            modFilesTree.Nodes.Add(modFile);
+
+            // Loop through all the directories in the mod path
+            TreeNode rootNode;
+
+            DirectoryInfo info = new DirectoryInfo(@CurrentMod.ModRootDirectory);
+            if (info.Exists)
+            {
+                rootNode = new TreeNode(info.Name);
+                rootNode.Tag = info;
+                GetDirectories(info.GetDirectories(), rootNode);
+                modFilesTree.Nodes.Add(rootNode);
+            }
+        }
+
+        private void GetDirectories(DirectoryInfo[] subDirs, TreeNode nodeToAddTo)
+        {
+            TreeNode aNode;
+            DirectoryInfo[] subSubDirs;
+            foreach (DirectoryInfo subDir in subDirs)
+            {
+                aNode = new TreeNode(subDir.Name, 0, 0);
+                aNode.Tag = subDir;
+                aNode.ImageIndex = 0;
+                subSubDirs = subDir.GetDirectories();
+                if (subSubDirs.Length != 0)
+                {
+                    GetDirectories(subSubDirs, aNode);
+                }
+                nodeToAddTo.Nodes.Add(aNode);
+
+                // Get any files
+                FileInfo[] files = subDir.GetFiles("*.txt");
+                foreach (FileInfo file in files)
+                {
+                    TreeNode fileNode = new TreeNode(file.Name, 0, 0);
+                    fileNode.Tag = file;
+                    fileNode.ImageIndex = 1;
+                    fileNode.SelectedImageIndex = 1;
+                    aNode.Nodes.Add(fileNode);
+                }
+            }
         }
 
         #endregion
 
         #region Events
 
-        private void selectDataType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            UpdateDataView(selectDataType.Text);
-        }
-
-        private void dataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            UpdateDataListBox();
-        }
-
         private void dataFilter_TextChanged(object sender, EventArgs e)
         {
             if (CurrentMod == null)
                 return;
 
-            UpdateDataListBox();
-        }
-
-
-        private void dataFilesFilter_TextChanged(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            UpdateFileListBox();
+            UpdateDataListBox(modFilesTree.SelectedNode.Text);
         }
 
         private void dataListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -940,17 +859,17 @@ namespace CK2Modder
             }
 
             // show the data
-            switch (CurrentMode)
+            switch (DataMode)
             {
-                case "Characters":
+                case "characters":
                     resource = CurrentMod.Characters.Find(c => c.ID == ID);
                     break;
 
-                case "Dynasties":
+                case "dynasties":
                     resource = CurrentMod.Dynasties.Find(d => d.ID == ID);
                     break;
 
-                case "Cultures":
+                case "cultures":
                     resource = CurrentMod.Cultures.Find(c => c.Name.Equals(name));
                     break;
             }
@@ -958,17 +877,60 @@ namespace CK2Modder
             UpdateTextEditor(resource);
         }
 
-        private void CK2Form_KeyDown(object sender, KeyEventArgs e)
+
+        private void modFilesTree_DoubleClick(object sender, EventArgs e)
         {
-            // Process shortcuts
-            if (e.KeyCode == Keys.F1)
-                selectDataType.SelectedIndex = 0;
-            else if (e.KeyCode == Keys.F2)
-                selectDataType.SelectedIndex = 1;
-            else if (e.KeyCode == Keys.F3)
-                selectDataType.SelectedIndex = 2;
-            else if (e.KeyCode == Keys.F4)
-                selectDataType.SelectedIndex = 3;
+            // check if the selection is a directory
+            if (modFilesTree.SelectedNode.Tag is DirectoryInfo)
+            {
+                // if a directory is selected, attempt to refresh the dataListBox with relevant information
+                DirectoryInfo dir = modFilesTree.SelectedNode.Tag as DirectoryInfo;
+
+                // pass the directory name
+                UpdateDataListBox(dir.Name);
+            }
+            // check if the selection is a file
+            else if (modFilesTree.SelectedNode.Tag is FileInfo)
+            {
+                // if a file is selected open it in the text editor
+            }
+            // otherwise the selection if the .mod file at the top
+            else if (modFilesTree.SelectedNode.Tag is Mod)
+            {
+                // if a mod is selected open it in the text editor
+                UpdateTextEditor(CurrentMod);
+            }
+        }
+
+
+        private void modFilesTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Tag is DirectoryInfo)
+            {
+                // if a directory is selected, attempt to refresh the dataListBox with relevant information
+                DirectoryInfo dir = e.Node.Tag as DirectoryInfo;
+
+                // pass the directory name
+                UpdateDataListBox(dir.Name);
+
+                DataMode = dir.Name;
+            }
+            else if (e.Node.Tag is FileInfo)
+            {
+                FileInfo file = e.Node.Tag as FileInfo;
+                String dir = file.Directory.Name;
+
+                // update the list view
+                UpdateDataListBox(dir, file.Name);
+
+                DataMode = dir;
+            }
+            // otherwise the selection if the .mod file at the top
+            else if (e.Node.Tag is Mod)
+            {
+                // if a mod is selected open it in the text editor
+                UpdateTextEditor(CurrentMod);
+            }
         }
 
         private void newModButton_Click(object sender, EventArgs e)
@@ -1015,117 +977,6 @@ namespace CK2Modder
         private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectWorkingLocation();
-        }
-
-        private void deleteSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (CurrentMod == null)
-                return;
-
-            String selectedFile = dataFilesListBox.SelectedItem as String;
-
-            //if (selectedFile == null || selectedFile.Equals(DefaultCharacterListView))
-            //    return;
-
-            if(MessageBox.Show("Deleting the file will delete all the characters in the file. Do you wish to continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.OK)
-            {
-                String originalFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + selectedFile + ".txt";
-
-                if (File.Exists(originalFile))
-                {
-                    File.Delete(originalFile);
-                }
-
-                dataFilesListBox.Items.Remove(selectedFile);
-                CurrentMod.CharacterFiles.Remove(selectedFile);
-
-                foreach (Character c in CurrentMod.Characters.ToList())
-                    if (c.BelongsTo.Equals(selectedFile))
-                        CurrentMod.Characters.Remove(c);
-
-                // Set the view to all characters
-                dataFilesListBox.SelectedIndex = 0;
-            }
-        }
-
-        private void editSelectedFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            String selected = dataFilesListBox.SelectedItem as String;
-
-            //if (selected == null || selected.Equals(DefaultCharacterListView))
-            //    return;
-
-            CharacterFileForm fileForm = new CharacterFileForm(selected);
-
-            if (fileForm.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-            {
-                // If the user hit ok without changing the name don't do anything
-                if (selected.Equals(fileForm.FileName))
-                    return;
-
-                if(fileForm.FileName.Equals(""))
-                {
-                    MessageBox.Show("The file must have a name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (CurrentMod.CharacterFiles.Contains(fileForm.FileName))
-                {
-                    MessageBox.Show("The name you entered already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                else
-                {
-                    String originalFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + selected + ".txt";
-                    String newFile = WorkingLocation + "/" + CurrentMod.Path + VanillaCharactersPath + fileForm.FileName + ".txt";
-
-                    // Rename the actual file
-                    if(File.Exists(originalFile) && !File.Exists(newFile))
-                    {
-                        // Copy the file, then delete the original
-                        File.Copy(originalFile, newFile);
-                        File.Delete(originalFile);
-
-                        // Update the UI
-                        CurrentMod.CharacterFiles.Remove(selected);
-                        CurrentMod.CharacterFiles.Add(fileForm.FileName);
-                        dataFilesListBox.Items.Remove(selected);
-                        dataFilesListBox.Items.Add(fileForm.FileName);
-
-                        // Update the characters
-                        foreach (Character c in CurrentMod.Characters)
-                        {
-                            if (c.BelongsTo.Equals(selected))
-                                c.BelongsTo = fileForm.FileName;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void characterFilesMenuAdd_Click(object sender, EventArgs e)
-        {
-            CharacterFileForm fileForm = new CharacterFileForm();
-
-            if (fileForm.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-            {
-                if (fileForm.FileName.Equals(""))
-                {
-                    MessageBox.Show("The file must have a name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (CurrentMod.CharacterFiles.Contains(fileForm.FileName))
-                {
-                    MessageBox.Show("The name you entered already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                else
-                {
-                    CurrentMod.CharacterFiles.Add(fileForm.FileName);
-                    dataFilesListBox.Items.Add(fileForm.FileName);
-                }
-            }
         }
 
         #endregion
