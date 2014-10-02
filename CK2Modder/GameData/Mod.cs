@@ -27,6 +27,7 @@ namespace CK2Modder.GameData
         public List<Dynasty> Dynasties { get; private set; }
         public List<Culture> Cultures { get; private set; }
         public List<Character> Characters { get; private set; }
+        public List<MiscFile> Files { get; private set; }
 
         // List of files that are in used
         public List<String> CharacterFiles { get; private set; }
@@ -144,6 +145,7 @@ namespace CK2Modder.GameData
             Dynasties = new List<Dynasty>();
             Cultures = new List<Culture>();
             Characters = new List<Character>();
+            Files = new List<MiscFile>();
 
             CharacterFiles = new List<String>();
             DynastyFiles = new List<String>();

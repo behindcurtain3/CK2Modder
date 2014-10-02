@@ -91,6 +91,7 @@
     <Compile Include="GameData\history\characters\LifeEventEditor.Designer.cs">
       <DependentUpon>LifeEventEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameData\MiscFile.cs" />
     <Compile Include="GameData\Mod.cs" />
     <Compile Include="GameData\ModResource.cs" />
     <Compile Include="Program.cs" />

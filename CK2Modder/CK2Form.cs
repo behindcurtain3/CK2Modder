@@ -892,7 +892,37 @@ namespace CK2Modder
             // check if the selection is a file
             else if (modFilesTree.SelectedNode.Tag is FileInfo)
             {
-                // if a file is selected open it in the text editor
+                FileInfo file = modFilesTree.SelectedNode.Tag as FileInfo;
+
+                // try to retrieve the selected file
+                MiscFile data = CurrentMod.Files.Find(delegate(MiscFile f) { return f.BelongsTo.Equals(file.Name); });
+
+                // if it exists load it in the editor
+                if (data != null)
+                {
+                    UpdateTextEditor(data);
+                }
+                // otherwise load the file
+                else
+                {
+                    List<String> lines = new List<string>();
+                    StreamReader reader = new StreamReader(file.FullName);
+                    String line;
+                    while((line = reader.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+
+                    data = MiscFile.Load(lines);
+
+                    if(data != null)
+                    {
+                        data.BelongsTo = file.Name;
+
+                        CurrentMod.Files.Add(data);
+                        UpdateTextEditor(data);
+                    }
+                }
             }
             // otherwise the selection if the .mod file at the top
             else if (modFilesTree.SelectedNode.Tag is Mod)
