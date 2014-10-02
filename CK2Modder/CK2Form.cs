@@ -25,7 +25,6 @@ namespace CK2Modder
         // Display string
         public static readonly String DefaultWindowTitle = "CK2 Modder";
         public static readonly String DefaultFileListView = "View All Files";
-        public static readonly String[] DefaultDataViews = { "Mod Details", "Characters", "Dynasties", "Cultures" };
 
         public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
@@ -76,6 +75,7 @@ namespace CK2Modder
             dataTextEditor.Caret.HighlightCurrentLine = true;
             dataTextEditor.Caret.CurrentLineBackgroundColor = System.Drawing.Color.DarkBlue;
             dataTextEditor.Caret.CurrentLineBackgroundAlpha = 64;
+            dataTextEditor.MatchBraces = true;
 
             if(!Directory.Exists(WorkingLocation))
             {

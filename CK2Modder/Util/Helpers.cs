@@ -57,6 +57,17 @@ namespace CK2Modder.Util
             }
         }
 
+        /// <summary>
+        /// Read through a list of strings and finds the first set of strings that matches:
+        /// 
+        /// key = {
+        ///     data...
+        /// }
+        /// 
+        /// </summary>
+        /// <param name="lines">List of lines to search through</param>
+        /// <param name="startIndex">The index within the list to begin searching</param>
+        /// <returns>A list of strings that composes: key = { } sequence</returns>
         public static List<String> ReadStringSequence(List<String> lines, int startIndex)
         {
             List<String> data = new List<String>();
@@ -65,9 +76,6 @@ namespace CK2Modder.Util
             // Loop through the lines
             for (int i = startIndex; i < lines.Count; i++)
             {
-                //if(lines[i].StartsWith("#"))
-                //   continue;
-
                 if (lines[i].Contains("{"))
                     bracketCount += StringExtensions.CountOccurences(lines[i], "{");
                 if (lines[i].Contains("}"))
