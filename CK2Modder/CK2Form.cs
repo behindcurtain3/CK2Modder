@@ -584,6 +584,19 @@ namespace CK2Modder
                     stream.Close();
                 }
             }
+
+            // write out any misc files that were loaded
+            foreach (MiscFile file in CurrentMod.Files)
+            {
+                // open the stream
+                stream = new StreamWriter(file.FileInfo.OpenWrite(), Encoding.Default);
+
+                // write the data
+                stream.Write(file.ToString());
+
+                // close the stream
+                stream.Close();
+            }
         }
 
         private void PopulateDataListBox(List<String> list)
@@ -918,6 +931,7 @@ namespace CK2Modder
                     if(data != null)
                     {
                         data.BelongsTo = file.Name;
+                        data.FileInfo = file;
 
                         CurrentMod.Files.Add(data);
                         UpdateTextEditor(data);
