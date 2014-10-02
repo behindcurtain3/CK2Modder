@@ -44,8 +44,6 @@ namespace CK2Modder
             this.closeWithoutSavingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.workingLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.characterFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -95,8 +93,7 @@ namespace CK2Modder
             // mainMenuStrip
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.fileToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Size = new System.Drawing.Size(784, 24);
@@ -176,21 +173,6 @@ namespace CK2Modder
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.workingLocationToolStripMenuItem});
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // workingLocationToolStripMenuItem
-            // 
-            this.workingLocationToolStripMenuItem.Name = "workingLocationToolStripMenuItem";
-            this.workingLocationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.workingLocationToolStripMenuItem.Text = "Working Location...";
-            this.workingLocationToolStripMenuItem.Click += new System.EventHandler(this.workingLocationToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -489,8 +471,6 @@ namespace CK2Modder
         private System.ComponentModel.BackgroundWorker dynastyBackgroundWorker;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem workingLocationToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem closeModToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeWithoutSavingToolStripMenuItem;

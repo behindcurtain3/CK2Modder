@@ -26,7 +26,6 @@ namespace CK2Modder
         public static readonly String DefaultWindowTitle = "CK2 Modder";
         public static readonly String DefaultFileListView = "View All Files";
 
-        public String WorkingLocation { get; set; }
         public Mod CurrentMod { get; set; }
         public String DataMode { get; set; }
         
@@ -57,9 +56,6 @@ namespace CK2Modder
 
         public void Initialize()
         {
-            // Setup the working location
-            WorkingLocation = UserPreferences.Default.WorkingLocation;
-
             InitializeComponent();
 
             // do this here so in the design view it can stay at the back
@@ -76,15 +72,6 @@ namespace CK2Modder
             dataTextEditor.Caret.CurrentLineBackgroundColor = System.Drawing.Color.DarkBlue;
             dataTextEditor.Caret.CurrentLineBackgroundAlpha = 64;
             dataTextEditor.MatchBraces = true;
-
-            if(!Directory.Exists(WorkingLocation))
-            {
-                if (!SelectWorkingLocation())
-                {
-                    MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Environment.Exit(0);
-                }
-            }
 
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
@@ -421,6 +408,7 @@ namespace CK2Modder
             }
 
             UserPreferences.Default.LastMod = CurrentMod.StorageLocation + "/" + CurrentMod.Name + ".mod";
+            UserPreferences.Default.WorkingLocation = CurrentMod.StorageLocation;
             UserPreferences.Default.Save();
 
             saveToolStripMenuItem.Enabled = true;
@@ -466,35 +454,6 @@ namespace CK2Modder
             modClosedPanel.Visible = true;
 
             this.Text = DefaultWindowTitle;
-        }
-               
-        private bool SelectWorkingLocation()
-        {
-            folderBrowserDialog = new FolderBrowserDialog();
-            //folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
-            folderBrowserDialog.Description = "Select the main Crusader Kings II installation directory containing ck2.exe";
-            folderBrowserDialog.SelectedPath = SteamDirectory;
-            folderBrowserDialog.ShowNewFolderButton = false;
-
-            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                if (File.Exists(folderBrowserDialog.SelectedPath + "/CK2game.exe"))
-                {
-                    WorkingLocation = folderBrowserDialog.SelectedPath;
-                    UserPreferences.Default.WorkingLocation = WorkingLocation;
-                    UserPreferences.Default.Save();
-                    return true;
-                }
-                else
-                {
-                    MessageBox.Show("Please select an installation directory for Crusader Kings II.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
         }
 
         public void SaveMod()
@@ -725,7 +684,14 @@ namespace CK2Modder
         private void CreateNewMod()
         {
             newModDialog = new SaveFileDialog();
-            newModDialog.InitialDirectory = WorkingLocation + "\\mod";
+            if (String.IsNullOrWhiteSpace(UserPreferences.Default.WorkingLocation))
+            {
+                newModDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                newModDialog.InitialDirectory = UserPreferences.Default.WorkingLocation;
+            } 
             newModDialog.AddExtension = true;
             newModDialog.DefaultExt = ".mod";
             newModDialog.FileName = "Mod Name";
@@ -755,7 +721,14 @@ namespace CK2Modder
         {
             openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Mod File (*.mod)|*.mod";
-            openFileDialog.InitialDirectory = WorkingLocation + "\\mod";
+            if (String.IsNullOrWhiteSpace(UserPreferences.Default.WorkingLocation))
+            {
+                openFileDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                openFileDialog.InitialDirectory = UserPreferences.Default.WorkingLocation;
+            }
             openFileDialog.Multiselect = false;
             openFileDialog.Title = "Select a mod to open";
 
@@ -1016,11 +989,6 @@ namespace CK2Modder
         private void closeWithoutSavingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloseMod();
-        }
-
-        private void workingLocationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SelectWorkingLocation();
         }
 
         #endregion
