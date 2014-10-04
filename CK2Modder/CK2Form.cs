@@ -15,16 +15,10 @@ namespace CK2Modder
 {
     public partial class CK2Form : Form
     {
-        public static readonly String SteamDirectory = "C:\\Program Files\\Steam\\steamapps\\common\\crusader kings ii";
-        public static readonly String SteamDirectoryX86 = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\crusader kings ii";
-        
         public static readonly String VanillaDynastiesPath = "/common/dynasties/";
         public static readonly String VanillaCharactersPath = "/history/characters/";
         public static readonly String VanillaCulturesPath = "/common/cultures/";
-
-        // Display string
         public static readonly String DefaultWindowTitle = "CK2 Modder";
-        public static readonly String DefaultFileListView = "View All Files";
 
         public Mod CurrentMod { get; set; }
         public String DataMode { get; set; }
@@ -76,7 +70,7 @@ namespace CK2Modder
             dynastyBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(dynastyBackgroundWorker_RunWorkerCompleted);
             cultureBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(cultureBackgroundWorker_RunWorkerCompleted);
             characterBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(characterBackgroundWorker_RunWorkerCompleted);
-        }        
+        }
 
         #endregion
 
@@ -793,6 +787,7 @@ namespace CK2Modder
                 aNode = new TreeNode(subDir.Name, 0, 0);
                 aNode.Tag = subDir;
                 aNode.ImageIndex = 0;
+                //aNode.ContextMenuStrip = treeMenuStrip;
                 subSubDirs = subDir.GetDirectories();
                 if (subSubDirs.Length != 0)
                 {
@@ -991,7 +986,45 @@ namespace CK2Modder
             CloseMod();
         }
 
-        #endregion
 
+        private void addFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Add file to the selected folder
+            DirectoryInfo directory = modFilesTree.SelectedNode.Tag as DirectoryInfo;
+
+            String fileName = "New File.txt";
+
+            MiscFile file = new MiscFile();
+            file.BelongsTo = directory.FullName + "/" + fileName;
+
+            // Write a blank file
+            StreamWriter stream = File.CreateText(file.BelongsTo);
+            stream.Close();
+
+            PopulateTreeView();
+        }
+
+        /// <summary>
+        /// Ensure whenever a user right-clicks on the treeview the context menu
+        /// is able to use the node clicked on instead of the selected node
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void modFilesTree_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Select the clicked node
+                modFilesTree.SelectedNode = modFilesTree.GetNodeAt(e.X, e.Y);
+
+                if (modFilesTree.SelectedNode != null)
+                {
+                    treeMenuStrip.Show(modFilesTree, e.Location);
+                }
+            }
+        }
+
+        #endregion
+        
     }
 }

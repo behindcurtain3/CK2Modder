@@ -73,6 +73,8 @@ namespace CK2Modder
             this.loadModButton = new System.Windows.Forms.Button();
             this.newModButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.treeMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.characterFilesContextMenuStrip.SuspendLayout();
             this.cultureSubContextMenuStrip.SuspendLayout();
@@ -88,6 +90,7 @@ namespace CK2Modder
             this.secondarySplitPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).BeginInit();
             this.modClosedPanel.SuspendLayout();
+            this.treeMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenuStrip
@@ -306,6 +309,7 @@ namespace CK2Modder
             this.modFilesTree.TabIndex = 1;
             this.modFilesTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.modFilesTree_AfterSelect);
             this.modFilesTree.DoubleClick += new System.EventHandler(this.modFilesTree_DoubleClick);
+            this.modFilesTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.modFilesTree_MouseUp);
             // 
             // iconsList
             // 
@@ -420,6 +424,20 @@ namespace CK2Modder
             this.label2.Text = "Create a New Mod or Load an Existing one";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // treeMenuStrip
+            // 
+            this.treeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFileToolStripMenuItem});
+            this.treeMenuStrip.Name = "treeMenuStrip";
+            this.treeMenuStrip.Size = new System.Drawing.Size(127, 26);
+            // 
+            // addFileToolStripMenuItem
+            // 
+            this.addFileToolStripMenuItem.Name = "addFileToolStripMenuItem";
+            this.addFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addFileToolStripMenuItem.Text = "Add File...";
+            this.addFileToolStripMenuItem.Click += new System.EventHandler(this.addFileToolStripMenuItem_Click);
+            // 
             // CK2Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -454,6 +472,7 @@ namespace CK2Modder
             this.secondarySplitPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataTextEditor)).EndInit();
             this.modClosedPanel.ResumeLayout(false);
+            this.treeMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -500,6 +519,8 @@ namespace CK2Modder
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TreeView modFilesTree;
         private System.Windows.Forms.ImageList iconsList;
+        private System.Windows.Forms.ContextMenuStrip treeMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem addFileToolStripMenuItem;
     }
 }
 
